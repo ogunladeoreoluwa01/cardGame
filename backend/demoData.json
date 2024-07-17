@@ -1,0 +1,106 @@
+{
+  "pets": [
+    {
+      "name": "Emberclaw",
+      "id": "6681c74c9f67b3d532f105cb"
+    },
+    {
+      "name": "Flame Serpent",
+      "id": "6681c74c9f67b3d532f105ce"
+    },
+    {
+      "name": "Inferno Guardian",
+      "id": "6681c74c9f67b3d532f105d1"
+    },
+    {
+      "name": "Blaze Phoenix",
+      "id": "6681c74c9f67b3d532f105d4"
+    },
+    {
+      "name": "Magma Titan",
+      "id": "6681c74c9f67b3d532f105d7"
+    },
+    {
+      "name": "Fire Drake",
+      "id": "6681c74c9f67b3d532f105da"
+    },
+    {
+      "name": "Volcanic Behemoth",
+      "id": "6681c74c9f67b3d532f105dd"
+    },
+    {
+      "name": "Ash Wyrm",
+      "id": "6681c74c9f67b3d532f105e0"
+    },
+    {
+      "name": "Pyro Hydra",
+      "id": "6681c74c9f67b3d532f105e3"
+    },
+    {
+      "name": "Lava Golem",
+      "id": "6681c74c9f67b3d532f105e6"
+    },
+    {
+      "name": "Tide Guardian",
+      "id": "6681c74c9f67b3d532f105e9"
+    },
+    {
+      "name": "Aqua Serpent",
+      "id": "6681c74c9f67b3d532f105ec"
+    },
+    {
+      "name": "Wavebreaker",
+      "id": "6681c74c9f67b3d532f105ef"
+    },
+    {
+      "name": "Coral Siren",
+      "id": "6681c74c9f67b3d532f105f2"
+    },
+    {
+      "name": "Kraken",
+      "id": "6681c74c9f67b3d532f105f5"
+    },
+    {
+      "name": "Leviathan",
+      "id": "6681c74c9f67b3d532f105f8"
+    },
+    {
+      "name": "Tsunami Dragon",
+      "id": "6681c74c9f67b3d532f105fb"
+    },
+    {
+      "name": "Abyssal Wyrm",
+      "id": "6681c74c9f67b3d532f105fe"
+    },
+    {
+      "name": "Frostfish",
+      "id": "6681c74c9f67b3d532f10601"
+    },
+    {
+      "name": "Hydro Golem",
+      "id": "6681c74c9f67b3d532f10604"
+    }
+  ],
+  "arenas": [
+    {
+      "name": "Volcano Crater",
+      "id": "6681c74c9f67b3d532f10606"
+    },
+    {
+      "name": "Inferno Plateau",
+      "id": "6681c74c9f67b3d532f10609"
+    },
+    {
+      "name": "Ocean Abyss",
+      "id": "6681c74c9f67b3d532f1060c"
+    },
+    {
+      "name": "Coral Reef",
+      "id": "6681c74c9f67b3d532f1060f"
+    },
+    {
+      "name": "Tidal Pools",
+      "id": "6681c74c9f67b3d532f10612"
+    }
+  ]
+}

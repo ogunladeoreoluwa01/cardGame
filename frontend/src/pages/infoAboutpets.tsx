@@ -1,0 +1,490 @@
+import React, { useState, useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/types";
+import NavBarComp from "@/components/navBarComponent";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button"; // Import Button component
+import HeaderComp from "@/components/headerComponent";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
+import fireBackground from "@/assets/static/aboutPage/Default_Fire_Arena_Volcanic_CraterDescription_The_Fire_Arena_i_0 (1).jpg";
+import fireCreature from "@/assets/static/aboutPage/Default_Fire_Element_PhoenixDescription_The_Phoenix_is_a_majes_0.jpg";
+import waterCreature from "@/assets/static/aboutPage/Default_Water_Element_LeviathanDescription_The_Leviathan_is_a_0.jpg";
+import waterBackground from "@/assets/static/aboutPage/Default_Description_The_Oceanic_Abyss_arena_is_a_vast_underwat_3.jpg";
+import earthCreature from "@/assets/static/aboutPage/Default_Creature_Earth_GolemDescription_Earth_Golems_are_formi_3.jpg";
+import earthBackground from "@/assets/static/aboutPage/Default_Arena_Mountain_StrongholdDescription_The_Mountain_Stro_2.jpg";
+import airCreature from "@/assets/static/aboutPage/Default_Creature_GriffinDescription_Griffins_are_majestic_crea_1.jpg";
+import airBackground from "@/assets/static/aboutPage/Default_Arena_Sky_TempleDescription_The_Sky_Temple_arena_float_2.jpg";
+import electricCreature from "@/assets/static/aboutPage/Default_Creature_ThunderbirdDescription_The_Thunderbird_is_a_m_1.jpg";
+import electricBackground from "@/assets/static/aboutPage/Default_Arena_Stormy_PeakDescription_The_Stormy_Peak_arena_is_2.jpg";
+import natureCreature from "@/assets/static/aboutPage/Default_Creature_TreantDescription_Treants_are_ancient_sentien_1.jpg";
+import natureBackground from "@/assets/static/aboutPage/Default_Arena_Enchanted_ForestDescription_The_Enchanted_Forest_2.jpg";
+import iceCreature from "@/assets/static/aboutPage/Default_Creature_YetiDescription_The_Yeti_or_Abominable_Snowma_3.jpg";
+import iceBackground from "@/assets/static/aboutPage/Default_Arena_Frozen_TundraDescription_The_Frozen_Tundrais_a_v_2.jpg";
+import darkCreature from "@/assets/static/aboutPage/Default_Creature_Vampire_batsDescription_Vampires_bats_are_un_1.jpg";
+import darkBackground from "@/assets/static/aboutPage/Default_Arena_Haunted_CastleDescription_The_Haunted_Castle_are_3.jpg";
+import lightCreature from "@/assets/static/aboutPage/Default_Creature_UnicornDescription_Unicorns_are_mythical_crea_0.jpg";
+import lightBackground from "@/assets/static/aboutPage/Default_Arena_Radiant_GardenDescription_The_Radiant_Garden_are_3.jpg";
+import metalCreature from "@/assets/static/aboutPage/Default_Creature_Iron_GolemDescription_Iron_Golems_are_powerfu_2.jpg";
+import metalBackground from "@/assets/static/aboutPage/Default_Arena_Forge_of_TitansDescription_The_Forge_of_Titans_a_3.jpg";
+import {
+  GiSmallFire,
+  GiDrop,
+  GiStonePile,
+  GiTornado,
+  GiLightningTrio,
+  GiIceBolt,
+  GiSundial,
+  GiMoon,
+  GiVineLeaf,
+  GiMetalBar,
+} from "react-icons/gi";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+const elementData: Record<
+  string,
+  {
+    color: string;
+    arena: string;
+    element: string;
+    icon: JSX.Element;
+    effect: string;
+    strengths: string[];
+    weaknesses: string[];
+    creature: string;
+    illustration: string;
+    creatureDescription: string;
+    elementDescription: string;
+  }
+> = {
+  Fire: {
+    color: "#FF4500",
+    arena: fireBackground,
+    element: "Fire",
+    icon: <GiSmallFire />,
+    effect:
+      "Burns enemies over time with searing flames, causing continuous fire damage that intensifies with each passing second.",
+    strengths: ["Nature", "Ice"],
+    weaknesses: ["Water", "Earth"],
+    creature: "Phoenix",
+    illustration: fireCreature,
+    creatureDescription:
+      "The Phoenix is a legendary firebird that is eternally reborn from its own ashes. It embodies the cycle of life, death, and rebirth, with its fiery plumage radiating both beauty and destruction.",
+    elementDescription:
+      "Fire is the element of passion, energy, and transformation. It is both a creator and a destroyer, representing the power to bring light and warmth, as well as to burn and obliterate. Masters of Fire wield intense flames to scorch their enemies, leaving nothing but ashes in their wake.",
+  },
+  Water: {
+    color: "#00BFFF",
+    arena: waterBackground,
+    element: "Water",
+    icon: <GiDrop />,
+    effect:
+      "Cools and calms the battlefield, providing defensive barriers and restorative healing that flows like a gentle stream.",
+    strengths: ["Fire", "Electric"],
+    weaknesses: ["Electric", "Earth"],
+    creature: "Mermaid",
+    illustration: waterCreature,
+    creatureDescription:
+      "Mermaids are enchanting sea creatures with the upper body of a human and the lower body of a fish. They are known for their mesmerizing voices and their ability to heal and protect the waters they inhabit.",
+    elementDescription:
+      "Water symbolizes adaptability, tranquility, and life itself. It has the power to soothe and heal, to cleanse and purify. Those who command Water can summon torrents and waves, using its fluid nature to shield allies and drown foes in a deluge of power.",
+  },
+  Earth: {
+    color: "#8B4513",
+    arena: earthBackground,
+    element: "Earth",
+    icon: <GiStonePile />,
+    effect:
+      "Provides unmatched stability and defensive strength, forming unbreakable barriers of stone and soil that withstand any assault.",
+    strengths: ["Electric", "Fire"],
+    weaknesses: ["Water", "Nature"],
+    creature: "Earth Golem",
+    illustration: earthCreature,
+    creatureDescription:
+      "Earth Golems are formidable, rock-based guardians crafted from the very bedrock of the earth. Their immense strength and resilience make them the ultimate defenders, standing unyielding against any threat.",
+    elementDescription:
+      "Earth represents endurance, solidity, and the foundational forces of nature. It is the essence of strength and persistence. Earth wielders can manipulate rocks and soil, creating fortresses of protection and unleashing powerful quakes to disrupt their enemies.",
+  },
+  Air: {
+    color: "#87CEFA",
+    arena: airBackground,
+    element: "Air",
+    icon: <GiTornado />,
+    effect:
+      "Brings swift and evasive maneuvers, enhancing agility and allowing rapid, unpredictable strikes like the wind itself.",
+    strengths: ["Earth", "Nature"],
+    weaknesses: ["Electric", "Ice"],
+    creature: "Griffin",
+    illustration: airCreature,
+    creatureDescription:
+      "Griffins are majestic creatures with the body of a lion and the head and wings of an eagle. They are symbols of vigilance and strength, soaring through the skies with unparalleled grace and power.",
+    elementDescription:
+      "Air embodies freedom, movement, and the unseen forces of the sky. It is the breath of life and the winds of change. Masters of Air harness the breeze to move with unmatched speed, creating whirlwinds and gusts that confound and scatter their enemies.",
+  },
+  Electric: {
+    color: "#FFD700",
+    arena: electricBackground,
+    element: "Electric",
+    icon: <GiLightningTrio />,
+    effect:
+      "Electrifies attacks with shocking damage, unleashing bolts of lightning that stun and paralyze foes, leaving them vulnerable.",
+    strengths: ["Water", "Air"],
+    weaknesses: ["Earth", "Metal"],
+    creature: "Thunderbird",
+    illustration: electricCreature,
+    creatureDescription:
+      "The Thunderbird is a mythic avian creature capable of summoning storms and wielding the power of lightning. Its mighty wings stir the skies, and its call heralds thunder and rain.",
+    elementDescription:
+      "Electricity represents raw energy, innovation, and the unpredictable power of the storm. It is the spark of life and the pulse of the universe. Those who control Electricity can channel immense voltage to shock, paralyze, and devastate their adversaries.",
+  },
+  Nature: {
+    color: "#32CD32",
+    arena: natureBackground,
+    element: "Nature",
+    icon: <GiVineLeaf />,
+    effect:
+      "Harmonizes with the surroundings, fostering growth and healing through a deep connection with the natural world.",
+    strengths: ["Earth", "Water"],
+    weaknesses: ["Fire", "Air"],
+    creature: "Treant",
+    illustration: natureCreature,
+    creatureDescription:
+      "Treants are ancient, sentient trees that act as guardians of the forest. With their immense size and wisdom, they nurture the woodland and protect it from harm.",
+    elementDescription:
+      "Nature is the essence of life, growth, and the interconnected web of all living things. It symbolizes renewal and balance. Nature's champions can summon the forces of flora and fauna, healing allies and ensnaring enemies with the power of the wild.",
+  },
+  Ice: {
+    color: "#00FFFF",
+    arena: iceBackground,
+    element: "Ice",
+    icon: <GiIceBolt />,
+    effect:
+      "Freezes enemies solid and slows their movements, encasing them in frost and sapping their strength with the chill of winter.",
+    strengths: ["Air", "Water"],
+    weaknesses: ["Fire", "Electric"],
+    creature: "Yeti",
+    illustration: iceCreature,
+    creatureDescription:
+      "The Yeti, or Abominable Snowman, is a mysterious creature of the frozen mountains. Known for its tremendous strength and elusive nature, it thrives in the harshest of cold environments.",
+    elementDescription:
+      "Ice signifies stillness, clarity, and the formidable power of the cold. It is the quiet strength that can halt anything in its path. Ice users can freeze their surroundings, creating barriers and weapons of frost that immobilize and weaken their enemies.",
+  },
+  Dark: {
+    color: "#8A2BE2",
+    arena: darkBackground,
+    element: "Dark",
+    icon: <GiMoon />,
+    effect:
+      "Obscures vision and deals shadowy damage, invoking fear and disorientation with the power of darkness and night.",
+    strengths: ["Light", "Ice"],
+    weaknesses: ["Light"],
+    creature: "Vampire",
+    illustration: darkCreature,
+    creatureDescription:
+      "Vampires are undead beings that feed on the life force of the living. They possess great strength, speed, and the ability to manipulate shadows, making them fearsome nocturnal predators.",
+    elementDescription:
+      "Darkness embodies mystery, fear, and the unknown. It is the shadow that conceals and the void that absorbs all light. Masters of Dark can blend into the night, striking terror into the hearts of their enemies with shadowy assaults and deceptive tactics.",
+  },
+  Light: {
+    color: "#FFF700",
+    arena: lightBackground,
+    element: "Light",
+    icon: <GiSundial />,
+    effect:
+      "Illuminates and heals, providing clarity, purification, and radiant energy that dispels darkness and restores vitality.",
+    strengths: ["Dark", "Nature"],
+    weaknesses: ["Dark", "Metal"],
+    creature: "Unicorn",
+    illustration: lightCreature,
+    creatureDescription:
+      "Unicorns are mythical creatures depicted as white horses with a single, spiraling horn. They symbolize purity, grace, and possess powerful healing abilities that can cure any ailment.",
+    elementDescription:
+      "Light represents purity, enlightenment, and the life-giving energy of the sun. It is the beacon of hope and the force that vanquishes shadows. Light wielders can heal wounds, banish darkness, and illuminate the path to victory with their radiant powers.",
+  },
+  Metal: {
+    color: "#B0C4DE",
+    arena: metalBackground,
+    element: "Metal",
+    icon: <GiMetalBar />,
+    effect:
+      "Strengthens defenses and enhances durability, creating unbreakable armor and weapons forged from the hardest metals.",
+    strengths: ["Electric", "Light"],
+    weaknesses: ["Nature", "Water"],
+    creature: "Iron Golem",
+    illustration: metalCreature,
+    creatureDescription:
+      "Iron Golems are powerful constructs made entirely of metal. They are known for their incredible strength, resilience, and unwavering loyalty to their creators, serving as both protectors and warriors.",
+    elementDescription:
+      "Metal symbolizes resilience, discipline, and the enduring power of crafted materials. It is the element of industry and protection. Metal users can manipulate metallic substances, forging formidable armor and weapons to defend against any threat.",
+  },
+};
+const getElementData = (elementName) => {
+  return elementData[elementName];
+};
+
+
+
+const AboutGame: React.FC = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+   const [activeElement, setActiveElement] = useState("");
+    const [lastScrollTop, setLastScrollTop] = useState(0);
+    const [navbarVisible, setNavbarVisible] = useState(true);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const currentScrollTop = window.pageYOffset;
+
+        if (currentScrollTop > lastScrollTop) {
+          // User is scrolling down
+          setNavbarVisible(false);
+        } else {
+          // User is scrolling up
+          setNavbarVisible(true);
+        }
+        setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop); // For Mobile or negative scrolling
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, [lastScrollTop]);
+
+
+     useEffect(() => {
+       const observer = new IntersectionObserver(
+         (entries) => {
+           entries.forEach((entry) => {
+             if (entry.isIntersecting) {
+               setActiveElement(entry.target.id);
+               console.log(entry.target.id);
+             }
+           });
+         },
+         { threshold: 0.5 } // Adjust threshold as needed
+       );
+
+       const sections = document.querySelectorAll("section");
+       sections.forEach((section) => observer.observe(section));
+
+       return () => {
+         sections.forEach((section) => observer.unobserve(section));
+       };
+     }, []);
+   
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (entry.target.classList.contains("hidden1")) {
+            entry.target.classList.add("show1");
+          } else if (entry.target.classList.contains("hidden2")) {
+            entry.target.classList.add("show2");
+          }
+        } else {
+          if (entry.target.classList.contains("hidden1")) {
+            entry.target.classList.remove("show1");
+          } else if (entry.target.classList.contains("hidden2")) {
+            entry.target.classList.remove("show2");
+          }
+        }
+      });
+    });
+
+    // Select both hidden1 and hidden2 elements
+    const hiddenElements = document.querySelectorAll(".hidden1, .hidden2");
+
+    // Observe each element
+    hiddenElements.forEach((el) => observer.observe(el));
+
+    // Cleanup the observer on component unmount
+    return () => {
+      hiddenElements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
+  return (
+    <>
+      <section className="">
+        <div className="">
+          <header
+            className={`${
+              navbarVisible ? "fixed" : "hidden"
+            } lg:px-6 px-3 bg-background  w-full py-[0.5px]  top-0 z-50`}
+          >
+            {" "}
+            <HeaderComp />
+          </header>
+          <main className="px-2  md:px-0   flex   flex-wrap overflow-hidden  ">
+            {Object.keys(elementData).map((element, index) => {
+              return (
+                <section
+                  id={elementData[element].element}
+                  className={`w-full relative bg-black h-[100vh]  ${
+                    index % 2 === 0 ? "hidden1" : "hidden2"
+                  } `}
+                >
+                  <img
+                    src={elementData[element].arena}
+                    alt=""
+                    className="w-full h-full opacity-20 object-cover"
+                  />
+
+                  <div
+                    className={`
+                      ${index % 2 === 0 ? "flex-row-reverse" : ""}  
+                  absolute z-0 p-4 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[65%] md:-translate-y-[50%] flex gap-5 flex-wrap items-start justify-center w-full`}
+                  >
+                    <Card
+                      style={{ backgroundColor: elementData[element].color }}
+                      className={`md:w-[250px] card md:h-[350px] w-[150px] h-[250px] text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden`}
+                    >
+                      <CardContent className="w-full h-full bg-muted p-0 z-0 relative bg-black">
+                        <img
+                          src={elementData[element].illustration}
+                          alt="hello"
+                          fetchPriority="auto"
+                          loading="lazy"
+                          className="w-full h-full object-fill text-center shimmer opacity-80"
+                        />
+                      </CardContent>
+                    </Card>
+                    <div className="w-full md:w-[60%] h-[300px] text-sm text-white rounded-lg flex flex-col gap-1 bg-transparent border-transparent ">
+                      <div
+                        style={{ color: elementData[element].color }}
+                        className="p-2 font-bold w-[100px] gap-1 h-[35px] bg-black   rounded-full text-center flex items-center justify-center"
+                      >
+                        {elementData[element].icon}
+                        {elementData[element].element}
+                      </div>
+                      <p className="text-muted-foreground  pb-2 ">
+                        {" "}
+                        {elementData[element].elementDescription}{" "}
+                        {elementData[element].effect}
+                      </p>
+                      <h1>
+                        {" "}
+                        <strong>{elementData[element].creature}</strong>{" "}
+                      </h1>
+                      <p className="text-muted-foreground  pb-2 ">
+                        A common creature of the {elementData[element].element}{" "}
+                        element {elementData[element].creatureDescription}
+                      </p>
+
+                      <p className="mb-1 p-0">
+                        <strong>Strengths</strong>{" "}
+                      </p>
+                      <div className="flex flex-wrap md:gap-2 gap-2 mb-1">
+                        {elementData[element].strengths.map(
+                          (strength, index) => (
+                            <Button
+                              key={index}
+                              className="p-2 font-bold hover:bg-elementColor hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                              style={{ color: elementData[strength].color }}
+                              onClick={() => {
+                                const elementSection = document.getElementById(
+                                  elementData[strength].element
+                                );
+                                if (elementSection) {
+                                  elementSection.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start",
+                                  });
+                                }
+                              }}
+                            >
+                              {elementData[strength].icon}
+                              {elementData[strength].element}
+                            </Button>
+                          )
+                        )}
+                      </div>
+                      <p className="mb-1  p-0">
+                        <strong>Weaknesses:</strong>{" "}
+                      </p>
+                      <div className="flex flex-wrap md:gap-2 gap-2">
+                        {elementData[element].weaknesses.map(
+                          (weakness, index) => (
+                            <Button
+                              key={index}
+                              className="p-2 font-bold hover:bg-elementColor hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                              style={{ color: elementData[weakness].color }}
+                              onClick={() => {
+                                const elementSection = document.getElementById(
+                                  elementData[weakness].element
+                                );
+                                if (elementSection) {
+                                  elementSection.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start",
+                                  });
+                                }
+                              }}
+                            >
+                              {elementData[weakness].icon}
+                              {elementData[weakness].element}
+                            </Button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
+            <div className="flex justify-center items-center w-full">
+              <div className="flex flex-wrap gap-3  justify-center fixed bottom-1 bg-muted p-2  items-center w-fit rounded-[0.75rem] scale-90">
+                {Object.keys(elementData).map((element) => {
+                  let isActive = false;
+                  if (elementData[element].element === activeElement) {
+                    isActive = true;
+                  } else {
+                    isActive = false;
+                  }
+
+                  const elementColor = elementData[element].color;
+                  return (
+                    <Button
+                      key={element}
+                      className={`p-2 font-bold hover:bg-elementColor bg-black dark:bg-opacity-30 bg-opacity-50 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center ${
+                        isActive ? "text-white" : ""
+                      } ${isActive ? "" : ""}`}
+                      style={{
+                        backgroundColor: isActive ? elementColor : undefined,
+                        color: isActive ? "white" : elementColor,
+                      }}
+                      onClick={() => {
+                        const elementSection = document.getElementById(
+                          elementData[element].element
+                        );
+                        if (elementSection) {
+                          elementSection.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                        }
+                      }}
+                    >
+                      {elementData[element].icon}
+                      {elementData[element].element}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+          </main>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default AboutGame;

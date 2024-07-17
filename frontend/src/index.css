@@ -1,0 +1,508 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  scroll-behavior: cubic-bezier(0.1, 0.7, 1.0, 0.1); /* Adjust cubic-bezier values for desired speed */
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 263.4 70% 50.4%;
+  }
+}
+
+.formLink {
+  color: hsl(263.4, 70%, 50.4%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.a1 {
+  display: inline;
+  padding: 20px;
+}
+
+.rainDrop:nth-child(even) {
+  animation-name: example1;
+  animation-duration: 0.5s;
+  position: relative;
+  animation-iteration-count: infinite;
+}
+
+.rainDrop:nth-child(odd) {
+  animation-name: example12;
+  animation-duration: 1s;
+  position: relative;
+  animation-iteration-count: infinite;
+}
+
+@keyframes example1 {
+  100% {
+    transform: translateX(600px);
+  }
+}
+@keyframes example12 {
+  100% {
+    transform: translateY(500px);
+  }
+}
+.bgGif {
+  background-image: url(https://i.pinimg.com/originals/21/6b/f1/216bf168f17efdf1fea5e9cd99150b99.gif);
+  filter: blur(0.7px);
+}
+.bglogin {
+  background-image: url(https://i.pinimg.com/originals/bc/e7/ed/bce7ed4acd55045b1f454a6a32ea4f9c.jpg);
+  filter: blur(0.7px);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.clip {
+  clip-path: polygon(0 2%, 89% 1%, 100% 98%, 0% 100%);
+}
+
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleDown {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scale-animation {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+.cardTexture{
+  background-image: url("./assets/static/book.jpeg");
+background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
+
+}
+
+.font{
+   font-family: "Kulim Park", sans-serif;
+}
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(105, 57, 36, 0.3); }
+  to { box-shadow: 0 0 10px rgba(105, 57, 36, 0.6); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes shine {
+  from { box-shadow: 0 0 3px rgba(192, 192, 192, 0.5); }
+  to { box-shadow: 0 0 6px rgba(224, 224, 224, 0.7); }
+}
+
+@keyframes etherealGlow {
+  from { box-shadow: 0 0 5px rgba(173, 216, 230, 0.5), 0 0 10px rgba(135, 206, 235, 0.5), 0 0 15px rgba(176, 224, 230, 0.5); }
+  to { box-shadow: 0 0 10px rgba(173, 216, 230, 0.7), 0 0 20px rgba(135, 206, 235, 0.7), 0 0 30px rgba(176, 224, 230, 0.7); }
+}
+
+@keyframes rainbowShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glowText {
+  from { text-shadow: 0 0 5px rgba(105, 57, 36, 0.3); }
+  to { text-shadow: 0 0 10px rgba(105, 57, 36, 0.6); }
+}
+
+@keyframes shimmerText {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes shineText {
+  from { text-shadow: 0 0 3px rgba(192, 192, 192, 0.5); }
+  to { text-shadow: 0 0 6px rgba(224, 224, 224, 0.7); }
+}
+
+@keyframes etherealGlowText {
+  from { text-shadow: 0 0 5px rgba(173, 216, 230, 0.5), 0 0 10px rgba(135, 206, 235, 0.5), 0 0 15px rgba(176, 224, 230, 0.5); }
+  to { text-shadow: 0 0 10px rgba(173, 216, 230, 0.7), 0 0 20px rgba(135, 206, 235, 0.7), 0 0 30px rgba(176, 224, 230, 0.7); }
+}
+
+@keyframes rainbowShimmerText {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rustic-text {
+   background: linear-gradient(135deg, #556b2f 0%, #8fbc8f 35%, #6b8e23 100%);
+  animation: glowText 20s infinite alternate, shimmerText 20s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.arcane-text {
+  background: linear-gradient(135deg, #c0c0c0 0%, #b0c4de 50%, #87ceeb 100%);
+  animation: glowText 20s infinite alternate, shimmerText 20s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.mythic-text {
+  background: linear-gradient(135deg, #800080 0%, #9932cc 50%, #d8bfd8 100%);
+  background-size: 200% 100%;
+  animation: shimmerText 20s infinite, shineText 20s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.exalted-text {
+  background: linear-gradient(135deg, #b8860b 0%, #ffd700 50%, #daa520 100%);
+  background-size: 200% 100%;
+  animation: shineText 20s linear infinite, shimmerText 20s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.ethereal-text {
+  background: linear-gradient(135deg, #ff00cc, #333399, #ff9900, #66ff66, #00ffff);
+  background-size: 150% 150%;
+  animation: rainbowShimmerText 20s linear infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.rustic-card {
+  background: linear-gradient(135deg, #556b2f 0%, #8fbc8f 35%, #6b8e23 100%);
+  animation: glow 20s infinite alternate,shine 20s linear infinite, shimmer 20s linear infinite;
+}
+
+.arcane-card {
+  background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
+  animation: shine 20s linear infinite, shimmer 20s linear infinite;
+}
+
+.mythic-card {
+  background: linear-gradient(135deg, #800080 0%, #9932cc 50%, #d8bfd8 100%);
+  background-size: 200% 100%;
+  animation:  shine 20s linear infinite;
+}
+
+.exalted-card {
+  background: linear-gradient(135deg, #ffc020 0%, #ffd700 50%, #ffd363 100%);
+  background-size: 200% 100%;
+  animation: shine 20s linear infinite, shimmer 20s linear infinite;
+}
+
+.ethereal-card {
+  background: linear-gradient(135deg, #ff00cc, #333399, #ff9900, #66ff66, #00ffff);
+  background-size: 300% 300%;
+  animation: rainbowShimmer 20s linear infinite;
+}
+
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+
+.card {
+    -webkit-box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+  
+  .shimmerBG {
+    animation-duration: 2.2s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+    background: #fbeeee;
+    background: linear-gradient(to right, #F6F6F6 8%, #F0F0F0 18%, #F6F6F6 33%);
+    background-size: 1200px 100%;
+}
+
+
+@-webkit-keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }  
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1200px 0;
+    }
+    100% {
+        background-position: 1200px 0;
+    }
+}
+}
+
+
+
+/* Example CSS animations */
+.hidden1 {
+  opacity: 0;
+  transform: translateY(100px);
+  filter: blur(20px);
+  transition: opacity 1s ease, transform 0.5s ease;
+}
+
+.hidden2 {
+  opacity: 0;
+  transform: translateX(-100px);
+  filter: blur(20px);
+  transition: opacity 1s ease, transform 0.5s ease;
+}
+
+.show1.hidden1 {
+  opacity: 1;
+   filter: blur(0);
+  transform: translateY(0);
+}
+
+.show2.hidden2 {
+  opacity: 1;
+    filter: blur(0);
+  transform: translateX(0);
+}
+
+
+
+
+ @media (prefers-reduced-motion) {
+  .hidden{
+    transition: none;
+  }
+ }
+ 
+ .gameload {
+  background: rgba(127, 70, 240, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(3px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+ .background-container {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    .background-container {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-image: url('https://i.pinimg.com/originals/93/3a/b4/933ab45770c5fe4aa87b6fac747640d5.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.89); /* Black with 50% opacity */
+      z-index: 2;
+    }
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 40px;
+      position: relative;
+      z-index: 3;
+      color: white;
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes fadeBlurIn {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes fadeBlurOut {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+.message {
+  animation: fadeBlurIn 1s ease forwards, fadeBlurOut 1s ease forwards;
+  animation-delay: 0s, 29s; /* Show animation for 1 second, hide for 1 second at the end */
+}
+
+.message.fade-out {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.gameLoadingBg{
+   background-image: url('https://i.pinimg.com/originals/09/f8/e7/09f8e7724ab58ba73c937d91d28adf71.jpg');
+      background-size: cover;
+      background-position: center;
+
+}
+.UnrankedStyle {
+  animation: shine 20s linear infinite;
+  border: 2px solid #ccc;
+  background-color: #999;
+}
+
+.RusticStyle {
+  animation: shine 20s linear infinite;
+  border: 2px solid #8B4513;
+  background-color: #D2691E;
+}
+
+.ArcaneStyle {
+background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
+  animation: shine 20s linear infinite;
+}
+
+.MythicStyle {
+ background: linear-gradient(135deg, #800080 0%, #9932cc 50%, #d8bfd8 100%);
+  background-size: 200% 100%;
+  animation: shimmer 20s infinite;
+}
+
+.ExaltedStyle {
+ background: linear-gradient(135deg, #ffc020 0%, #ffd700 50%, #ffd363 100%);
+  background-size: 200% 100%;
+  animation: shine 20s linear infinite;
+}
+
+.EtherealStyle {
+  background: linear-gradient(135deg, #ff00cc, #333399, #ff9900, #66ff66, #00ffff);
+  background-size: 300% 300%;
+  animation: rainbowShimmer 20s linear infinite;
+}
+
+@keyframes rotateRankStyles {
+  0% { background-color: #d3d3d3; } 
+  10% { background-color: #8b4513; }
+  20% { background-color: #7cd4f7; } 
+  30% { background-color: #4b0082; }
+  40% { background-color: #9932cc; }
+  50% { background-color: #ffd700; }
+  60% { background-color: #ff00cc; } 
+  70% { background-color: #333399; }
+  80% { background-color: #ff9900; }
+  90% { background-color: #66ff66; }
+  100% { background-color: #00ffff; } 
+}
+
+.rotatingStyles {
+  animation: rotateRankStyles 25s infinite ease-in-out,
+            
+             
+             shimmer 20s linear infinite;
+}
