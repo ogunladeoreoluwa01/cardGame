@@ -194,7 +194,7 @@ const CardComp: React.FC<Props> = ({
       className={`card w-[300px] h-[400px] md:w-[200px] md:h-[300px] p-1  md:p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
     >
       <div
-        className={`w-[3rem] h-[3rem] md:w-[2.25rem] md:h-[2.25rem] flex p-1 md:p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px] md:right-0 z-30  ${rarityStyle} rounded-full`}
+        className={`w-[3rem] h-[2rem] md:w-[2.25rem] md:h-[1.45rem] flex p-1 md:p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px] md:right-0 z-30  ${rarityStyle} rounded-full`}
       >
         <h1 className="w-full h-full cardBg rounded-full md:text-sm  flex text-white   justify-center items-center ">
           {level}
