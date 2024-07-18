@@ -191,7 +191,7 @@ const ActiveBattleCardComp: React.FC<Props> = ({
       className={`card w-[170px] h-[270px] p-[0.19rem] relative overflow-hidden ${rarityStyle} font-mono `}
     >
       <div
-        className={`w-[2.25rem] h-[2.25rem] flex p-[0.19rem]   justify-center items-center absolute top-0 right-0 z-30  ${rarityStyle} rounded-full`}
+        className={`w-[2.25rem] h-[1.35rem] flex p-[0.19rem]   justify-center items-center absolute top-0 right-0 z-30  ${rarityStyle} rounded-full`}
       >
         <h1 className="w-full h-full cardBg rounded-full text-sm  flex text-white   justify-center items-center ">
           {level}
