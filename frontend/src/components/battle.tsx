@@ -1,13 +1,13 @@
 /* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
 import styles from "../styles/styles";
-
 import ActionButton from "./ActionButton";
 import PlayerInfo from "./PlayerInfo";
-import GameCardComp from "./gameCardComp";
 import BattleCardComp from "./battleCardComp";
+import ActiveBattleCardComp from "./activeBattleCard";
+import EmoteBar from "@/components/battlePageEmote";
+import { emojiArray } from "@/assets";
 import {
   attack,
   attackSound,
@@ -39,9 +39,27 @@ const Battle = () => {
   const [player1, setPlayer1] = useState({});
   const { battleName } = useParams();
   const navigate = useNavigate();
+     const [selectedEmoji, setSelectedEmoji] = useState(null);
+     const [showEmoteBar, setShowEmoteBar] = useState(false);
+     const [showEmoji, setShowEmoji] = useState(false);
   const [backgroundUrl, setBackgroundUrl] = useState(
     "https://i.pinimg.com/originals/04/55/5f/04555f5b3e8b3d4f22c2e6bf249b58f8.jpg"
   );
+
+    const handleEmojiClick = (emojiSrc) => {
+      setSelectedEmoji(emojiSrc);
+      setShowEmoji(true);
+      setShowEmoteBar(false);
+
+      // Hide the emoji after 3 seconds
+      setTimeout(() => {
+        setShowEmoji(false);
+      }, 3000);
+    };
+
+     const toggleEmoteBar = (toggle) => {
+    setShowEmoteBar(toggle);
+  };
 
   const changeBackground = (url) => {
     setBackgroundUrl(url);
@@ -68,10 +86,24 @@ const Battle = () => {
         backgroundSize: "cover",
         width: "100%", // Ensure it covers the entire area
         height: "100vh", // Adjust as needed
-         
       }}
       className={`flex flex-col w-screen h-screen justify-center items-center overflow-hidden ${styles.glassEffect}`}
     >
+      {showEmoji && selectedEmoji && (
+        <div
+          className="absolute top-[20px] left-1/2 -translate-x-[70%]"
+        >
+          <img src={selectedEmoji} alt={selectedEmoji} />
+        </div>
+      )}
+
+      <div className="flex gap-1 fixed top-[4.5rem] right-5">
+        <EmoteBar
+          handleEmojiClick={handleEmojiClick}
+          setShowEmoteBar={toggleEmoteBar}
+          showEmoteBar={showEmoteBar}
+        />
+      </div>
       <PlayerInfo
         player={dummyPlayer}
         playerIcon="https://i.pinimg.com/originals/b4/9c/0d/b49c0d0cf01e2de348fb58d90079768e.png"
@@ -90,7 +122,13 @@ const Battle = () => {
       />
 
       {/* center of the gamescreen  */}
-      <div className={` `}>hi</div>
+      <div className={`flex justify-center items-center gap-[7rem] `}>
+        <ActiveBattleCardComp />
+
+        <span></span>
+
+        <ActiveBattleCardComp />
+      </div>
 
       <div className="deck-container ">
         <section className=" flex flex-col gap-3 fixed -bottom-[10rem] left-1/2 -translate-x-1/2  ">

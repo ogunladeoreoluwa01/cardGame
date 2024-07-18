@@ -14,8 +14,10 @@ import { gameAction } from "@/stores/reducers/gameReducer";
 import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
 import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 
+
 import PingBar from "@/components/pingBar";
 import Battle from "@/components/battle";
+
 // Initialize socket
 const gameSocket = io("http://localhost:5000/game", {
   autoConnect: false,
@@ -28,6 +30,7 @@ const gameSocket = io("http://localhost:5000/game", {
 const GamesPage: React.FC = () => {
   const dispatch = useDispatch();
   const { toast } = useToast();
+
   const navigate = useNavigate();
 
   const [isPlayer1, setIsPlayer1] = useState(false);
@@ -44,6 +47,9 @@ const GamesPage: React.FC = () => {
     (state: RootState) => state.refreshToken
   );
   const gameSessionState = useSelector((state: RootState) => state.gameSession);
+
+
+
 
   useEffect(() => {
     if (
@@ -360,6 +366,7 @@ gameSocket.on("reconnect", () => {
           <section className="w-screen h-screen">
             <Battle />
             <PingBar pingIN={ping} />  
+           
           </section>
         </>
       )}
