@@ -247,12 +247,12 @@ background-size: cover;
 
 .rustic-card {
   background: linear-gradient(135deg, #556b2f 0%, #8fbc8f 35%, #6b8e23 100%);
-  animation: glow 20s infinite alternate,shine 20s linear infinite, shimmer 20s linear infinite;
+  animation: shine 20s linear infinite;
 }
 
 .arcane-card {
   background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
-  animation: shine 20s linear infinite, shimmer 20s linear infinite;
+  animation: shine 20s linear infinite;
 }
 
 .mythic-card {
@@ -332,14 +332,17 @@ background-size: cover;
   opacity: 0;
   transform: translateY(100px);
   filter: blur(20px);
-  transition: opacity 1s ease, transform 0.5s ease;
+ 
+  transition: opacity 1.3s ease, transform 0.5s ease;
+   
 }
 
 .hidden2 {
   opacity: 0;
   transform: translateX(-100px);
   filter: blur(20px);
-  transition: opacity 1s ease, transform 0.5s ease;
+  transition: opacity 1.3s ease, transform 0.5s ease;
+
 }
 
 .show1.hidden1 {
@@ -506,3 +509,31 @@ background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
              
              shimmer 20s linear infinite;
 }
+
+
+.cardBg{
+  background-image:url("https://i.pinimg.com/originals/ce/d2/04/ced204482cc08e1511f4d639a89d7d7f.jpg");
+  background-repeat:no-repeat;
+  background-position: bottom;
+  background-size: cover;
+}
+
+.blurredEdges{
+    box-shadow: 0 0 8px 8px white inset;
+}
+.battleCard:hover{
+top:-6rem;
+ 
+}
+.battleCard {
+  transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+}
+
+.removing {
+  transform: rotate(-200deg) translateX(-100px); /* Adjust as needed */
+  opacity: 0;
+}
+
+
+

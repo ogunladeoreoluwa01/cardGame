@@ -63,7 +63,8 @@ const router = createBrowserRouter([
     element: <DuelsPage />,
   },
   {
-    path: "/games-page/:duelId/duelJoinKey/:duelJoinKey",
+      // path: "/games-page/:duelId/duelJoinKey/:duelJoinKey",
+    path: "/games-page",
     element: <GamesPage />,
   },
   {

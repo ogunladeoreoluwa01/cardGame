@@ -34,7 +34,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, playerIcon, mt = false,
     <div
       className={`flex items-center justify-center fixed ${
         mt ? "mt-4" : "mb-4"
-      } ${isPlayerOne ? " left-6 bottom-2" : " right-8 top-4 flex-row-reverse"}`}
+      } ${isPlayerOne ? " left-6 top-4" : " right-8 top-4 flex-row-reverse"}`}
     >
       <img
         src={playerIcon}
@@ -42,7 +42,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, playerIcon, mt = false,
         className="w-12 h-12 object-contain rounded-full"
       />
 
-      <div className={`${styles.playerHealth} relative`}>
+      <div className={`${styles.playerHealth}   relative`}>
         <div
           className={`${styles.playerHealthBar} ${getHealthBarColor(
             healthPercentage

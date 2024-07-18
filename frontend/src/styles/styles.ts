@@ -38,7 +38,7 @@ const styles = {
   // player info component
   playerImg: "w-4 h-4 object-contain rounded-full",
   playerHealth:
-    "flex flex-row bg-white rounded-md py-1 px-[0.25rem]  w-[23rem]  h-4 bg-opacity-10 backdrop-filter backdrop-blur-lg mx-3",
+    "flex flex-row bg-white rounded-md py-1 px-[0.25rem]  w-[15rem]  h-4 bg-opacity-10 backdrop-filter backdrop-blur-lg mx-3",
   playerHealthBar: " w-full  h-2 rounded-sm",
   playerMana:
     "min-w-8 w-fit px-2 h-4 rounded-full text-white font-mono font-extrabold text-md ",

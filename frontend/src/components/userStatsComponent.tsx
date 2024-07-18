@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button"; // Import Button component
 import NumberCounter from "./numberCounterprop";
 import DashInventoryComp from "@/components/dashInventoryComponent";
+
+
 interface UserStatsProps {
   profileImage: string | null;
   secondaryImage: string | null;
@@ -72,9 +74,9 @@ const UserStatsComp: React.FC<UserStatsProps> = ({
             />
           </section>
           <div className="lg:hidden hidden md:inline-block ">
-             <DashInventoryComp />
+            <DashInventoryComp />
           </div>
-         
+
           <section className="w-[10rem] md:w-[25vw] lg:w-[10rem] lg:h-[3.5rem] h-[10rem] p-2 flex flex-col justify-start rounded-[0.75rem] bg-muted">
             <h1 className="font-bold text-ellipsis overflow-hidden w-full h-[24px]">
               {userFullName}
@@ -155,8 +157,10 @@ const UserStatsComp: React.FC<UserStatsProps> = ({
               </p>
             </h1>
           </section>
+          
         </section>
       </section>
+     
     </section>
   );
 };

@@ -9,8 +9,9 @@ import XpSectionComp from "@/components/xpSectionComp";
 import DashInventoryComp from "@/components/dashInventoryComponent";
 import { Button } from "@/components/ui/button"; // Import Button component
 import LeaderBoards from "@/components/leaderBoardComponent";
-import CardComp from "@/components/cardComp"
-import BattlePetsCard from "@/components/battlePetsCard";
+
+
+
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -49,9 +50,9 @@ const Dashboard: React.FC = () => {
           <UserStatsComponent />
           <XpSectionComp />
 
-          <CardComp />
-          <BattlePetsCard />
+        
         </section>
+       
       </section>
     </>
   );

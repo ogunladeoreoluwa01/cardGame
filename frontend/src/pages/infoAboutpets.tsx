@@ -66,7 +66,7 @@ const elementData: Record<
   }
 > = {
   Fire: {
-    color: "#FF4500",
+    color: "#8B0000",
     arena: fireBackground,
     element: "Fire",
     icon: <GiSmallFire />,
@@ -82,7 +82,7 @@ const elementData: Record<
       "Fire is the element of passion, energy, and transformation. It is both a creator and a destroyer, representing the power to bring light and warmth, as well as to burn and obliterate. Masters of Fire wield intense flames to scorch their enemies, leaving nothing but ashes in their wake.",
   },
   Water: {
-    color: "#00BFFF",
+    color: "#1C86EE",
     arena: waterBackground,
     element: "Water",
     icon: <GiDrop />,
@@ -98,7 +98,7 @@ const elementData: Record<
       "Water symbolizes adaptability, tranquility, and life itself. It has the power to soothe and heal, to cleanse and purify. Those who command Water can summon torrents and waves, using its fluid nature to shield allies and drown foes in a deluge of power.",
   },
   Earth: {
-    color: "#8B4513",
+    color: "#4B3621",
     arena: earthBackground,
     element: "Earth",
     icon: <GiStonePile />,
@@ -114,7 +114,7 @@ const elementData: Record<
       "Earth represents endurance, solidity, and the foundational forces of nature. It is the essence of strength and persistence. Earth wielders can manipulate rocks and soil, creating fortresses of protection and unleashing powerful quakes to disrupt their enemies.",
   },
   Air: {
-    color: "#87CEFA",
+    color: "#4682B4",
     arena: airBackground,
     element: "Air",
     icon: <GiTornado />,
@@ -130,7 +130,7 @@ const elementData: Record<
       "Air embodies freedom, movement, and the unseen forces of the sky. It is the breath of life and the winds of change. Masters of Air harness the breeze to move with unmatched speed, creating whirlwinds and gusts that confound and scatter their enemies.",
   },
   Electric: {
-    color: "#FFD700",
+    color: "#DAA520",
     arena: electricBackground,
     element: "Electric",
     icon: <GiLightningTrio />,
@@ -146,7 +146,7 @@ const elementData: Record<
       "Electricity represents raw energy, innovation, and the unpredictable power of the storm. It is the spark of life and the pulse of the universe. Those who control Electricity can channel immense voltage to shock, paralyze, and devastate their adversaries.",
   },
   Nature: {
-    color: "#32CD32",
+    color: "#2E8B57",
     arena: natureBackground,
     element: "Nature",
     icon: <GiVineLeaf />,
@@ -162,7 +162,7 @@ const elementData: Record<
       "Nature is the essence of life, growth, and the interconnected web of all living things. It symbolizes renewal and balance. Nature's champions can summon the forces of flora and fauna, healing allies and ensnaring enemies with the power of the wild.",
   },
   Ice: {
-    color: "#00FFFF",
+    color: "#008B8B",
     arena: iceBackground,
     element: "Ice",
     icon: <GiIceBolt />,
@@ -178,7 +178,7 @@ const elementData: Record<
       "Ice signifies stillness, clarity, and the formidable power of the cold. It is the quiet strength that can halt anything in its path. Ice users can freeze their surroundings, creating barriers and weapons of frost that immobilize and weaken their enemies.",
   },
   Dark: {
-    color: "#8A2BE2",
+    color: "#4B0082",
     arena: darkBackground,
     element: "Dark",
     icon: <GiMoon />,
@@ -194,7 +194,7 @@ const elementData: Record<
       "Darkness embodies mystery, fear, and the unknown. It is the shadow that conceals and the void that absorbs all light. Masters of Dark can blend into the night, striking terror into the hearts of their enemies with shadowy assaults and deceptive tactics.",
   },
   Light: {
-    color: "#FFF700",
+    color: "#B8860B",
     arena: lightBackground,
     element: "Light",
     icon: <GiSundial />,
@@ -210,7 +210,7 @@ const elementData: Record<
       "Light represents purity, enlightenment, and the life-giving energy of the sun. It is the beacon of hope and the force that vanquishes shadows. Light wielders can heal wounds, banish darkness, and illuminate the path to victory with their radiant powers.",
   },
   Metal: {
-    color: "#B0C4DE",
+    color: "#4F4F4F",
     arena: metalBackground,
     element: "Metal",
     icon: <GiMetalBar />,
@@ -328,9 +328,7 @@ const AboutGame: React.FC = () => {
               return (
                 <section
                   id={elementData[element].element}
-                  className={`w-full relative bg-black h-[100vh]  ${
-                    index % 2 === 0 ? "hidden1" : "hidden2"
-                  } `}
+                  className={`w-full relative bg-black h-[100vh]   `}
                 >
                   <img
                     src={elementData[element].arena}
@@ -341,11 +339,16 @@ const AboutGame: React.FC = () => {
                   <div
                     className={`
                       ${index % 2 === 0 ? "flex-row-reverse" : ""}  
-                  absolute z-0 p-4 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[65%] md:-translate-y-[50%] flex gap-5 flex-wrap items-start justify-center w-full`}
+                     
+                  absolute z-0 p-4 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[65%] md:-translate-y-[50%] flex gap-5 flex-wrap items-start justify-center w-full
+                  
+                  `}
                   >
                     <Card
                       style={{ backgroundColor: elementData[element].color }}
-                      className={`md:w-[250px] card md:h-[350px] w-[150px] h-[250px] text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden`}
+                      className={`md:w-[250px] card md:h-[350px] w-[150px] h-[250px] text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden  ${
+                        index % 2 === 0 ? "hidden1" : "hidden2"
+                      }`}
                     >
                       <CardContent className="w-full h-full bg-muted p-0 z-0 relative bg-black">
                         <img
@@ -357,10 +360,14 @@ const AboutGame: React.FC = () => {
                         />
                       </CardContent>
                     </Card>
-                    <div className="w-full md:w-[60%] h-[300px] text-sm text-white rounded-lg flex flex-col gap-1 bg-transparent border-transparent ">
+                    <div
+                      className={` ${
+                        index % 2 === 0 ? "hidden2" : "hidden1"
+                      } w-full md:w-[60%] h-[300px] text-sm text-white rounded-lg flex flex-col gap-1 bg-transparent border-transparent `}
+                    >
                       <div
-                        style={{ color: elementData[element].color }}
-                        className="p-2 font-bold w-[100px] gap-1 h-[35px] bg-black   rounded-full text-center flex items-center justify-center"
+                        style={{ backgroundColor: elementData[element].color }}
+                        className="p-2 font-bold w-[100px] gap-1 h-[35px] text-white   rounded-full text-center flex items-center justify-center"
                       >
                         {elementData[element].icon}
                         {elementData[element].element}
@@ -387,7 +394,7 @@ const AboutGame: React.FC = () => {
                           (strength, index) => (
                             <Button
                               key={index}
-                              className="p-2 font-bold hover:bg-elementColor hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                              className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
                               style={{ color: elementData[strength].color }}
                               onClick={() => {
                                 const elementSection = document.getElementById(
@@ -415,7 +422,7 @@ const AboutGame: React.FC = () => {
                           (weakness, index) => (
                             <Button
                               key={index}
-                              className="p-2 font-bold hover:bg-elementColor hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                              className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
                               style={{ color: elementData[weakness].color }}
                               onClick={() => {
                                 const elementSection = document.getElementById(
@@ -440,8 +447,8 @@ const AboutGame: React.FC = () => {
                 </section>
               );
             })}
-            <div className="flex justify-center items-center w-full">
-              <div className="flex flex-wrap gap-3  justify-center fixed bottom-1 bg-muted p-2  items-center w-fit rounded-[0.75rem] scale-90">
+            <div className="flex justify-center items-center w-full  ">
+              <div className="flex flex-wrap gap-3 justify-center fixed bottom-1 bg-muted p-2  items-center w-fit rounded-[0.75rem] scale-90">
                 {Object.keys(elementData).map((element) => {
                   let isActive = false;
                   if (elementData[element].element === activeElement) {

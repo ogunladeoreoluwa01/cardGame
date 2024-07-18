@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from "react";
-import phynix from "@/assets/static/download.jpeg";
 import {
   Card,
   CardContent,
@@ -41,11 +39,9 @@ interface Props {
   level: number;
   health: number;
   attack: number;
-  defense: number;
+  defence: number;
   mana: number;
   rarity: string;
-  weakAgainst: string[];
-  strongAgainst: string[];
 }
 
 const elementData: Record<
@@ -53,52 +49,52 @@ const elementData: Record<
   { color: string; icon: JSX.Element; effect: string }
 > = {
   Fire: {
-    color: "#FF4500",
+    color: "#8B0000",
     icon: <GiSmallFire />,
     effect: "Burns enemies over time with fire damage.",
   },
   Water: {
-    color: "#00BFFF",
+    color: "#1C86EE",
     icon: <GiDrop />,
     effect: "Cools and calms, providing defensive and healing abilities.",
   },
   Earth: {
-    color: "#8B4513",
+    color: "#4B3621",
     icon: <GiStonePile />,
     effect: "Provides stability and defensive strength.",
   },
   Air: {
-    color: "#87CEFA",
+    color: "#4682B4",
     icon: <GiTornado />,
     effect: "Brings swift and evasive maneuvers, enhancing agility.",
   },
   Electric: {
-    color: "#FFD700",
+    color: "#DAA520",
     icon: <GiLightningTrio />,
     effect: "Electrifies attacks with shocking damage and stunning effects.",
   },
   Nature: {
-    color: "#32CD32",
+    color: "#2E8B57",
     icon: <GiVineLeaf />,
     effect: "Harmonizes with surroundings, providing healing and growth.",
   },
   Ice: {
-    color: "#00FFFF",
+    color: "#008B8B",
     icon: <GiIceBolt />,
     effect: "Freezes enemies and slows their actions.",
   },
   Dark: {
-    color: "#8A2BE2",
+    color: "#4B0082",
     icon: <GiMoon />,
     effect: "Obscures vision and deals shadowy damage.",
   },
   Light: {
-    color: "#FFF700",
+    color: "#B8860B",
     icon: <GiSundial />,
     effect: "Illuminates and heals, providing clarity and purity.",
   },
   Metal: {
-    color: "#B0C4DE",
+    color: "#4F4F4F",
     icon: <GiMetalBar />,
     effect: "Strengthens defenses and enhances durability.",
   },
@@ -109,46 +105,43 @@ const classData: Record<
   { color: string; icon: JSX.Element; effect: string }
 > = {
   Guardian: {
-    color: "#4CAF50",
+    color: "#2E7D32",
     icon: <GiTurtleShell />,
     effect: "Provides exceptional defense and protection for allies.",
   },
   Breaker: {
-    color: "#B0C4DE",
+    color: "#8B4513",
     icon: <GiPorcupine />,
     effect: "Breaks through enemy defenses with powerful attacks.",
   },
   Predator: {
-    color: "#FF5722",
+    color: "#8B0000",
     icon: <GiTigerHead />,
     effect: "Uses speed and ferocity to overwhelm opponents.",
   },
   Nimble: {
-    color: "#E91E63",
+    color: "#AD1457",
     icon: <GiFox />,
     effect: "Dodges attacks and strikes with precision and agility.",
   },
 };
 
+
+
 const CardComp: React.FC<Props> = ({
   elements = ["Dark", "Light"],
   classy = "Breaker",
   illustration = "https://i.pinimg.com/originals/92/b8/41/92b841ca44cc515099196aceae3479f9.jpg",
-  description = " majestic and fearsome creature of the night, shrouded in darkness and possessing an aura of mystery and power. It harnesses the elements of darkness and light to strike fear and confusion into its enemies.",
+  description = "A majestic and fearsome creature of the night, shrouded in darkness and possessing an aura of mystery and power. It harnesses the elements of darkness and light to strike fear and confusion into its enemies.",
   name = "Shadow Lion",
   level = 100,
   health = 1000,
   attack = 100,
-  defense = 100,
+  defence = 100,
   mana = 100,
-  rarity = "Mythic",
-  weakAgainst = ["Water", "Ice", "Electric"],
-  strongAgainst = ["Light", "Fire", "Nature"],
+  rarity = "Ethereal",
 }) => {
-  const [hover, setHover] = useState(false);
-  const [elementStyles, setElementStyles] = useState<
-    { color: string; icon: JSX.Element; effect: string }[]
-  >([]);
+  const [rarityStyle, setRarityStyle] = useState("bg-primary");
   const [classStyle, setClassStyle] = useState<{
     color: string;
     icon: JSX.Element | null;
@@ -158,30 +151,9 @@ const CardComp: React.FC<Props> = ({
     icon: null,
     effect: "",
   });
-  const [rarityStyle, setRarityStyle] = useState("bg-primary");
-  const [weakAgainstStyles, setWeakAgainstStyles] = useState<
+  const [elementStyles, setElementStyles] = useState<
     { color: string; icon: JSX.Element; effect: string }[]
   >([]);
-  const [strongAgainstStyles, setStrongAgainstStyles] = useState<
-    { color: string; icon: JSX.Element; effect: string }[]
-  >([]);
-
-  useEffect(() => {
-    setElementStyles(elements.map((el) => elementData[el]));
-  }, [elements]);
-
-  useEffect(() => {
-    if (classData[classy]) {
-      setClassStyle(classData[classy]);
-    }
-  }, [classy]);
-
-  useEffect(() => {
-    setWeakAgainstStyles(weakAgainst.map((el) => elementData[el]));
-  }, [weakAgainst]);
-  useEffect(() => {
-    setStrongAgainstStyles(strongAgainst.map((el) => elementData[el]));
-  }, [strongAgainst]);
 
   useEffect(() => {
     switch (rarity) {
@@ -206,144 +178,84 @@ const CardComp: React.FC<Props> = ({
     }
   }, [rarity]);
 
+  
+  useEffect(() => {
+    setElementStyles(elements.map((el) => elementData[el]));
+  }, []);
+
+  useEffect(() => {
+    if (classData[classy]) {
+      setClassStyle(classData[classy]);
+    }
+  }, [classy]);
+
   return (
     <Card
-      className={`md:w-[250px] card md:h-[360px] w-[220px] h-[320px]   text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden ${rarityStyle}`}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      className={`card w-[300px] h-[400px] md:w-[200px] md:h-[300px] p-1  md:p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
     >
-      <CardContent className="w-full  h-full bg-muted p-0 relative bg-black  ">
-        <img
-          src={illustration}
-          alt={name}
-          fetchPriority="auto"
-          loading="lazy"
-          className="w-full h-full  object-center text-center shimmer opacity-50 "
-        />
-        {!hover && (
-          <>
-            <div className="absolute bottom-10 left-2 flex-col flex gap-2 ">
-              {strongAgainstStyles.map((el, index) => (
-                <p
-                  key={index}
-                  style={{ color: el.color }}
-                  className="p-1 font-bold w-[30px]  bg-black bg-opacity-60  rounded-full h-[30px] text-center flex items-center justify-center"
-                >
-                  {el.icon}
-                </p>
-              ))}
-            </div>
-            <div className="absolute top-2 right-2 flex flex-col items-end gap-2 ">
-              <div className="flex items-center p-1  rounded gap-3 justify-evenly w-full bg-black bg-opacity-80">
-                <p className="font-medium flex gap-1 scale-[0.8] md:scale-100  text-sm items-center justify-center w-1/4">
-                  <span className="text-[#ff47e0] text-lg ">
-                    <GiMineralHeart />
-                  </span>
-                  {health}
-                </p>
-                <p className="font-medium gap-1 scale-[0.8] md:scale-100  text-sm flex items-center  justify-center w-1/4">
-                  <span className="text-[#FFD700] text-lg ">
-                    <GiStarCycle />
-                  </span>
-                  {level}
-                </p>
-              </div>
-              {elementStyles.map((el, index) => ( 
-                <p
-                  key={index}
-                  style={{ color: el.color }}
-                  className="p-1 font-bold w-[30px]  bg-black bg-opacity-60  rounded-full h-[30px] text-center flex items-center justify-center"
-                >
-                  {el.icon}
-                </p>
-              ))}
-              <p
-                style={{ color: classStyle.color }}
-                className="p-1 font-bold w-[30px]  bg-black bg-opacity-60  rounded-full h-[30px] text-center flex items-center justify-center"
+      <div
+        className={`w-[3rem] h-[3rem] md:w-[2.25rem] md:h-[2.25rem] flex p-1 md:p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px] md:right-0 z-30  ${rarityStyle} rounded-full`}
+      >
+        <h1 className="w-full h-full cardBg rounded-full md:text-sm  flex text-white   justify-center items-center ">
+          {level}
+        </h1>
+      </div>
+      <CardContent
+        className={`w-full h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
+      >
+        <h1 className="absolute top-0 left-1/2 line-clamp-1 md:text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[90%] text-center h-8">
+          {name}
+        </h1>
+        <div className="w-full h-[270px] md:h-[210px] bg-black rounded-t-[0.5rem] relative">
+          <div className="flex flex-col text-white absolute top-6 gap-1 left-1 z-20">
+            <span className="flex items-center gap-1 text-[#B22222] w-fit backdrop-blur-sm">
+              <GiMineralHeart />{" "}
+              <p className="text-white md:text-xs">{health}</p>
+            </span>
+          </div>
+          <div className="flex flex-col text-white absolute bottom-2 gap-1 left-1 z-20">
+            <span className="flex items-center gap-1 text-[#FF4500] w-fit backdrop-blur-sm">
+              <GiBouncingSword />{" "}
+              <p className="text-white md:text-xs">{attack}</p>
+            </span>
+            <span className="flex items-center gap-1 text-[#4682B4] w-fit backdrop-blur-sm">
+              <GiVibratingShield />{" "}
+              <p className="text-white md:text-xs">{defence}</p>
+            </span>
+            <span className="flex items-center gap-1 text-[#6A5ACD] w-fit backdrop-blur-sm">
+              <GiMagicSwirl /> <p className="text-white md:text-xs">{mana}</p>
+            </span>
+          </div>
+          <img
+            src={illustration}
+            alt={name}
+            fetchPriority="auto"
+            loading="lazy"
+            className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
+          />
+        </div>
+        <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-[3px] cardBg">
+          <div className="-top-5 md:-top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2">
+            {elementStyles.map((el, index) => (
+              <div
+                key={index}
+                style={{ backgroundColor: el.color }}
+                className="md:w-7 md:h-7 w-10 h-10 p-1 flex items-center justify-center rounded-full text-xl border-white border-2"
               >
-                {classStyle.icon}
-              </p>
-            </div>
-
-            <div className=" absolute bottom-[0.1rem] left-[0.3rem] font-bold w-[95%] flex flex-col items-start">
-              <h1 className="my-1 border-b border-white w-full text-center">
-                {name}
-              </h1>
-              <div className="flex items-center justify-evenly w-full py-1 bg-black bg-opacity-80">
-                <p className="font-medium scale-[0.8] md:scale-100 flex gap-1 text-sm items-center justify-center w-1/4">
-                  <span className="text-[#DC143C] text-lg">
-                    <GiBouncingSword />
-                  </span>
-                  {attack}
-                </p>
-                <p className="font-medium scale-[0.8] md:scale-100  flex gap-1 text-sm items-center justify-center w-1/4">
-                  <span className="text-[#228B22] text-lg ">
-                    <GiVibratingShield />
-                  </span>
-                  {defense}
-                </p>
-                <p className="font-medium scale-[0.8] md:scale-100  gap-1 text-sm flex items-center  justify-center w-1/4">
-                  <span className="text-[#4169E1] text-lg ">
-                    <GiMagicSwirl />
-                  </span>
-                  {mana}
-                </p>
+                {el.icon}
               </div>
-            </div>
-          </>
-        )}
-        {hover && (
-          <div className="absolute inset-0 bg-black bg-opacity-80 font-medium   hidden md:flex items-start justify-center text-white text-sm p-2 animate-slide-up">
-            <div className="flex flex-col">
-              <h1 className="my-1 mb-2 border-b font-bold border-white w-full text-center ">
-                {name}
-              </h1>
-              <p className="text-sm leading-[0.95rem] font-bold ">
-                {description}
-              </p>
-            </div>
-
-            <div className="absolute bottom-2 left-2 w-full p-2 flex flex-col items-start  ">
-              {elementStyles.map((el, index) => (
-                <p
-                  key={index}
-                  style={{ color: el.color }}
-                  className="text-lg flex  gap-2 justify-center items-start"
-                >
-                  {el.icon}
-                  <span className="text-xs text-white font-bold">
-                    {el.effect}
-                  </span>
-                </p>
-              ))}
-              <p
-                style={{ color: classStyle.color }}
-                className="text-lg flex items-start  gap-2 justify-center"
-              >
-                {classStyle.icon}
-                <span className="text-xs text-white font-bold">
-                  {classStyle.effect}
-                </span>
-              </p>
-
-              <p className=" mx-auto text-white text-xs  mt-2 font-bold border-white  text-center ">
-                Weak Against
-              </p>
-              <span className="flex justify-center mt-1">
-                {weakAgainstStyles.map((el, index) => (
-                  <span
-                    key={index}
-                    style={{ color: el.color }}
-                    className="text-lg flex items-start  gap-2 justify-center"
-                  >
-                    <br />
-                    {el.icon}
-                  </span>
-                ))}
-              </span>
+            ))}
+            <div
+              style={{ backgroundColor: classStyle.color }}
+              className="md:w-7 md:h-7 w-10 h-10 p-1 flex items-center  text-white justify-center rounded-full text-xl border-white border-2"
+            >
+              {classStyle.icon}
             </div>
           </div>
-        )}
+          <p className="mt-5 md:mt-2 text-[0.8rem] md:text-[0.7rem] text-white tracking-tighter leading-3 md:line-clamp-4">
+            {description}
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
