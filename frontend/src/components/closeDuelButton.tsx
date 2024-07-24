@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { GiExitDoor } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/types";
-import joinDuel from "@/services/gameServices/joinADuel";
+import ClosePendingDuel from "@/services/gameServices/closePendingDuel";
 import refreshAccessToken from "@/services/authServices/refreshAccessToken";
 import { accessTokenAction } from "@/stores/reducers/accessTokenReducer";
 import clearAccessToken from "@/stores/actions/accessTokenAction";
@@ -13,17 +15,15 @@ import { useToast } from "@/components/ui/use-toast";
 import { gameAction } from "@/stores/reducers/gameReducer";
 import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
-import NavBarComp from "@/components/navBarComponent";
 
-const JoinGameLinkPage = () => {
-  const [isWaiting, setIsWaiting] = useState(true);
-  const [isError, setIsError] = useState(false);
+const ClosePendingDuelButton = () => {
+  const initialGameState = useSelector((state: RootState) => state.ongoingGame);
 
   const { toast } = useToast();
-  const { duelKey } = useParams();
+ 
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
-  const userState: any | null = useSelector((state: RootState) => state.user);
+ 
   const accessTokenState: any | null = useSelector(
     (state: RootState) => state.accessToken
   );
@@ -70,33 +70,29 @@ const JoinGameLinkPage = () => {
     }
   };
 
-  const fetchDuel = async (accessToken: string) => {
+  const closeDuel = async (accessToken: string) => {
     try {
-      const response = await joinDuel({
+      const response = await ClosePendingDuel({
         accessToken: accessToken,
-        duelJoinKey: duelKey,
+        duelId: initialGameState.gameState._id,
       });
       toast({
         variant: "Success",
-        description: "You will be redirected to the game shortly",
+        description: response.message,
       });
-      setIsWaiting(false);
-      dispatch(gameAction.setGameState(response.duel));
-      localStorage.setItem("game", JSON.stringify(response.duel));
-      dispatch(liveGameAction.setLiveGameState(response.duel));
-      localStorage.setItem("liveGame", JSON.stringify(response.duel));
-      setTimeout(() => {
-        navigate(
-          `/games-page/${response.duel._id}/duelJoinKey/${response.duel.duelJoinKey}`
-        );
-      }, 3000);
+      dispatch(liveGameAction.resetLiveGameState());
+      localStorage.removeItem("game");
+      dispatch(gameAction.resetGameState());
+      localStorage.removeItem("liveGame");
+      dispatch(gameSessionAction.clearSessionId());
+      localStorage.removeItem("gameSession");
+      navigate("/");
     } catch (error: any) {
-      setIsError(true);
       const errorMessage = JSON.parse(error.message);
       if (errorMessage.errorCode === 440) {
         const newAccessToken = await refresh();
         if (newAccessToken) {
-          fetchDuel(newAccessToken);
+          closeDuel(newAccessToken);
         }
       } else {
         toast({
@@ -107,31 +103,19 @@ const JoinGameLinkPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (duelKey && accessTokenState.userAccessToken) {
-      fetchDuel(accessTokenState.userAccessToken);
-    }
-  }, [duelKey, accessTokenState.userAccessToken]);
-
   return (
-    <>
-      {isError ? (
-        <div>
-          Oops, there seems to be an error. Try going to the duel page and using
-          the join duel by code feature.
-        </div>
-      ) : isWaiting ? (
-        <div>You will be redirected to the duels page shortly</div>
-      ) : (
-        <div>Loading...</div>
-      )}
-      <NavBarComp
-        userState={userState}
-        accessTokenState={accessTokenState}
-        refreshTokenState={refreshTokenState}
-      />
-    </>
+    <div className="w-full flex justify-end absolute md:top-8  md:right-8 top-4 right-4">
+      <Button
+        onClick={() => {
+          closeDuel(accessTokenState.userAccessToken);
+        }}
+        variant="destructive"
+        className="text-lg p-3"
+      >
+        <GiExitDoor />
+      </Button>
+    </div>
   );
 };
 
-export default JoinGameLinkPage;
+export default ClosePendingDuelButton;

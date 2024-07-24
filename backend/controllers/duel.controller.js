@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const Duel = require("../models/duel.model.js")
 const Pets = require("../models/pet.model.js")
+const Arena =require("../models/arena.model.js")
 const PetsLibary = require("../models/petLibary.model.js")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -34,9 +35,9 @@ const createDuel = async (req, res, next) => {
   try {
     const playerOneId = req.user.id;
     const { isPrivate } = req.body;
-    const io = getSocketInstance
+    const io = getSocketInstance()
 
-    const Arenas = ["6681c74c9f67b3d532f10606", "6681c74c9f67b3d532f10609", "6681c74c9f67b3d532f1060c", "6681c74c9f67b3d532f1060f", "6681c74c9f67b3d532f10612"];
+    const Arenas = ["669a9129a063f66e717131cd", "669a9129a063f66e717131d3", "669a9129a063f66e717131d6"];
 
     // Check for active duels
     const inActiveDuelCheck = await Duel.find({
@@ -64,6 +65,12 @@ const createDuel = async (req, res, next) => {
     const randomArenasIndex = Math.floor(Math.random() * Arenas.length);
     const randomArena = Arenas[randomArenasIndex];
     const duelJoinKey = generateRandomCode();
+
+
+      const arena = await Arena.findById( randomArena);
+    if (!arena) {
+      return res.status(404).json({  message: "Arena  does not exist." });
+    }
 
     // Find user and populate current deck
     const user = await User.findById(playerOneId).populate({
@@ -95,9 +102,15 @@ const createDuel = async (req, res, next) => {
 
     // Element buffs
     const elementBuffs = {
-      Light: (pet) => pet.currentHealth += 20,
-      Dark: (pet) => pet.currentManaCost = Math.max(pet.currentManaCost - 5, 0),
-      Nature: (pet) => pet.currentHealth *= 1.3
+         Light: (pet) => { 
+        pet.currentHealth = Math.round(pet.currentHealth + 20); 
+    },
+    Dark: (pet) => { 
+        pet.currentManaCost = Math.round(Math.max(pet.currentManaCost - 5, 0)); 
+    },
+    Nature: (pet) => { 
+        pet.currentHealth = Math.round(pet.currentHealth * 1.3); 
+    }
     };
 
     // Check if user has specific elements
@@ -134,8 +147,8 @@ const createDuel = async (req, res, next) => {
       }
     };
 
-    const userHealth = Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500);
-    const userManaPool = Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500);
+    const userHealth = Math.round(Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500));
+    const userManaPool = Math.round(Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500));
 
     // Set the active card and adjust the current deck
     const activeCard = user.pets.currentDeck[0];
@@ -182,9 +195,28 @@ const createDuel = async (req, res, next) => {
       activePet: activeCard
     };
 
+  function ensureSingleStringArray(element) {
+    // Flatten the array if it contains nested arrays
+    const flattened = Array.isArray(element) ? element.flat(Infinity) : [element];
+
+    // Ensure all elements are strings
+    const stringArray = flattened.map(String);
+
+    return stringArray;
+}
+
+
+const arenaElements = ensureSingleStringArray(arena.element);
+
     // Create a new duel
     let duel = new Duel({
-      arena: randomArena,
+       arena:{
+          arenaId: randomArena,
+    arenaImage:arena.imageUrl,
+    arenaElement:arenaElements,
+    arenaName:arena.name,
+    arenaDescription:arena.description,
+    },
       players: {
         player1: player1Data
       },
@@ -312,9 +344,15 @@ const io = getSocketInstance()
 
     // Define element buffs
     const elementBuffs = {
-      Light: (pet) => { pet.currentHealth += 20; },
-      Dark: (pet) => { pet.currentManaCost = Math.max(pet.currentManaCost - 5, 0); },
-      Nature: (pet) => { pet.currentHealth *= 1.3; }
+       Light: (pet) => { 
+        pet.currentHealth = Math.round(pet.currentHealth + 20); 
+    },
+    Dark: (pet) => { 
+        pet.currentManaCost = Math.round(Math.max(pet.currentManaCost - 5, 0)); 
+    },
+    Nature: (pet) => { 
+        pet.currentHealth = Math.round(pet.currentHealth * 1.3); 
+    }
     };
 
     const hasElement = (element) => user.pets.currentDeck.some(pet => pet.petInfo.element.includes(element));
@@ -352,8 +390,8 @@ const io = getSocketInstance()
       }
     };
 
-    const userHealth = Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500);
-    const userManaPool = Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500);
+   const userHealth = Math.round(Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500));
+    const userManaPool = Math.round(Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500));
 
     const activeCard = user.pets.currentDeck[0];
     const currentDeck = user.pets.currentDeck.slice(1);
@@ -470,6 +508,5 @@ const closeDuelB4Ongoing = async (req, res, next) => {
 module.exports = {
     createDuel,
     joinDuel,
-    
     closeDuelB4Ongoing
 };

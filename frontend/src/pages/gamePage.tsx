@@ -19,7 +19,7 @@ import PingBar from "@/components/pingBar";
 import Battle from "@/components/battle";
 
 // Initialize socket
-const gameSocket = io("http://localhost:5000/game", {
+const gameSocket:Socket = io("http://localhost:5000/game", {
   autoConnect: false,
   reconnection: true,
   reconnectionAttempts: 5,
@@ -34,11 +34,12 @@ const GamesPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [isPlayer1, setIsPlayer1] = useState(false);
+  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [isWaiting, setIsWaiting] = useState(true);
-  const [gameState, setGameState] = useState<any>(null);
-  const [liveGameState, setLiveGameState] = useState<any>(null);
   const [ping, setPing] = useState<number | null>(null);
-
+  const [currentDmg, setCurrentDmg] = useState<number | null>(null);
+  const [opponentDmg, setOpponentDmg] = useState<number | null>(null);
   const userState = useSelector((state: RootState) => state.user);
   const initialGameState = useSelector((state: RootState) => state.ongoingGame);
   const updatedGameState = useSelector((state: RootState) => state.liveGame);
@@ -49,15 +50,33 @@ const GamesPage: React.FC = () => {
   const gameSessionState = useSelector((state: RootState) => state.gameSession);
 
 
-
-
-  useEffect(() => {
+ useEffect(() => {
+   if (
+     initialGameState?.gameState?.players?.player1?.userId &&
+     initialGameState?.gameState?.players?.player2?.userId
+   ) {
+    setTimeout(() => {
+       setIsWaiting(false);
+      }, 1000);
+     
+   }
+ }, [
+   initialGameState?.gameState?.players?.player1?.userId,
+   initialGameState?.gameState?.players?.player2?.userId,
+ ]);
+ useEffect(() => {
     if (
       userState?.userInfo?._id ===
       initialGameState?.gameState?.players?.player1?.userId
     ) {
       setIsPlayer1(true);
     }
+ }, [
+   initialGameState?.gameState?.players?.player1?.userId,
+ ]);
+
+  useEffect(() => {
+   
 
     if (initialGameState?.gameState) {
       gameSocket.connect();
@@ -84,7 +103,6 @@ const GamesPage: React.FC = () => {
       gameSocket.on("pong", handlePong);
 
       gameSocket.on("connect", () => {
-        console.log("Connected to game server with ID:", gameSocket.id);
 
         if (!gameSessionState.sessionId) {
           gameSocket.emit("createRoom", duelId, username, userId);
@@ -103,52 +121,46 @@ const GamesPage: React.FC = () => {
           gameSocket.emit("reconnectToGame", {
             userId:userId,
             sessionID:sessionID,
-          });
-
-          ;
-        
-          console.log(`"gamestate triggered WITH${sessionID} AND ${userId}"`);
-         
+          });    
         }
       });
 
-      gameSocket.on("userJoinedDuel", (socketID,userID,username) => {
+      gameSocket.on("userJoinedDuel", (data:{ socketID: string; userID: string; username: string }) => {
+        const { socketID, userID, username } = data;
         toast({
           description: `${socketID},
           ${userID},
           ${username},`
         });
       });
-      gameSocket.on("notification", (notification) => {
+      gameSocket.on("notification", (notification:string) => {
         toast({
           description: notification,
         });
       });
 
-      gameSocket.on("gameStart", (data) => {
+      gameSocket.on("gameStart", (data:{message:string; gameState:any;}) => {
         const {message , gameState}= data
-        // toast({
-        //   description: message,
-        // });
+        toast({
+          description: message,
+        });
         console.log("message")
           dispatch(gameAction.setGameState(gameState));
           localStorage.setItem("game", JSON.stringify(gameState));
           dispatch(liveGameAction.setLiveGameState(gameState));
           localStorage.setItem("liveGame", JSON.stringify(gameState));
-        setIsWaiting(false);
+          console.log(gameState)
+        setTimeout(() => {
+       setIsWaiting(false);
+      }, 5000);
       });
-
-      // Add other socket event listeners here...
 
     gameSocket.on(
       "statusEffectApplied",
       (
-        defenderId,
-        attackerId,
-        defenderMessage,
-        attackerMessage,
-        updatedGameState
+      data
       ) => {
+        const {  defenderId,attackerId,defenderMessage,attackerMessage,updatedGameState} = data
         
         if(userId===defenderId){
 toast({
@@ -166,12 +178,15 @@ toast({
         dispatch(liveGameAction.setLiveGameState(updatedGameState));
         localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
         setIsWaiting(false);
+        
+        
       }
     );
 
     gameSocket.on(
       "statusEffectChange",
-      (forUser, message, statusEffects, updatedGameState) => {
+      (data) => {
+        const {forUser, message, statusEffects, updatedGameState} =data
         if (userId === forUser) {
           toast({
             variant: statusEffects,
@@ -181,11 +196,13 @@ toast({
         dispatch(liveGameAction.setLiveGameState(updatedGameState));
         localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
         setIsWaiting(false);
+        
       }
     );
 
 
-    gameSocket.on("notificationError", (forUser, message) => {
+    gameSocket.on("notificationError", (data) => {
+      const {forUser, message} = data
       if (userId === forUser) {
         toast({
           variant: "destructive",
@@ -196,7 +213,9 @@ toast({
 
       gameSocket.on(
         "notificationWarning",
-        (forUser, message, updatedGameState) => {
+        (data) => {
+          const { forUser, message, updatedGameState } = data;
+          
           if (userId === forUser) {
             toast({
               variant: "warning",
@@ -206,22 +225,39 @@ toast({
           dispatch(liveGameAction.setLiveGameState(updatedGameState));
           localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
           setIsWaiting(false);
+          console.log(updatedGameState)
         }
       );
-        gameSocket.on("attackResult", (forUser, message, updatedGameState) => {
+        gameSocket.on("attackResult", (data) => {
+        const {forUser, message, updatedGameState ,currentDamage,opponentDamage ,turnMessage} = data
           if (userId === forUser) {
+            toast({
+              variant: "defense",
+              description: `you dealt ${currentDamage} to your opponent`,
+            });
+          }else{
             toast({
               variant: "attack",
               description: message,
             });
           }
+            setCurrentDmg(currentDamage)
+            setOpponentDmg(opponentDamage)
+            toast({
+              description: turnMessage,
+            });
+
           dispatch(liveGameAction.setLiveGameState(updatedGameState));
           localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
           setIsWaiting(false);
         });
           gameSocket.on(
             "defendResult",
-            (forUser, message, updatedGameState) => {
+            (data) => {
+              const { forUser, message, updatedGameState, turnMessage } = data; 
+              toast({
+              description: turnMessage,
+            });
               if (userId === forUser) {
                 toast({
                   variant: "defense",
@@ -234,6 +270,7 @@ toast({
                 JSON.stringify(updatedGameState)
               );
               setIsWaiting(false);
+              console.log(updatedGameState)
             }
           );
 
@@ -252,7 +289,8 @@ gameSocket.on("reconnect", () => {
   });
 });
 
-      gameSocket.on("opponentDisconnected", (message, updatedGameState) => {
+      gameSocket.on("opponentDisconnected", (data) => {
+        const {message, updatedGameState} = data
         toast({
           variant: "warning",
           description: message,
@@ -260,11 +298,13 @@ gameSocket.on("reconnect", () => {
         dispatch(liveGameAction.setLiveGameState(updatedGameState));
         localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
         setIsWaiting(false);
+        console.log(updatedGameState)
       });
 
       
 
-      gameSocket.on("gameEnd", (winner, message, loser, updatedGameState) => {
+      gameSocket.on("gameEnd", (data) => {
+        const {winner, message, loser, updatedGameState} =data
         if (winner === "draw" || loser === "draw") {
           toast({
             variant: "draw",
@@ -286,13 +326,14 @@ gameSocket.on("reconnect", () => {
         }
         dispatch(liveGameAction.resetLiveGameState());
         localStorage.removeItem("game");
-        // dispatch(gameAction.resetGameState());
-        // localStorage.removeItem("liveGame");
+        dispatch(gameAction.resetGameState());
+        localStorage.removeItem("liveGame");
         dispatch(gameSessionAction.clearSessionId());
         localStorage.removeItem("gameSession");
         dispatch(liveGameAction.setLiveGameState(updatedGameState));
         localStorage.setItem("liveGame", JSON.stringify(updatedGameState));
         setIsWaiting(false);
+        console.log(updatedGameState)
         gameSocket.disconnect();
       });
 
@@ -310,6 +351,19 @@ gameSocket.on("reconnect", () => {
         });
       });
 
+      gameSocket.on("emoteResult",(data) =>{
+        const {emoji} = data
+      console.log("Message from server:", emoji);
+      setSelectedEmoji(emoji);
+      console.log(selectedEmoji)
+      setShowEmoji(true);
+
+      // Hide the emoji after 3 seconds
+      setTimeout(() => {
+        setShowEmoji(false);
+      }, 3000);
+    })
+
       gameSocket.on("disconnect", () => {
         toast({
           description: `Disconnected from game socket`,
@@ -317,6 +371,7 @@ gameSocket.on("reconnect", () => {
         console.log("Disconnected from game socket");
       });
     };
+    
 
     const cleanUpSocketListeners = () => {
       clearInterval(checkPingInterval);
@@ -327,6 +382,7 @@ gameSocket.on("reconnect", () => {
       gameSocket.off("statusEffectApplied");
       // Remove other socket event listeners here...
       gameSocket.off("reconnect");
+      gameSocket.off("emote")
 
       gameSocket.off("opponentDisconnected");
       gameSocket.off("playerReconnecting");
@@ -347,26 +403,34 @@ gameSocket.on("reconnect", () => {
       gameSocket.disconnect();
     };
   }, []);
-   const simulateDisconnect = () => {
-     gameSocket.disconnect();
-     setTimeout(() => {
-       gameSocket.connect();
-     }, 5000); // Reconnect after 5 seconds
-   };
+  
 
   return (
     <>
-      {!isWaiting ? (
+      {isWaiting ? (
         <>
-          <button onClick={simulateDisconnect}>Simulate Disconnect</button>
-          <GameLoad />
+          <GameLoad isPlayer1={isPlayer1} />
         </>
       ) : (
         <>
-          <section className="w-screen h-screen">
-            <Battle />
-            <PingBar pingIN={ping} />  
-           
+        
+          <section className="w-screen h-screen relative">
+             {showEmoji && selectedEmoji && (
+        <div className={`absolute top-[50px] left-[6rem] slide-in-blurred-top z-30`}>
+          <img src={selectedEmoji} alt="Selected emoji" />
+        </div>
+      )}
+            <Battle
+              initialPlayers={initialGameState?.gameState?.players}
+              livePlayers={updatedGameState?.liveGameState?.players}
+              arena={updatedGameState?.liveGameState?.arena.arenaImage}
+              userId={userState?.userInfo?._id}
+              sessionId={initialGameState?.gameState?._id}
+              socket={gameSocket}
+              currentDamage={currentDmg}
+              opponentDamage={opponentDmg}
+            />
+            <PingBar pingIN={ping} />
           </section>
         </>
       )}

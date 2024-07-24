@@ -28,28 +28,30 @@ const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-2 overflow-hidden rounded-md border p-4 pr-6 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
-      variant: {
-        default: "border bg-background text-foreground",
-        destructive:
-          "destructive group border-destructive bg-destructive text-destructive-foreground",
-        Success: "border-emerald-400 bg-emerald-100 text-emerald-700",
-        warning: "border-amber-400 bg-amber-100 text-amber-700",
-        dazzle: "border-yellow-300 bg-yellow-100 text-yellow-700", // Light
-        fear: "border-gray-700 bg-gray-900 text-gray-100", // Shadow
-        burn: "border-red-400 bg-red-100 text-red-700", // Fire
-        soak: "border-blue-400 bg-blue-100 text-blue-700", // Water
-        petrify: "border-brown-400 bg-brown-100 text-brown-700", // Earth
-        corrode: "border-orange-400 bg-orange-100 text-orange-700", // Metal
-        disorient: "border-teal-400 bg-teal-100 text-teal-700", // Air
-        shock: "border-purple-400 bg-purple-100 text-purple-700", // Lightning
-        freeze: "border-cyan-400 bg-cyan-100 text-cyan-700", // Ice
-        rooted: "border-green-400 bg-green-100 text-green-700", // Nature
-        winner: "border-zinc-400 ethereal-card text-zinc-100", // Winner
-        draw: "border-zinc-400 exalted-card text-zinc-100", // draw
-        loser: "border-gray-400 bg-gray-100 text-gray-700", // Loser
-        attack: "border-red-400 bg-red-100 text-red-700", // Attack result
-        defense: "border-blue-400 bg-blue-100 text-blue-700", // Defense result
-      },
+    variant: {
+  default: "border bg-background text-foreground",
+  destructive:
+    "destructive group border-destructive bg-destructive text-destructive-foreground",
+  Success: "border-emerald-500 bg-emerald-200 text-emerald-800",
+  warning: "border-amber-500 bg-amber-200 text-amber-800",
+  dazzle: "border-yellow-500 bg-yellow-200 text-yellow-800", // Light
+  fear: "border-gray-800 bg-gray-900 text-gray-200", // Shadow
+  burn: "border-red-500 bg-red-200 text-red-800", // Fire
+  soak: "border-blue-500 bg-blue-200 text-blue-800", // Water
+  petrify: "border-brown-500 bg-brown-200 text-brown-800", // Earth
+  corrode: "border-orange-500 bg-orange-200 text-orange-800", // Metal
+  disorient: "border-teal-500 bg-teal-200 text-teal-800", // Air
+  shock: "border-purple-500 bg-purple-200 text-purple-800", // Lightning
+  freeze: "border-cyan-500 bg-cyan-200 text-cyan-800", // Ice
+  rooted: "border-green-500 bg-green-200 text-green-800", // Nature
+  winner: "border-zinc-500 ethereal-card text-zinc-200", // Winner
+  draw: "border-zinc-500 exalted-card text-zinc-200", // Draw
+  loser: "border-gray-500 bg-gray-200 text-gray-800", // Loser
+  attack: "border-red-500 bg-red-200 text-red-800", // Attack result
+  defense: "border-blue-500 bg-blue-200 text-blue-800", // Defense result
+  lowMana: "border-indigo-500 bg-indigo-200 text-indigo-800", // Low Mana message
+}
+
     },
     defaultVariants: {
       variant: "default",

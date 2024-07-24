@@ -29,19 +29,31 @@ import {
   GiMetalBar,
   GiMineralHeart,
 } from "react-icons/gi";
+import FloatingDamageEffect from "./damageNumber";
 
+// interface Props {
+//   elements: string[];
+//   classy: string;
+//   illustration: string;
+//   name: string;
+//   level: number;
+//   health: number;
+//   attack: number;
+//   defence: number;
+//   mana: number;
+//   rarity: string;
+// }
 interface Props {
-  elements: string[];
-  classy: string;
-  illustration: string;
-  description: string;
-  name: string;
-  level: number;
-  health: number;
-  attack: number;
-  defence: number;
-  mana: number;
-  rarity: string;
+  elements: any;
+  classy: any;
+  illustration: any;
+  name: any;
+  level: any;
+  health: any;
+  attack: any;
+  defence: any;
+  mana: any;
+  rarity: any;
 }
 
 const elementData: Record<
@@ -126,11 +138,10 @@ const classData: Record<
   },
 };
 
-const ActiveBattleCardComp: React.FC<Props> = ({
+const ActiveBattleCardComp = ({
   elements = ["Dark", "Light"],
   classy = "Breaker",
   illustration = "https://i.pinimg.com/originals/92/b8/41/92b841ca44cc515099196aceae3479f9.jpg",
-  description = "A majestic and fearsome creature of the night, shrouded in darkness and possessing an aura of mystery and power. It harnesses the elements of darkness and light to strike fear and confusion into its enemies.",
   name = "Shadow Lion",
   level = 100,
   health = 1000,
@@ -138,8 +149,11 @@ const ActiveBattleCardComp: React.FC<Props> = ({
   defence = 100,
   mana = 100,
   rarity = "Ethereal",
+  damageTaken = 0,
 }) => {
   const [rarityStyle, setRarityStyle] = useState("bg-primary");
+  const [damage, setDamage] = useState<number | null>(null);
+
   const [classStyle, setClassStyle] = useState<{
     color: string;
     icon: JSX.Element | null;
@@ -153,6 +167,11 @@ const ActiveBattleCardComp: React.FC<Props> = ({
     { color: string; icon: JSX.Element; effect: string }[]
   >([]);
 
+  useEffect(() => {
+    if (damageTaken) {
+      setDamage(damageTaken);
+    }
+  }, [damageTaken, setDamage]);
   useEffect(() => {
     switch (rarity) {
       case "Rustic":
@@ -186,10 +205,19 @@ const ActiveBattleCardComp: React.FC<Props> = ({
     }
   }, [classy]);
 
+  const handleAnimationEnd = () => {
+    setDamage(null);
+  };
+
   return (
     <Card
-      className={`card w-[170px] h-[270px] p-[0.19rem] relative overflow-hidden ${rarityStyle} font-mono `}
+      className={`card saturate-150 w-[170px] h-[270px] p-[0.19rem] relative overflow-hidden ${rarityStyle} font-mono `}
     >
+      {damage ? <FloatingDamageEffect
+        damage={damage}
+        onAnimationEnd={handleAnimationEnd}
+      />:<> </> }
+     
       <div
         className={`w-[2.25rem] h-[1.45rem] flex p-[0.19rem]   justify-center items-center absolute top-0 right-0 z-30  ${rarityStyle} rounded-full`}
       >
@@ -198,16 +226,16 @@ const ActiveBattleCardComp: React.FC<Props> = ({
         </h1>
       </div>
       <CardContent
-        className={`w-full h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
+        className={`w-full mx-auto h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
       >
-        <h1 className="absolute top-0 left-1/2 line-clamp-1 text-sm  -translate-x-1/2 text-white z-20  px-2 py-1 w-[90%] text-center h-8">
-          {name}
-        </h1>
         <div className="w-full h-[200px] bg-black rounded-t-[0.5rem] relative">
+          <h1 className="absolute bottom-1 left-1/2 line-clamp-1 text-sm  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
+            {name}
+          </h1>
           <img
             src={illustration}
             alt={name}
-            fetchPriority="auto"
+            fetchpriority="high"
             loading="lazy"
             className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
           />
@@ -234,7 +262,7 @@ const ActiveBattleCardComp: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex  text-white w-[90%] flex-wrap justify-around items-center mt-1 gap-1  ">
+          <div className="flex  text-white w-[90%] flex-wrap justify-around items-center mt-[0.35rem] mx-auto gap-1  ">
             <span className="flex items-center gap-1 text-[#B22222] w-fit backdrop-blur-sm">
               <GiMineralHeart /> <p className="text-white text-xs">{health}</p>
             </span>

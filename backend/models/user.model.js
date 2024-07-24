@@ -17,8 +17,8 @@ const userSchema = new Schema(
     superAdmin: { type: Boolean, default: false },
     profile: {
       gender: { type: String, default: "" },
-      fullName: { type: String, default: "" },
-      bio: { type: String, default: "" },
+      fullName: { type: String, default: "user" },
+      bio: { type: String, default: "hello world" },
       avatar: { type: String, default: "" },
       coverImage: { type: String, default: "" },
       level: { type: Number, default: 1 },
@@ -54,6 +54,7 @@ const userSchema = new Schema(
     pets: {
       favPet: { type: Schema.Types.ObjectId, ref: "Pet", index: true },
       allPets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
+      availablePets:[{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
       currentDeck: [{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
     },
     notifications: [{ type: Schema.Types.ObjectId, ref: "Notifications", default: [], index: true }],

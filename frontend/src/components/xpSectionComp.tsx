@@ -160,27 +160,19 @@ interface UserXpProp {
   xpNeededToNextLevel: number | null;
   experience: number | null;
   level: number | null;
-  Aureus: number | null;
-  Argentum: number | null;
+
 }
 
-const XpSectionComp: React.FC<UserXpProp> = ({
+const 
+XpSectionComp: React.FC<UserXpProp> = ({
   xpNeededToNextLevel,
   experience,
   level,
-  Aureus,
-  Argentum,
+
 }) => {
   const [percent, setPercent] = useState(0);
 
-  // Provide dummy data if props are not provided
-  if (!xpNeededToNextLevel || !experience || !level) {
-    xpNeededToNextLevel = 100000;
-    experience = 90300;
-    level = 30;
-    Aureus = 400;
-    Argentum = 500;
-  }
+
 
   useEffect(() => {
     const calculatedPercent = (experience / xpNeededToNextLevel) * 100;
@@ -210,13 +202,13 @@ const XpSectionComp: React.FC<UserXpProp> = ({
         </Button>
       </section>
       <section>
-        <section className="lg:w-[50vw] w-full flex gap-8 items-center">
-          <p className="md:text-sm text-xs w-[4vw] text-muted-foreground inline-block number">
+        <section className="lg:w-[50vw] w-full flex gap-2 items-center my-2">
+          <p className="md:text-sm text-xs w-[3rem] px-2 text-muted-foreground inline-block number">
             lvl.
             <NumberCounter number={level} />
           </p>
-          <div className="lg:w-[95%] md:w-[93%] w-[85%] h-3 bg-muted rounded-[0.25rem] relative overflow-hidden">
-            <h1 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[0.6rem] z-20 ">
+          <div className="lg:w-[95%] md:w-[93%] w-[85%] h-[0.7rem] bg-muted rounded-[0.25rem] relative overflow-hidden">
+            <h1 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[0.5rem] z-20 ">
               {percent.toFixed(2)}%
             </h1>
             <div

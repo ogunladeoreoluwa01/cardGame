@@ -55,22 +55,22 @@ const UserStatsComp: React.FC<UserStatsProps> = ({
       <section className="flex gap-2 flex-wrap">
         <section className="lg:w-[50vw] w-full lg:h-[14rem] p-[0.2rem] h-[10rem] rounded-[0.75rem] bg-primary">
           <img
-            src={profileImage}
+            src={secondaryImage}
             alt="User Avatar"
             className="object-center object-cover w-full h-full rounded-[0.75rem]"
+            fetchpriority="high"
             loading="lazy"
-            fetchPriority="auto"
           />
         </section>
 
         <section className="flex flex-row md:w-full px-3 lg:px-0 sm:w-0 lg:w-0 lg:flex-col gap-2 justify-center">
           <section className="w-[10rem]  lg:w-[10rem] lg:h-[10rem] p-1 h-[10rem] rounded-[0.75rem] bg-primary">
             <img
-              src={secondaryImage}
+              src={profileImage}
               alt="User Avatar"
               className="object-center object-cover w-full h-full rounded-[0.75rem]"
+              fetchpriority="high"
               loading="lazy"
-              fetchPriority="auto"
             />
           </section>
           <div className="lg:hidden hidden md:inline-block ">
@@ -157,10 +157,8 @@ const UserStatsComp: React.FC<UserStatsProps> = ({
               </p>
             </h1>
           </section>
-          
         </section>
       </section>
-     
     </section>
   );
 };

@@ -12,6 +12,9 @@ import clearAccessToken from "@/stores/actions/accessTokenAction";
 import clearRefreshToken from "@/stores/actions/refreshTokenAction";
 import logOut from "@/stores/actions/userAction";
 import { AppDispatch } from "@/stores";
+import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
+import { gameAction } from "@/stores/reducers/gameReducer";
+import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 
 interface CreateDuelButtonsProps {
   setGameState: React.Dispatch<React.SetStateAction<any>>;
@@ -60,6 +63,12 @@ useEffect(() => {
         dispatch(logOut());
         localStorage.removeItem("account");
         localStorage.removeItem("refreshToken");
+         dispatch(liveGameAction.resetLiveGameState());
+         localStorage.removeItem("game");
+         dispatch(gameAction.resetGameState());
+         localStorage.removeItem("liveGame");
+         dispatch(gameSessionAction.clearSessionId());
+         localStorage.removeItem("gameSession");
         toast({
           variant: "warning",
           description: "User logged out",

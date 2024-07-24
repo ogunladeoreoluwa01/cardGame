@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"; // Import Button component
 import HeaderComp from "@/components/headerComponent";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
-import fireBackground from "@/assets/static/aboutPage/Default_Fire_Arena_Volcanic_CraterDescription_The_Fire_Arena_i_0 (1).jpg";
+import fireBackground from "@/assets/static/aboutPage/Default_Fire_Arena_Volcanic_CraterDescription_The_Fire_Arena_i_0.jpg";
 import fireCreature from "@/assets/static/aboutPage/Default_Fire_Element_PhoenixDescription_The_Phoenix_is_a_majes_0.jpg";
 import waterCreature from "@/assets/static/aboutPage/Default_Water_Element_LeviathanDescription_The_Leviathan_is_a_0.jpg";
 import waterBackground from "@/assets/static/aboutPage/Default_Description_The_Oceanic_Abyss_arena_is_a_vast_underwat_3.jpg";
@@ -177,7 +177,7 @@ const elementData: Record<
     elementDescription:
       "Ice signifies stillness, clarity, and the formidable power of the cold. It is the quiet strength that can halt anything in its path. Ice users can freeze their surroundings, creating barriers and weapons of frost that immobilize and weaken their enemies.",
   },
-  Dark: {
+  Shadow: {
     color: "#4B0082",
     arena: darkBackground,
     element: "Dark",
@@ -334,6 +334,8 @@ const AboutGame: React.FC = () => {
                     src={elementData[element].arena}
                     alt=""
                     className="w-full h-full opacity-20 object-cover"
+                     fetchpriority="high"
+        loading="lazy"
                   />
 
                   <div
@@ -354,8 +356,8 @@ const AboutGame: React.FC = () => {
                         <img
                           src={elementData[element].illustration}
                           alt="hello"
-                          fetchPriority="auto"
-                          loading="lazy"
+                           fetchpriority="high"
+        loading="lazy"
                           className="w-full h-full object-fill text-center shimmer opacity-80"
                         />
                       </CardContent>

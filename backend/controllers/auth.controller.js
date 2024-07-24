@@ -47,26 +47,62 @@ const getPetsId = (pets) => {
 };
 
 const pets = [
-  { name: 'Emberclaw', id: '6681c74c9f67b3d532f105cb' },
-  { name: 'Flame Serpent', id: '6681c74c9f67b3d532f105ce' },
-  { name: 'Inferno Guardian', id: '6681c74c9f67b3d532f105d1' },
-  { name: 'Blaze Phoenix', id: '6681c74c9f67b3d532f105d4' },
-  { name: 'Magma Titan', id: '6681c74c9f67b3d532f105d7' },
-  { name: 'Fire Drake', id: '6681c74c9f67b3d532f105da' },
-  { name: 'Volcanic Behemoth', id: '6681c74c9f67b3d532f105dd' },
-  { name: 'Ash Wyrm', id: '6681c74c9f67b3d532f105e0' },
-  { name: 'Pyro Hydra', id: '6681c74c9f67b3d532f105e3' },
-  { name: 'Lava Golem', id: '6681c74c9f67b3d532f105e6' },
-  { name: 'Tide Guardian', id: '6681c74c9f67b3d532f105e9' },
-  { name: 'Aqua Serpent', id: '6681c74c9f67b3d532f105ec' },
-  { name: 'Wavebreaker', id: '6681c74c9f67b3d532f105ef' },
-  { name: 'Coral Siren', id: '6681c74c9f67b3d532f105f2' },
-  { name: 'Kraken', id: '6681c74c9f67b3d532f105f5' },
-  { name: 'Leviathan', id: '6681c74c9f67b3d532f105f8' },
-  { name: 'Tsunami Dragon', id: '6681c74c9f67b3d532f105fb' },
-  { name: 'Abyssal Wyrm', id: '6681c74c9f67b3d532f105fe' },
-  { name: 'Frostfish', id: '6681c74c9f67b3d532f10601' },
-  { name: 'Hydro Golem', id: '6681c74c9f67b3d532f10604' }
+ {
+      "name": "Emberclaw",
+      "id": "669a9128a063f66e717131a4"
+    },
+    {
+      "name": "Flame Serpent",
+      "id": "669a9128a063f66e717131a7"
+    },
+    {
+      "name": "Inferno Guardian",
+      "id": "669a9128a063f66e717131aa"
+    },
+    {
+      "name": "Blaze Phoenix",
+      "id": "669a9128a063f66e717131ad"
+    },
+    {
+      "name": "Magma Titan",
+      "id": "669a9128a063f66e717131b0"
+    },
+    {
+      "name": "Fire Drake",
+      "id": "669a9128a063f66e717131b3"
+    },
+    {
+      "name": "Volcanic Behemoth",
+      "id": "669a9128a063f66e717131b6"
+    },
+    {
+      "name": "Lava Golem",
+      "id": "669a9128a063f66e717131b9"
+    },
+    {
+      "name": "Tide Guardian",
+      "id": "669a9128a063f66e717131bc"
+    },
+    {
+      "name": "Aqua Serpent",
+      "id": "669a9128a063f66e717131bf"
+    },
+    {
+      "name": "Coral Siren",
+      "id": "669a9128a063f66e717131c2"
+    },
+    {
+      "name": "Kraken",
+      "id": "669a9128a063f66e717131c5"
+    },
+    {
+      "name": "Leviathan",
+      "id": "669a9128a063f66e717131c8"
+    },
+    {
+      "name": "Tsunami Dragon",
+      "id": "669a9129a063f66e717131cb"
+    }
 ];
 
 const generateJwt = (userId,expiresTime) => {

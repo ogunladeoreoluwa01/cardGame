@@ -43,7 +43,7 @@ const userState: any | null = useSelector((state: RootState) => state.user);
         <div className="mb-[5rem]">
           <header className="lg:px-6 px-4 ">
             {" "}
-            <HeaderComp />
+            <HeaderComp userState={userState} />
           </header>
           <main className="lg:px-6 px-4 flex gap-8 flex-wrap overflow-hidden">
             <div className="">
@@ -52,7 +52,13 @@ const userState: any | null = useSelector((state: RootState) => state.user);
 
             <section className="flex flex-col gap-2 items-center">
               <div className="hidden lg:inline-block">
-                <DashInventoryComp />
+                <DashInventoryComp
+                  username={userState?.userInfo?.username}
+                  allPets={userState?.userInfo?.pets?.allPets}
+                  inventory={userState?.userInfo?.inventory}
+                  Argentum={userState?.userInfo?.profile?.Argentum}
+                  Aureus={userState?.userInfo?.profile?.Aureus}
+                />
               </div>
               <LeaderBoards />
             </section>

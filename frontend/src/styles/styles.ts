@@ -40,6 +40,9 @@ const styles = {
   playerHealth:
     "flex flex-row bg-white rounded-md py-1 px-[0.25rem]  w-[15rem]  h-4 bg-opacity-10 backdrop-filter backdrop-blur-lg mx-3",
   playerHealthBar: " w-full  h-2 rounded-sm",
+  playerManaBar: " w-full h-[0.35rem] rounded-sm",
+  playerManas:
+    "flex flex-row bg-white rounded-md py-[0.12rem] px-[0.15rem]  w-[13rem]  h-[0.6rem] bg-opacity-10 backdrop-filter backdrop-blur-lg mx-3",
   playerMana:
     "min-w-8 w-fit px-2 h-4 rounded-full text-white font-mono font-extrabold text-md ",
   playerInfo: "font-mono font-medium",

@@ -32,7 +32,7 @@ const PingBar: React.FC<PingBarProps> = ({ pingIN }) => {
   }, [pingIN]);
 
   return (
-    <div className={`flex flex-col items-center ${pingColor} fixed top-[4rem] left-3`}>
+    <div className={`flex flex-col items-center ${pingColor} fixed top-[4.5rem] left-5`}>
       {PingIcon}
       <p className="text-[0.65rem] ">{ping} ms</p>
     </div>

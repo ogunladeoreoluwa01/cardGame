@@ -191,7 +191,7 @@ const CardComp: React.FC<Props> = ({
 
   return (
     <Card
-      className={`card w-[300px] h-[400px] md:w-[200px] md:h-[300px] p-1  md:p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
+      className={`card saturate-150 w-[300px] h-[400px] md:w-[200px] md:h-[300px] p-1  md:p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
     >
       <div
         className={`w-[3rem] h-[2rem] md:w-[2.25rem] md:h-[1.45rem] flex p-1 md:p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px] md:right-0 z-30  ${rarityStyle} rounded-full`}
@@ -201,13 +201,13 @@ const CardComp: React.FC<Props> = ({
         </h1>
       </div>
       <CardContent
-        className={`w-full h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
+        className={`w-full mx-auto h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
       >
-        <h1 className="absolute top-0 left-1/2 line-clamp-1 md:text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[90%] text-center h-8">
+        <h1 className="absolute top-4 left-1/2 line-clamp-1 md:text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
           {name}
         </h1>
         <div className="w-full h-[270px] md:h-[210px] bg-black rounded-t-[0.5rem] relative">
-          <div className="flex flex-col text-white absolute top-6 gap-1 left-1 z-20">
+          <div className="flex flex-col text-white absolute top-2 gap-1 left-1 z-20">
             <span className="flex items-center gap-1 text-[#B22222] w-fit backdrop-blur-sm">
               <GiMineralHeart />{" "}
               <p className="text-white md:text-xs">{health}</p>
@@ -229,7 +229,7 @@ const CardComp: React.FC<Props> = ({
           <img
             src={illustration}
             alt={name}
-            fetchPriority="auto"
+            fetchpriority="auto"
             loading="lazy"
             className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
           />

@@ -60,7 +60,7 @@ function initializeSocket(server) {
           username: socket.username
         });
 
-        logger.info(`User joined room ${duelId}: ${socket.id}, username: ${username}, userId: ${userId}`);
+        console.log(`User joined room ${duelId}: ${socket.id}, username: ${username}, userId: ${userId}`);
       } catch (e) {
         console.log('[error]', 'join room:', e);
         socket.emit('error', 'couldn’t perform requested action');
@@ -68,15 +68,15 @@ function initializeSocket(server) {
     });
 
     socket.on('attackAction', async (data) => {
-      await userAction_Attack(socket, data);
+      await userAction_Attack(io,socket, data);
     });
 
     socket.on('defendAction', async (data) => {
-      await userAction_Defend(socket, data);
+      await userAction_Defend(io,socket, data);
     });
 
     socket.on('leaveDuel', async (data) => {
-      await userAction_LeaveActiveDuel(socket, data);
+      await userAction_LeaveActiveDuel(io,socket, data);
     });
 
     socket.on('pong', (latency) => {
@@ -95,7 +95,7 @@ function initializeSocket(server) {
         const sessionId = socket.sessionID;
         const userId = socket.userID;
 
-        await GameLogic_HandlePlayerDisconnect(socket, { sessionId, userId });
+        await GameLogic_HandlePlayerDisconnect(io,socket, { sessionId, userId });
 
         logger.info(`User disconnected from game: ${socket.id}`);
       } catch (error) {
@@ -107,8 +107,14 @@ function initializeSocket(server) {
       }
     });
 
+    socket.on('emote',(data) =>{
+      const{emoji, userId, sessionID}= data
+      console.log(emoji)
+        io.of("game").to(sessionID).emit('emoteResult', {emoji});
+    } )
+
     socket.on('reconnectToGame', async (data) => {
-      await GameLogic_HandlePlayerReconnect(socket, data);
+      await GameLogic_HandlePlayerReconnect(io,socket, data);
     });
   });
 

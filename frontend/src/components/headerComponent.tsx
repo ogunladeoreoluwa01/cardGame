@@ -14,7 +14,13 @@ import { gameAction } from "@/stores/reducers/gameReducer";
 import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
 
-const HeaderComp: React.FC = () => {
+
+
+interface Props {
+  userState: { userInfo: any | null };
+}
+
+const HeaderComp: React.FC<Props> = ({ userState }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -23,16 +29,12 @@ const HeaderComp: React.FC = () => {
     dispatch(clearAccessToken());
     dispatch(clearRefreshToken());
     dispatch(logOut());
-     dispatch(liveGameAction.resetLiveGameState());
-     localStorage.removeItem("game");
-      dispatch(gameAction.resetGameState());
-      localStorage.removeItem("liveGame");
-       dispatch(
-         gameSessionAction.clearSessionId()
-       );
-       localStorage.removeItem(
-         "gameSession",
-       );
+    dispatch(liveGameAction.resetLiveGameState());
+    localStorage.removeItem("game");
+    dispatch(gameAction.resetGameState());
+    localStorage.removeItem("liveGame");
+    dispatch(gameSessionAction.clearSessionId());
+    localStorage.removeItem("gameSession");
     localStorage.removeItem("account");
     localStorage.removeItem("refreshToken");
     toast({
@@ -73,12 +75,16 @@ const HeaderComp: React.FC = () => {
           <Button
             onClick={navigateDash}
             variant="secondary"
-            className="w-10 h-10 rounded-sm p-0"
+            className="w-10 h-10 rounded-sm p-[0.1rem] bg-primary hover:bg-muted hover:p-[0.2rem]"
           >
+          
             <img
-              src="https://i.pinimg.com/originals/21/6b/f1/216bf168f17efdf1fea5e9cd99150b99.gif"
-              alt="User Avatar"
-              className="w-full h-full rounded-sm"
+              src={userState?.userInfo?.profile?.avatar}
+              alt={userState?.userInfo?.username}
+              className="w-full h-full rounded-sm object-cover object-center "
+              fetchpriority="high"
+              loading="lazy"
+              title={userState?.userInfo?.username}
             />
           </Button>
         </div>

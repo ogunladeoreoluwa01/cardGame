@@ -5,9 +5,6 @@ import attack from './attack.png';
 import defense from './defense.png';
 import alertIcon from './alertIcon.svg';
 
-
-
-
 // sounds
 import attackSound from './sounds/attack.wav';
 import defenseSound from './sounds/defense.mp3';
@@ -90,19 +87,35 @@ import E74 from "./chatAssets/E74.png";
 import E75 from "./chatAssets/E75.png";
 
 
+// status effects
+import dazzle from "./StatusEffectAssets/glow.png"
+import burn from "./StatusEffectAssets/on_fire_(burning).png"
+import soak from "./StatusEffectAssets/water_spell.png"
+import rooted from "./StatusEffectAssets/thorn_vine_spell.png"
+import shock from "./StatusEffectAssets/paralyzed.png"
+import freeze from "./StatusEffectAssets/frozen.png"
+import fear from "./StatusEffectAssets/blinded.png"
+import disorient from "./StatusEffectAssets/confused.png"
+import petrify from "./StatusEffectAssets/cursed_(disarmed+silenced).png";
+import corrode from "./StatusEffectAssets/frenzy_spell_(critical_booster).png";
+
+// currenccyAssets
+
+import gold from "./gold.png"
+import silver from "./silver.png"
+
+
 
 
 export {
- 
-
   attack,
   defense,
   alertIcon,
-
-
   attackSound,
   defenseSound,
   explosion,
+  gold,
+  silver
 };
 
 
@@ -116,6 +129,31 @@ export const gameRules = [
   'If a player attacks, they spend 3 Mana',
 ];
 
+export const statusEffectArray =[
+   dazzle,
+ burn ,
+ soak ,
+ rooted, 
+ shock ,
+ freeze ,
+ fear ,
+ disorient, 
+ petrify ,
+corrode ,
+];
+
+export const statusEffectMap = {
+  dazzle,
+  burn,
+  soak,
+  rooted,
+  shock,
+  freeze,
+  fear,
+  disorient,
+  petrify,
+  corrode,
+};
 export const emojiArray = [
   E1,
   E2,

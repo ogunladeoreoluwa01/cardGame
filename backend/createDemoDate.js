@@ -12,6 +12,7 @@ const createPet = async (pet) => {
   }
 };
 
+
 const createArena = async (arena) => {
   try {
     const response = await axios.post('http://localhost:5000/api/demo/arena', arena);
@@ -29,8 +30,8 @@ const firePets = [
     baseAttack: 150,
     baseDefense: 80,
     baseManaCost: 40,
-    illustration: 'link-to-image',
-    description: 'Emberclaw, a fierce creature of the blazing infernos, stands tall with its scorching claws and fiery breath...',
+    illustration: 'https://i.pinimg.com/originals/14/e2/1c/14e21c6b9851054135c3e97a9c383bbd.jpg',
+    description: 'Emberclaw, a fierce creature of the blazing infernos, stands tall with its scorching claws and fiery breath',
     class: 'Guardian',
     classBonus: 'Increases defense against physical attacks.',
     elementalBonus: 'Boosts fire-based abilities.',
@@ -44,8 +45,8 @@ const firePets = [
     baseAttack: 160,
     baseDefense: 70,
     baseManaCost: 35,
-    illustration: 'link-to-image',
-    description: 'The Flame Serpent slithers through the air, leaving a trail of fire and ash in its wake...',
+    illustration: 'https://i.pinimg.com/originals/c9/24/f1/c924f11f7410175cdf89c632e1886128.jpg',
+    description: 'The Flame Serpent slithers through the air, leaving a trail of fire and ash in its wake',
     class: 'Predator',
     classBonus: 'Increases attack power when health is low.',
     elementalBonus: 'Enhances fire attacks.',
@@ -59,8 +60,8 @@ const firePets = [
     baseAttack: 130,
     baseDefense: 90,
     baseManaCost: 45,
-    illustration: 'link-to-image',
-    description: 'The Inferno Guardian protects the heart of the volcano with its impenetrable armor and fiery sword...',
+    illustration: 'https://i.pinimg.com/originals/7b/3f/42/7b3f4264afbf85e17169f35ae8a550b2.jpg',
+    description: 'The Inferno Guardian protects the heart of the volcano with its impenetrable armor and fiery sword',
     class: 'Guardian',
     classBonus: 'Reduces damage taken from non-elemental attacks.',
     elementalBonus: 'Improves resistance to fire damage.',
@@ -74,8 +75,8 @@ const firePets = [
     baseAttack: 170,
     baseDefense: 75,
     baseManaCost: 50,
-    illustration: 'link-to-image',
-    description: 'The Blaze Phoenix rises from its ashes, radiating immense heat and fire with each flap of its wings...',
+    illustration: 'https://i.pinimg.com/originals/8d/24/38/8d24388fc0ddd484ad0d4099047f5447.jpg',
+    description: 'The Blaze Phoenix rises from its ashes, radiating immense heat and fire with each flap of its wings',
     class: 'Nimble',
     classBonus: 'Increases evasion and critical hit chance.',
     elementalBonus: 'Boosts fire-based skills.',
@@ -89,8 +90,8 @@ const firePets = [
     baseAttack: 140,
     baseDefense: 100,
     baseManaCost: 55,
-    illustration: 'link-to-image',
-    description: 'The Magma Titan, with its colossal size and molten rock body, crushes its enemies with sheer force...',
+    illustration: 'https://i.pinimg.com/originals/e3/78/75/e37875ab862140cc7e4cacb43972ef08.jpg',
+    description: 'The Magma Titan, with its colossal size and molten rock body, crushes its enemies with sheer force',
     class: 'Breaker',
     classBonus: 'Deals extra damage to structures and defenses.',
     elementalBonus: 'Increases effectiveness of fire abilities.',
@@ -104,8 +105,8 @@ const firePets = [
     baseAttack: 150,
     baseDefense: 85,
     baseManaCost: 40,
-    illustration: 'link-to-image',
-    description: 'The Fire Drake soars through the skies, spewing flames and scorching everything in its path...',
+    illustration: 'https://i.pinimg.com/originals/e8/96/39/e89639bf4d56563ea5f76444eac26d3e.jpg',
+    description: 'The Fire Drake soars through the skies, spewing flames and scorching everything in its path',
     class: 'Predator',
     classBonus: 'Increases damage when attacking.',
     elementalBonus: 'Enhances fire breath attacks.',
@@ -119,8 +120,8 @@ const firePets = [
     baseAttack: 120,
     baseDefense: 110,
     baseManaCost: 60,
-    illustration: 'link-to-image',
-    description: 'The Volcanic Behemoth towers over its foes, its massive form made of molten rock and lava...',
+    illustration: 'https://i.pinimg.com/originals/84/81/e3/8481e30d9cf9470aedea4639f82e8628.jpg',
+    description: 'The Volcanic Behemoth towers over its foes, its massive form made of molten rock and lava',
     class: 'Guardian',
     classBonus: 'Reduces damage taken from all sources.',
     elementalBonus: 'Enhances fire-based defenses.',
@@ -128,44 +129,15 @@ const firePets = [
     weaknesses: ['Water', 'Earth'],
     strengths: ['Nature', 'Ice']
   },
-  {
-    name: 'Ash Wyrm',
-    baseHealth: 90,
-    baseAttack: 140,
-    baseDefense: 70,
-    baseManaCost: 30,
-    illustration: 'link-to-image',
-    description: 'The Ash Wyrm burrows through the volcanic ash, striking its enemies with precision and speed...',
-    class: 'Nimble',
-    classBonus: 'Increases speed and agility.',
-    elementalBonus: 'Boosts fire-based attacks.',
-    element: 'Fire',
-    weaknesses: ['Water', 'Earth'],
-    strengths: ['Ice', 'Nature']
-  },
-  {
-    name: 'Pyro Hydra',
-    baseHealth: 130,
-    baseAttack: 160,
-    baseDefense: 85,
-    baseManaCost: 50,
-    illustration: 'link-to-image',
-    description: 'The Pyro Hydra, with its multiple heads, unleashes a torrent of flames and destruction...',
-    class: 'Predator',
-    classBonus: 'Increases damage dealt with multiple attacks.',
-    elementalBonus: 'Enhances fire-based abilities.',
-    element: 'Fire',
-    weaknesses: ['Water', 'Earth'],
-    strengths: ['Ice', 'Nature']
-  },
+
   {
     name: 'Lava Golem',
     baseHealth: 150,
     baseAttack: 130,
     baseDefense: 95,
     baseManaCost: 45,
-    illustration: 'link-to-image',
-    description: 'The Lava Golem, a being of molten rock and fire, crushes its enemies with its powerful fists...',
+    illustration: 'https://i.pinimg.com/originals/9c/3b/e9/9c3be9281974912dfe48cd3740c7f67a.jpg',
+    description: 'The Lava Golem, a being of molten rock and fire, crushes its enemies with its powerful fists',
     class: 'Guardian',
     classBonus: 'Increases defense and health.',
     elementalBonus: 'Boosts fire-based defenses.',
@@ -182,8 +154,8 @@ const waterPets = [
     baseAttack: 120,
     baseDefense: 100,
     baseManaCost: 50,
-    illustration: 'link-to-image',
-    description: 'Tide Guardian stands sentinel over the ocean depths, its protective nature unmatched...',
+    illustration: 'https://i.pinimg.com/originals/d6/da/69/d6da69808fc41cafaf248b32332ee0af.jpg',
+    description: 'Tide Guardian stands sentinel over the ocean depths, its protective nature unmatched',
     class: 'Guardian',
     classBonus: 'Enhances defensive capabilities.',
     elementalBonus: 'Boosts water-based abilities.',
@@ -197,8 +169,8 @@ const waterPets = [
     baseAttack: 140,
     baseDefense: 80,
     baseManaCost: 40,
-    illustration: 'link-to-image',
-    description: 'The Aqua Serpent glides through the water, striking its prey with lightning speed and deadly precision...',
+    illustration: 'https://i.pinimg.com/originals/64/3a/5a/643a5a7ce559340059687e588be42a11.jpg',
+    description: 'The Aqua Serpent glides through the water, striking its prey with lightning speed and deadly precision',
     class: 'Predator',
     classBonus: 'Increases attack speed and critical hit rate.',
     elementalBonus: 'Enhances water-based attacks.',
@@ -206,29 +178,15 @@ const waterPets = [
     weaknesses: ['Lightning', 'Fire'],
     strengths: ['Earth', 'Ice']
   },
-  {
-    name: 'Wavebreaker',
-    baseHealth: 150,
-    baseAttack: 130,
-    baseDefense: 90,
-    baseManaCost: 55,
-    illustration: 'link-to-image',
-    description: 'The Wavebreaker crushes its enemies with the force of the ocean, its powerful strikes relentless...',
-    class: 'Breaker',
-    classBonus: 'Increases damage against fortified defenses.',
-    elementalBonus: 'Boosts water-based abilities.',
-    element: 'Water',
-    weaknesses: ['Lightning', 'Fire'],
-    strengths: ['Earth', 'Ice']
-  },
+ 
   {
     name: 'Coral Siren',
     baseHealth: 100,
     baseAttack: 110,
     baseDefense: 70,
     baseManaCost: 30,
-    illustration: 'link-to-image',
-    description: 'The Coral Siren enchants its foes with its mesmerizing song, drawing them into the depths...',
+    illustration: 'https://i.pinimg.com/originals/99/ba/d4/99bad44dbf469befde3cf8713ad3dc74.jpg',
+    description: 'The Coral Siren enchants its foes with its mesmerizing song, drawing them into the depths',
     class: 'Nimble',
     classBonus: 'Increases evasion and charm effects.',
     elementalBonus: 'Enhances water-based skills.',
@@ -242,8 +200,8 @@ const waterPets = [
     baseAttack: 150,
     baseDefense: 110,
     baseManaCost: 60,
-    illustration: 'link-to-image',
-    description: 'The Kraken, with its massive tentacles, drags its enemies into the abyss, never to be seen again...',
+    illustration: 'https://i.pinimg.com/originals/3f/2c/61/3f2c61117637c9615072888e502152c0.jpg',
+    description: 'The Kraken, with its massive tentacles, drags its enemies into the abyss, never to be seen again',
     class: 'Guardian',
     classBonus: 'Increases health and defense.',
     elementalBonus: 'Boosts water-based defenses.',
@@ -257,8 +215,8 @@ const waterPets = [
     baseAttack: 160,
     baseDefense: 90,
     baseManaCost: 50,
-    illustration: 'link-to-image',
-    description: 'The Leviathan roams the ocean depths, its colossal form inspiring awe and terror...',
+    illustration: 'https://i.pinimg.com/originals/59/30/de/5930de0136729559ee654f1cb5392a0f.jpg',
+    description: 'The Leviathan roams the ocean depths, its colossal form inspiring awe and terror',
     class: 'Predator',
     classBonus: 'Increases damage dealt with physical attacks.',
     elementalBonus: 'Enhances water-based abilities.',
@@ -272,8 +230,8 @@ const waterPets = [
     baseAttack: 140,
     baseDefense: 80,
     baseManaCost: 45,
-    illustration: 'link-to-image',
-    description: 'The Tsunami Dragon commands the waves, its roar summoning tidal forces that engulf its enemies...',
+    illustration: 'https://i.pinimg.com/originals/9d/0c/93/9d0c93496115e9727867a33fdf34fdae.jpg',
+    description: 'The Tsunami Dragon commands the waves, its roar summoning tidal forces that engulf its enemies',
     class: 'Breaker',
     classBonus: 'Increases damage dealt with area attacks.',
     elementalBonus: 'Boosts water-based abilities.',
@@ -281,112 +239,67 @@ const waterPets = [
     weaknesses: ['Lightning', 'Fire'],
     strengths: ['Earth', 'Ice']
   },
-  {
-    name: 'Abyssal Wyrm',
-    baseHealth: 90,
-    baseAttack: 120,
-    baseDefense: 70,
-    baseManaCost: 35,
-    illustration: 'link-to-image',
-    description: 'The Abyssal Wyrm lurks in the darkest depths, striking swiftly and retreating into the shadows...',
-    class: 'Nimble',
-    classBonus: 'Increases speed and evasion.',
-    elementalBonus: 'Enhances water-based attacks.',
-    element: 'Water',
-    weaknesses: ['Lightning', 'Fire'],
-    strengths: ['Earth', 'Ice']
-  },
-  {
-    name: 'Frostfish',
-    baseHealth: 110,
-    baseAttack: 130,
-    baseDefense: 80,
-    baseManaCost: 40,
-    illustration: 'link-to-image',
-    description: 'The Frostfish swims gracefully through icy waters, its presence chilling the air around it...',
-    class: 'Nimble',
-    classBonus: 'Increases evasion and freezing effects.',
-    elementalBonus: 'Boosts water-based attacks.',
-    element: 'Water',
-    weaknesses: ['Lightning', 'Fire'],
-    strengths: ['Earth', 'Ice']
-  },
-  {
-    name: 'Hydro Golem',
-    baseHealth: 150,
-    baseAttack: 120,
-    baseDefense: 100,
-    baseManaCost: 50,
-    illustration: 'link-to-image',
-    description: 'The Hydro Golem, formed from enchanted waters, crushes its enemies with immense strength...',
-    class: 'Guardian',
-    classBonus: 'Increases health and defensive capabilities.',
-    elementalBonus: 'Boosts water-based defenses.',
-    element: 'Water',
-    weaknesses: ['Lightning', 'Fire'],
-    strengths: ['Earth', 'Ice']
-  }
+
+  
 ];
 
 
 const arenas = [
   {
     name: 'Volcano Crater',
-    description: 'A fierce battlefield surrounded by bubbling lava and molten rocks, where the ground itself burns...',
+    description: 'A fierce battlefield surrounded by bubbling lava and molten rocks, where the ground itself burns',
     element: 'Fire',
-    imageUrl: 'link-to-image'
+    imageUrl: 'https://i.pinimg.com/originals/e8/f6/25/e8f6256ab806306b933714cd8c0a7d7a.jpg'
   },
-  {
-    name: 'Inferno Plateau',
-    description: 'A vast plateau with searing heat and flames erupting from the ground, challenging the bravest warriors...',
-    element: 'Fire',
-    imageUrl: 'link-to-image'
-  },
+
   {
     name: 'Ocean Abyss',
-    description: 'A deep underwater arena with bioluminescent creatures lighting the way, creating a hauntingly beautiful battlefield...',
+    description: 'A deep underwater arena with bioluminescent creatures lighting the way, creating a hauntingly beautiful battlefield',
     element: 'Water',
-    imageUrl: 'link-to-image'
+    imageUrl: 'https://i.pinimg.com/originals/77/4f/2a/774f2ad4dcdfec18612689c8105a5d3b.jpg'
   },
   {
-    name: 'Coral Reef',
-    description: 'A vibrant underwater world teeming with life and colorful corals, where battles are both deadly and beautiful...',
+    name: 'ice tribes ritual grounds',
+    description: 'A memento to the ice tribes chiefs .',
     element: 'Water',
-    imageUrl: 'link-to-image'
+    imageUrl: 'https://cdnb.artstation.com/p/assets/images/images/006/894/497/large/kisoo-lee-an-arena.jpg?1502071019'
   },
-  {
-    name: 'Tidal Pools',
-    description: 'A series of interconnected pools filled with seawater and hidden dangers, where the tide can turn the battle...',
-    element: 'Water',
-    imageUrl: 'link-to-image'
-  }
+  
 ];
 
 const createDemoData = async () => {
   const petsData = [];
+  const PETID =[]
   const arenasData = [];
+  const ARENAID = []
 
-  console.log("Creating Fire Pets...");
+  console.log("Creating Fire Pets");
   for (const pet of firePets) {
     const petData = await createPet(pet);
+    const PetID =petData.id
     if (petData) petsData.push(petData);
+    if (PetID) PETID.push(PetID)
   }
   
-  console.log("Creating Water Pets...");
+  console.log("Creating Water Pets");
   for (const pet of waterPets) {
     const petData = await createPet(pet);
     if (petData) petsData.push(petData);
   }
   
-  console.log("Creating Arenas...");
+  console.log("Creating Arenas");
   for (const arena of arenas) {
     const arenaData = await createArena(arena);
+    const arenaID =arenaData.id
     if (arenaData) arenasData.push(arenaData);
+    if (arenaID) ARENAID.push(arenaID)
   }
 
   const demoData = {
     pets: petsData,
     arenas: arenasData,
+    petID:PETID,
+    arenasIdS:ARENAID,
   };
 
   const demoDataPath = path.join(__dirname, 'demoData.json');

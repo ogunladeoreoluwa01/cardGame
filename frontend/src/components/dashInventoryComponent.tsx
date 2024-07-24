@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import gold from "@/assets/static/goldnoBg.png";
-import silver from "@/assets/static/silvercoinNoBg.png";
 import NumberCounter from "./numberCounterprop";
+import {gold,silver} from "@/assets"
 
-interface UserXpProp {
+interface Prop {
   allPets: any[] | null;
   inventory: any[] | null;
   Aureus: number;
   Argentum: number;
+  username:string;
 }
 
-const DashInventoryComp: React.FC<UserXpProp> = ({
+const DashInventoryComp: React.FC<Prop> = ({
   allPets,
   inventory,
   Aureus = 4200,
   Argentum = 5330,
+  username
 }) => {
   const [noOfPets, setNoOfPets] = useState(allPets ? allPets.length : 100000);
   const [noOfItems, setNoOfItems] = useState(
@@ -34,12 +35,20 @@ const DashInventoryComp: React.FC<UserXpProp> = ({
   return (
     <>
       <section className="lg:min-w-[25vw]  md:w-fit   h-[10rem] bg-muted p-2 rounded-[0.75rem] ">
-        <h1 className="ml-4 uppercase font-bold text-sm">your Inventory</h1>
+        <h1 className="ml-4 uppercase font-bold text-sm">
+          {username}'s Inventory
+        </h1>
         <section className="flex gap-6 items-center">
           <section className="flex items-center gap-2">
             <div className="flex flex-col  justify-center items-center w-20">
               <p className="text-muted-foreground uppercase text-sm">Aureus</p>
-              <img src={gold} alt="" className="w-20 h-20 rounded-full" />
+              <img
+                src={gold}
+                alt=""
+                className="w-[4rem] h-[4rem] rounded-full "
+                fetchpriority="high"
+                loading="lazy"
+              />
               <p className=" uppercase text-sm text-center font-bold">
                 {" "}
                 <NumberCounter number={Aureus} />
@@ -49,7 +58,13 @@ const DashInventoryComp: React.FC<UserXpProp> = ({
               <p className="text-muted-foreground uppercase text-sm">
                 Argentum
               </p>
-              <img src={silver} alt="" className="w-20 h-20 rounded-full" />
+              <img
+                src={silver}
+                alt=""
+                className="w-[4rem] h-[4rem] rounded-full"
+                fetchpriority="high"
+                loading="lazy"
+              />
               <p className=" uppercase text-sm text-center font-bold">
                 {" "}
                 <NumberCounter number={Argentum} />

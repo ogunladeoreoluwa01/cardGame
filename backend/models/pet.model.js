@@ -68,10 +68,10 @@ petSchema.pre("save", async function (next) {
   console.log("Rarity multiplier:", rarityMultiplier);
 
   // Update pet's stats based on base stats, level, and rarity multiplier
-  this.currentHealth = petData.baseHealth * this.level * rarityMultiplier;
-  this.currentAttack = petData.baseAttack * this.level * rarityMultiplier;
-  this.currentDefense = petData.baseDefense * this.level * rarityMultiplier;
-  this.currentManaCost = petData.baseManaCost * this.level * rarityMultiplier;
+  this.currentHealth =Math.round(petData.baseHealth * this.level * rarityMultiplier) ;
+  this.currentAttack =Math.round(petData.baseAttack * this.level * rarityMultiplier);
+  this.currentDefense =Math.round(petData.baseDefense * this.level * rarityMultiplier);
+  this.currentManaCost =Math.round(petData.baseManaCost * this.level * rarityMultiplier);
 
   console.log("Updated stats - Health:", this.currentHealth, "Attack:", this.currentAttack, "Defense:", this.currentDefense, "Mana Cost:", this.currentManaCost);
 

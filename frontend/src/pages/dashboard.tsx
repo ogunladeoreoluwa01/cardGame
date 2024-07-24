@@ -47,12 +47,24 @@ const Dashboard: React.FC = () => {
       <section className="flex flex-wrap  ">
         {/* main */}
         <section className="flex flex-col lg:gap-5 md:gap-3 gap-2 ">
-          <UserStatsComponent />
-          <XpSectionComp />
+          <UserStatsComponent
+            profileImage={userState.userInfo?.profile?.avatar}
+            secondaryImage={userState.userInfo?.profile?.coverImage}
+            userFullName={userState.userInfo?.profile?.fullName}
+            handle={userState.userInfo?.username}
+            duelsLost={userState.userInfo?.userStats?.duelsLost}
+            duelsWon={userState.userInfo?.userStats?.duelsWon}
+            bio={userState.userInfo?.profile?.bio}
+          />
+          <XpSectionComp
+            xpNeededToNextLevel={
+              userState?.userInfo?.profile?.xpNeededToNextLevel
+            }
+            experience={userState?.userInfo?.profile?.experience}
+            level={userState?.userInfo?.profile?.level}
 
-        
+          />
         </section>
-       
       </section>
     </>
   );

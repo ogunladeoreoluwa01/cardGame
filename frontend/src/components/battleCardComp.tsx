@@ -30,18 +30,31 @@ import {
   GiMineralHeart,
 } from "react-icons/gi";
 
+// interface Props {
+//   elements: string[];
+//   classy: string;
+//   illustration: string;
+//   description: string;
+//   name: string;
+//   level: number;
+//   health: number;
+//   attack: number;
+//   defence: number;
+//   mana: number;
+//   rarity: string;
+// }
 interface Props {
-  elements: string[];
-  classy: string;
-  illustration: string;
-  description: string;
-  name: string;
-  level: number;
-  health: number;
-  attack: number;
-  defence: number;
-  mana: number;
-  rarity: string;
+  elements: any;
+  classy: any;
+  illustration: any;
+  description: any;
+  name: any;
+  level: any;
+  health:any;
+  attack: any;
+  defence: any;
+  mana: any;
+  rarity: any;
 }
 
 const elementData: Record<
@@ -188,7 +201,7 @@ const BattleCardComp: React.FC<Props> = ({
 
   return (
     <Card
-      className={`card w-[170px] h-[270px] p-[0.20rem] relative overflow-hidden ${rarityStyle} font-mono `}
+      className={`card w-[170px] saturate-150 h-[270px] p-[0.20rem] relative overflow-hidden ${rarityStyle} font-mono `}
     >
       <div
         className={`w-[2.25rem] h-[1.45rem] flex p-[0.19rem]   justify-center items-center absolute top-0 right-0 z-30  ${rarityStyle} rounded-full`}
@@ -198,22 +211,20 @@ const BattleCardComp: React.FC<Props> = ({
         </h1>
       </div>
       <CardContent
-        className={`w-full h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
+        className={`w-full mx-auto h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
       >
-        <h1 className="absolute top-0 left-1/2 line-clamp-1 text-sm  -translate-x-1/2 text-white z-20  px-2 py-1 w-[90%] text-center h-8">
+        <h1 className="absolute top-4 left-1/2 line-clamp-1 text-sm  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
           {name}
         </h1>
         <div className="w-full h-[190px] bg-black rounded-t-[0.5rem] relative">
-          <div className="flex flex-col text-white absolute top-6 gap-1 left-1 z-20">
+          <div className="flex flex-col text-white absolute top-2 gap-1 left-1 z-20">
             <span className="flex items-center gap-1 text-[#B22222] w-fit backdrop-blur-sm">
-              <GiMineralHeart />{" "}
-              <p className="text-white text-xs">{health}</p>
+              <GiMineralHeart /> <p className="text-white text-xs">{health}</p>
             </span>
           </div>
           <div className="flex flex-col text-white absolute bottom-4 gap-1 left-1 z-20">
             <span className="flex items-center gap-1 text-[#FF4500] w-fit backdrop-blur-sm">
-              <GiBouncingSword />{" "}
-              <p className="text-white text-xs">{attack}</p>
+              <GiBouncingSword /> <p className="text-white text-xs">{attack}</p>
             </span>
             <span className="flex items-center gap-1 text-[#4682B4] w-fit backdrop-blur-sm">
               <GiVibratingShield />{" "}
@@ -226,14 +237,16 @@ const BattleCardComp: React.FC<Props> = ({
           <img
             src={illustration}
             alt={name}
-            fetchPriority="auto"
+            fetchpriority="auto"
             loading="lazy"
             className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
           />
         </div>
         <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-[3px] cardBg">
-          <div className="
-      -top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2">
+          <div
+            className="
+      -top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2"
+          >
             {elementStyles.map((el, index) => (
               <div
                 key={index}

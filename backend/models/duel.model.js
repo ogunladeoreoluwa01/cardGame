@@ -17,6 +17,7 @@ const petSchema = new Schema( {
       weaknesses: [{ type: String, enum: ["Light", "Shadow", "Fire", "Water", "Earth", "Metal", "Air","Lightning","Ice","Nature"] }, ],// List of weaknesses against other elements
       strengths: [{ type: String, enum: ["Light", "Shadow", "Fire", "Water", "Earth", "Metal", "Air","Lightning","Ice","Nature"]  }]// List of strengths against other elements },
     },
+    
     experience: { type: Number, default: 0 },
     xpNeededToNextLevel: { type: Number, default: 0 },
     rarity: { type: String,  }, // Assign a random rarity on creation
@@ -28,10 +29,31 @@ const petSchema = new Schema( {
   }, { _id: false }); 
 // Disable _id for embedded schema
 
+const StatusEffectSchema = new Schema({
+  type: {
+    type: String,
+    enum: ['dazzle', 'fear', 'burn', 'soak', 'petrify', 'corrode', 'disorient', 'shock', 'freeze', 'rooted'],
+    default: ""
+  },
+  duration: {
+    type: Number,
+    default: 0
+  },
+  value: {
+    type: Number,
+    default: 0
+  }
+});
 // Define the Duel schema with embedded Pet data
 const duelSchema = new Schema(
   {
-    arena: { type: Schema.Types.ObjectId, ref: "Arenas", required: true },
+    arena:{
+          arenaId: { type: Schema.Types.ObjectId, ref: "Arenas", required: true },
+          arenaName:{type:String },
+        arenaDescription:{type:String },
+    arenaImage:{type:String },
+    arenaElement:{type: [String], required: true, enum: ["Light", "Dark", "Fire", "Water", "Earth", "Metal", "Air","Lightning","Ice","Nature"]},
+    },
     players: {
       player1: {
         userId: { type: Schema.Types.ObjectId, ref: "User", required: true, },
@@ -45,11 +67,9 @@ const duelSchema = new Schema(
         rank: { type: String },
         activePet: petSchema, // Embed Pet schema for activePet
         statusEffects: {
-
-          type: { type: String, enum: ['dazzle', 'fear', 'burn', 'soak', 'petrify', 'corrode', 'disorient', 'shock', 'freeze', 'poison',""] },
-          duration: { type: Number }, // turns remaining
-          value: { type: Number } // effect value, e.g., damage per turn, defense reduction percentage
-        },
+    type: [StatusEffectSchema],
+    default: []
+  },
         isDefending: { type: Boolean, default: false}
       },
       player2: {
@@ -63,11 +83,10 @@ const duelSchema = new Schema(
         health: { type: Number, default: 30 },
         rank: { type: String },
         activePet: petSchema, // Embed Pet schema for activePet
-        statusEffects: {
-          type: { type: String, enum: ['dazzle', 'fear', 'burn', 'soak', 'petrify', 'corrode', 'disorient', 'shock', 'freeze', 'poison',""] },
-          duration: { type: Number }, // turns remaining
-          value: { type: Number } // effect value, e.g., damage per turn, defense reduction percentage
-        },
+       statusEffects: {
+    type: [StatusEffectSchema],
+    default: []
+  },
         isDefending: { type: Boolean, default: false}
       }
     },

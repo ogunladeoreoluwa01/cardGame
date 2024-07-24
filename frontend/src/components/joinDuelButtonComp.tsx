@@ -34,6 +34,7 @@ import logOut from "@/stores/actions/userAction";
 import { AppDispatch } from "@/stores";
 import { gameAction } from "@/stores/reducers/gameReducer";
 import { liveGameAction } from "@/stores/reducers/liveGameReducer";
+import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
 const FormSchema = z.object({
   pin: z
     .string()
@@ -69,7 +70,7 @@ export const JoinDuelWithKey: React.FC<JoinDuelWithKeyProps> = ({
   useEffect(() => {
     console.log(refreshTokenState.userRefreshToken);
     console.log(accessTokenState);
-    console.log()
+    console.log();
   }, [refreshTokenState, accessTokenState]);
 
   const refresh = async () => {
@@ -83,7 +84,7 @@ export const JoinDuelWithKey: React.FC<JoinDuelWithKeyProps> = ({
         refreshToken: refreshTokenState.userRefreshToken,
       });
       dispatch(accessTokenAction.setUserAccessToken(response.accessToken));
-      console.log(response);
+      
       return response.accessToken;
     } catch (err: any) {
       toast({
@@ -97,6 +98,12 @@ export const JoinDuelWithKey: React.FC<JoinDuelWithKeyProps> = ({
         dispatch(logOut());
         localStorage.removeItem("account");
         localStorage.removeItem("refreshToken");
+        dispatch(liveGameAction.resetLiveGameState());
+     localStorage.removeItem("game");
+     dispatch(gameAction.resetGameState());
+     localStorage.removeItem("liveGame");
+     dispatch(gameSessionAction.clearSessionId());
+     localStorage.removeItem("gameSession");
         toast({
           variant: "warning",
           description: "User logged out",
@@ -114,13 +121,6 @@ export const JoinDuelWithKey: React.FC<JoinDuelWithKeyProps> = ({
         description: "Duel joined successfully",
       });
       setGameState(data.duel);
-          dispatch(gameAction.setGameState(data.duel));
-          localStorage.setItem("game", JSON.stringify(data.duel));
-               dispatch(liveGameAction.setLiveGameState(data.duel));
-               localStorage.setItem("liveGame", JSON.stringify(data.duel));
-      navigate(
-        `/games-page/${data.duel?._id}/duelJoinKey/${data.duel?.duelJoinKey}`
-      );
     },
     onError: async (error: any) => {
       try {

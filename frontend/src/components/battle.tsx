@@ -1,80 +1,113 @@
-/* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "../styles/styles";
 import ActionButton from "./ActionButton";
 import PlayerInfo from "./PlayerInfo";
 import BattleCardComp from "./battleCardComp";
 import ActiveBattleCardComp from "./activeBattleCard";
 import EmoteBar from "@/components/battlePageEmote";
-import { emojiArray } from "@/assets";
-import {
-  attack,
-  attackSound,
-  defense,  defenseSound,
-
-} from "../assets";
+import StatusEffectComponent from "@/components/statusEffects";
+import { attack, attackSound, defense, defenseSound } from "../assets";
 import { playAudio } from "../utils/animations";
+import { Socket } from "socket.io-client";
 
-
-
-const initialCards = Array.from({ length: 10 }, (_, i) => i + 1); // Example array representing your cards
+const statusEffectsValid = ["burn", " freeze"];
 
 const getRotation = (index, total) => {
   const mid = (total - 1) / 2;
   return (index - mid) * 5; // Adjust the 5 for the desired rotation amount
 };
 
-const getLeftPosition = (index, total) => {
-  const mid = (total - 1) / 2;
-  return 50 + (index - mid) * 10; // Adjust the 20 for the desired spacing
-};
+interface BattleProps {
+  initialPlayers: any;
+  livePlayers: any;
+  arena: any;
+  userId: any;
+  sessionId: any;
+  currentDamage:any;
+  opponentDamage:any;
+  socket: Socket;
+}
 
-
-
-
-const Battle = () => {
-
-  const [player2, setPlayer2] = useState({});
-  const [player1, setPlayer1] = useState({});
-  const { battleName } = useParams();
-  const navigate = useNavigate();
-     const [selectedEmoji, setSelectedEmoji] = useState(null);
-     const [showEmoteBar, setShowEmoteBar] = useState(false);
-     const [showEmoji, setShowEmoji] = useState(false);
-  const [backgroundUrl, setBackgroundUrl] = useState(
-    "https://i.pinimg.com/originals/04/55/5f/04555f5b3e8b3d4f22c2e6bf249b58f8.jpg"
+const Battle: React.FC<BattleProps> = ({
+  initialPlayers,
+  livePlayers,
+  arena,
+  userId,
+  sessionId,
+  currentDamage,
+  opponentDamage,
+  socket,
+}) => {
+  const [currentInitialPlayer1, setCurrentInitialPlayer1] = useState<
+    any | null
+  >(null);
+  const [currentInitialPlayer2, setCurrentInitialPlayer2] = useState<
+    any | null
+  >(null);
+  const [currentLivePlayer1, setCurrentLivePlayer1] = useState<any | null>(
+    null
+  );
+  const [currentLivePlayer2, setCurrentLivePlayer2] = useState<any | null>(
+    null
+  );
+   const [player1Dmg, setPlayer1Dmg] = useState<any | null>(
+    null
   );
 
-    const handleEmojiClick = (emojiSrc) => {
-      setSelectedEmoji(emojiSrc);
-      setShowEmoji(true);
-      setShowEmoteBar(false);
+    const [player2Dmg, setPlayer2Dmg] = useState<any | null>(
+    null
+  );
+  
 
-      // Hide the emoji after 3 seconds
-      setTimeout(() => {
-        setShowEmoji(false);
-      }, 3000);
-    };
+  useEffect(() => {
+    const initialPlayer1 = initialPlayers.player1;
+    const initialPlayer2 = initialPlayers.player2;
+    const livePlayer1 = livePlayers.player1;
+    const livePlayer2 = livePlayers.player2;
+    
 
-     const toggleEmoteBar = (toggle) => {
+    if (userId === initialPlayer1.userId) {
+      setCurrentInitialPlayer1(initialPlayer1);
+      setCurrentLivePlayer1(livePlayer1);
+      setCurrentInitialPlayer2(initialPlayer2);
+      setCurrentLivePlayer2(livePlayer2);
+      setPlayer1Dmg(currentDamage)
+      setPlayer2Dmg(opponentDamage)
+
+    } else {
+      setCurrentInitialPlayer1(initialPlayer2);
+      setCurrentLivePlayer1(livePlayer2);
+      setCurrentInitialPlayer2(initialPlayer1);
+      setCurrentLivePlayer2(livePlayer1);
+      setPlayer2Dmg(currentDamage)
+      setPlayer1Dmg(opponentDamage)
+    }
+  }, [userId, initialPlayers, livePlayers]);
+
+  const navigate = useNavigate();
+  
+  const [showEmoteBar, setShowEmoteBar] = useState(false);
+
+  const [backgroundUrl, setBackgroundUrl] = useState(arena);
+
+  const handleEmojiClick = (emojiSrc: string) => {
+    socket.emit("emote", {emoji:emojiSrc, userId: userId, sessionID: sessionId});
+     setShowEmoteBar(false);
+  };
+
+  const toggleEmoteBar = (toggle: boolean) => {
     setShowEmoteBar(toggle);
   };
 
-  const changeBackground = (url) => {
-    setBackgroundUrl(url);
+  const attackAction = () => {
+    socket.emit("attackAction", { userId: userId, sessionID: sessionId });
+    playAudio(attackSound);
   };
-
-
- const [cards, setCards] = useState(initialCards);
-
-
-  const makeAMove = async (choice) => {
-    playAudio(choice === 1 ? attackSound : defenseSound);
-  };
-  const dummyPlayer = {
-    health: 100,
-    mana: 500,
+  
+  const defenceAction = () => {
+    socket.emit("defendAction", { userId: userId, sessionID: sessionId });
+    playAudio(defenseSound);
   };
 
   return (
@@ -89,45 +122,88 @@ const Battle = () => {
       }}
       className={`flex flex-col w-screen h-screen justify-center items-center overflow-hidden ${styles.glassEffect}`}
     >
-      {showEmoji && selectedEmoji && (
-        <div
-          className="absolute top-[20px] left-1/2 -translate-x-[70%]"
-        >
-          <img src={selectedEmoji} alt={selectedEmoji} />
-        </div>
-      )}
+     
 
-      <div className="flex gap-1 fixed top-[4.5rem] right-5">
+      <div className="flex gap-1 fixed top-[7rem] left-5 ">
+        {currentLivePlayer1?.statusEffects?.map((effect, index) => (
+          <div key={index}>
+            <StatusEffectComponent statusEffects={effect?.type} />
+          </div>
+        ))}
+      </div>
+
+      <div className="flex gap-1 fixed top-[4.5rem] right-10 ">
         <EmoteBar
           handleEmojiClick={handleEmojiClick}
           setShowEmoteBar={toggleEmoteBar}
           showEmoteBar={showEmoteBar}
         />
+
+        
       </div>
-      <PlayerInfo
-        player={dummyPlayer}
-        playerIcon="https://i.pinimg.com/originals/b4/9c/0d/b49c0d0cf01e2de348fb58d90079768e.png"
-        initialHealth={100}
-        liveHealth={40}
-        isPlayerOne={false}
-        isThePlayer={false}
-      />
-      <PlayerInfo
-        player={dummyPlayer}
-        playerIcon="https://i.pinimg.com/originals/b4/9c/0d/b49c0d0cf01e2de348fb58d90079768e.png"
-        initialHealth={100}
-        liveHealth={100}
-        isPlayerOne={true}
-        isThePlayer={true}
-      />
+      {currentLivePlayer1 &&
+        currentLivePlayer2 &&
+        currentInitialPlayer1 &&
+        currentInitialPlayer2 && (
+          <>
+            <PlayerInfo
+              playerIcon={currentLivePlayer1.ProfileIMG}
+              initialHealth={currentInitialPlayer1.health}
+              liveHealth={currentLivePlayer1.health}
+              mana={currentLivePlayer1.manaPool}
+              initialMana={currentInitialPlayer1.manaPool}
+              playerImage={currentLivePlayer1?.profileIMG}
+              playerName={currentLivePlayer1?.username}
+              isPlayerOne={true}
+              isThePlayer={true}
+            />
+            <PlayerInfo
+              playerIcon={currentLivePlayer2.ProfileIMG}
+              initialHealth={currentInitialPlayer2.health}
+              liveHealth={currentLivePlayer2.health}
+              mana={currentLivePlayer2.manaPool}
+              initialMana={currentInitialPlayer2.manaPool}
+              playerImage={currentLivePlayer2?.profileIMG}
+              playerName={currentLivePlayer2?.username}
+              isPlayerOne={false}
+              isThePlayer={false}
+            />
+          </>
+        )}
 
       {/* center of the gamescreen  */}
       <div className={`flex justify-center items-center gap-[7rem] `}>
-        <ActiveBattleCardComp />
-
+        {currentLivePlayer1?.activePet && (
+          <ActiveBattleCardComp
+            elements={currentLivePlayer1.activePet.petInfo.element}
+            classy={currentLivePlayer1.activePet.petInfo.class}
+            illustration={currentLivePlayer1.activePet.petInfo.illustration}
+            name={currentLivePlayer1.activePet.petInfo.name}
+            level={currentLivePlayer1.activePet.level}
+            health={currentLivePlayer1.activePet.currentHealth}
+            attack={currentLivePlayer1.activePet.currentAttack}
+            defence={currentLivePlayer1.activePet.currentDefense}
+            mana={currentLivePlayer1.activePet.currentManaCost}
+            rarity={currentLivePlayer1.activePet.rarity}
+            damageTaken={player1Dmg}
+          />
+        )}
         <span></span>
-
-        <ActiveBattleCardComp />
+        {currentLivePlayer2?.activePet && (
+          <ActiveBattleCardComp
+            elements={currentLivePlayer2.activePet.petInfo.element}
+            illustration={currentLivePlayer2.activePet.petInfo.illustration}
+            classy={currentLivePlayer2.activePet.petInfo.class}
+            name={currentLivePlayer2.activePet.petInfo.name}
+            level={currentLivePlayer2.activePet.level}
+            health={currentLivePlayer2.activePet.currentHealth}
+            attack={currentLivePlayer2.activePet.currentAttack}
+            defence={currentLivePlayer2.activePet.currentDefense}
+            mana={currentLivePlayer2.activePet.currentManaCost}
+            rarity={currentLivePlayer2.activePet.rarity}
+            damageTaken={player2Dmg}
+          />
+        )}
       </div>
 
       <div className="deck-container ">
@@ -136,28 +212,42 @@ const Battle = () => {
             <div className="flex items-center justify-center gap-4 flex-row">
               <ActionButton
                 imgUrl={attack}
-                handleClick={() => makeAMove(1)}
+                handleClick={() => attackAction()}
                 restStyles="hover:border-yellow-400 transition-all duration-300 ease-in-out"
               />
-              <p className="font-bold font-mono">Deck size: {cards.length}</p>
+              <p className="font-bold font-mono">
+                Deck size: {currentLivePlayer1?.currentDeck?.length}
+              </p>
 
               <ActionButton
                 imgUrl={defense}
-                handleClick={() => makeAMove(2)}
+                handleClick={() => defenceAction()}
                 restStyles="hover:border-red-600 transition-all duration-300 ease-in-out"
               />
             </div>
           </div>
           <section className="flex gap-1 justify-center items-center">
-            {cards.slice(0, 5).map((card, index) => (
+            {currentLivePlayer1?.currentDeck?.slice(0, 5).map((card, index) => (
               <div
-                key={card}
-                className="battleCard relative saturate-50 hover:saturate-100"
+                key={index}
+                className="battleCard relative  "
                 style={{
                   transform: `rotate(${getRotation(index, 5) / 4}deg)`,
                 }}
               >
-                <BattleCardComp />
+                <BattleCardComp
+                  elements={card.petInfo.element}
+                  classy={card.petInfo.class}
+                  name={card.petInfo.name}
+                  illustration={card.petInfo.illustration}
+                  level={card.level}
+                  health={card.currentHealth}
+                  attack={card.currentAttack}
+                  defence={card.currentDefense}
+                  mana={card.currentManaCost}
+                  rarity={card.rarity}
+                  description={card.petInfo.description}
+                />
               </div>
             ))}
           </section>
@@ -166,15 +256,29 @@ const Battle = () => {
 
       {/* discard pile */}
       <section className="flex gap-4 justify-center fixed scale-[0.85] grayscale  top-[40%] left-[6rem] ">
-        {cards.slice(0, 5).map((card, index) => (
+        {currentLivePlayer1?.discardPile.map((card, index) => (
           <div
-            key={card}
-            className="absolute  transform -translate-x-1/2"
+            key={index}
+            className="absolute transform -translate-x-1/2"
             style={{
-              transform: `rotate(${getRotation(index, 5) / 3}deg)`,
+              transform: `rotate(${getRotation(index, 5)}deg)`,
+              left: `${index * 20}px`,
+              zIndex: index,
             }}
           >
-            <BattleCardComp />
+            <BattleCardComp
+              elements={card.petInfo.element}
+              classy={card.petInfo.class}
+              name={card.petInfo.name}
+              illustration={card.petInfo.illustration}
+              level={card.level}
+              health={card.currentHealth}
+              attack={card.currentAttack}
+              defence={card.currentDefense}
+              mana={card.currentManaCost}
+              rarity={card.rarity}
+              description={card.petInfo.description}
+            />
           </div>
         ))}
       </section>

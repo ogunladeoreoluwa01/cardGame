@@ -8,7 +8,7 @@ import HeaderComp from "@/components/headerComponent";
 import NavBarComp from "@/components/navBarComponent";
 import CreateDuelButtons from "@/components/createDuelButtons";
 import { gameAction } from "@/stores/reducers/gameReducer";
-import {liveGameAction} from "@/stores/reducers/liveGameReducer"
+import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 import { AppDispatch } from "@/stores";
 import { JoinDuelWithKey } from "@/components/joinDuelButtonComp";
 
@@ -28,13 +28,14 @@ const DuelsPage: React.FC = () => {
   useEffect(() => {
     if (gameState) {
       dispatch(gameAction.setGameState(gameState));
-       localStorage.setItem("game", JSON.stringify(gameState));
-       dispatch(liveGameAction.setLiveGameState(gameState));
-       localStorage.setItem("liveGame", JSON.stringify(gameState));
+      localStorage.setItem("game", JSON.stringify(gameState));
+      dispatch(liveGameAction.setLiveGameState(gameState));
+      localStorage.setItem("liveGame", JSON.stringify(gameState));
       setTimeout(() => {
-        navigate(
-          `/games-page/${gameState._id}/duelJoinKey/${gameState.duelJoinKey}`
-        );
+        // navigate(
+        //   `/games-page/${gameState._id}/duelJoinKey/${gameState.duelJoinKey}`
+        // );
+        navigate(`/games-page`);
       }, 1000); // 1000 milliseconds = 3 seconds
     }
   }, [gameState, dispatch, navigate]);

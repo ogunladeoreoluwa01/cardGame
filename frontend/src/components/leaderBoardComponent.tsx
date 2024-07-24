@@ -47,6 +47,8 @@ function LeaderBoards() {
                   src="https://i.pinimg.com/originals/21/6b/f1/216bf168f17efdf1fea5e9cd99150b99.gif"
                   alt="User Avatar"
                   className="w-full h-full rounded-sm"
+                   fetchpriority="high"
+        loading="lazy"
                 />
               </Button>
               <div className="flex flex-col justify-center items-start">
