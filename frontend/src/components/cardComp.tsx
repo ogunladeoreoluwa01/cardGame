@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+
+import { useNavigate, Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -10,7 +12,7 @@ import {
 import {
   GiTurtleShell,
   GiTigerHead,
-  GiFox,
+  GiFairyWings,
   GiPorcupine,
   GiSmallFire,
   GiDrop,
@@ -18,8 +20,7 @@ import {
   GiTornado,
   GiLightningTrio,
   GiIceBolt,
-  GiStarCycle,
-  GiPoisonGas,
+  GiTwoCoins,
   GiSundial,
   GiMoon,
   GiVineLeaf,
@@ -29,6 +30,8 @@ import {
   GiMetalBar,
   GiMineralHeart,
 } from "react-icons/gi";
+
+import { FaComputer } from "react-icons/fa6";
 
 interface Props {
   elements: string[];
@@ -42,6 +45,9 @@ interface Props {
   defence: number;
   mana: number;
   rarity: string;
+  id: string;
+  isListed: boolean;
+  isSystem: boolean;
 }
 
 const elementData: Record<
@@ -68,7 +74,7 @@ const elementData: Record<
     icon: <GiTornado />,
     effect: "Brings swift and evasive maneuvers, enhancing agility.",
   },
-  Electric: {
+  Lightning: {
     color: "#DAA520",
     icon: <GiLightningTrio />,
     effect: "Electrifies attacks with shocking damage and stunning effects.",
@@ -83,7 +89,7 @@ const elementData: Record<
     icon: <GiIceBolt />,
     effect: "Freezes enemies and slows their actions.",
   },
-  Dark: {
+  Shadow: {
     color: "#4B0082",
     icon: <GiMoon />,
     effect: "Obscures vision and deals shadowy damage.",
@@ -121,15 +127,13 @@ const classData: Record<
   },
   Nimble: {
     color: "#AD1457",
-    icon: <GiFox />,
+    icon: <GiFairyWings />,
     effect: "Dodges attacks and strikes with precision and agility.",
   },
 };
 
-
-
 const CardComp: React.FC<Props> = ({
-  elements = ["Dark", "Light"],
+  elements = ["Shadow", "Light"],
   classy = "Breaker",
   illustration = "https://i.pinimg.com/originals/92/b8/41/92b841ca44cc515099196aceae3479f9.jpg",
   description = "A majestic and fearsome creature of the night, shrouded in darkness and possessing an aura of mystery and power. It harnesses the elements of darkness and light to strike fear and confusion into its enemies.",
@@ -140,7 +144,11 @@ const CardComp: React.FC<Props> = ({
   defence = 100,
   mana = 100,
   rarity = "Ethereal",
+  id,
+  isListed = true,
+  isSystem = true,
 }) => {
+  const navigate = useNavigate();
   const [rarityStyle, setRarityStyle] = useState("bg-primary");
   const [classStyle, setClassStyle] = useState<{
     color: string;
@@ -178,7 +186,6 @@ const CardComp: React.FC<Props> = ({
     }
   }, [rarity]);
 
-  
   useEffect(() => {
     setElementStyles(elements.map((el) => elementData[el]));
   }, []);
@@ -191,39 +198,55 @@ const CardComp: React.FC<Props> = ({
 
   return (
     <Card
-      className={`card saturate-150 w-[300px] h-[400px] md:w-[200px] md:h-[300px] p-1  md:p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
+      onClick={() => {
+        navigate(`/user-pet-view/${id}`);
+      }}
+      className={`card saturate-150 rounded-sm w-[170px] h-[275px]  cursor-pointer  md:w-[200px]  md:h-[300px]     p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
     >
       <div
-        className={`w-[3rem] h-[2rem] md:w-[2.25rem] md:h-[1.45rem] flex p-1 md:p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px] md:right-0 z-30  ${rarityStyle} rounded-full`}
+        className={`w-[2.15rem]  h-[1.35rem] flex   p-[0.21rem]   justify-center items-center absolute top-0 -right-[2px]   z-30  ${rarityStyle} rounded-full`}
       >
-        <h1 className="w-full h-full cardBg rounded-full md:text-sm  flex text-white   justify-center items-center ">
+        <h1 className="w-full h-full cardBg rounded-full text-sm  flex text-white   justify-center items-center ">
           {level}
         </h1>
       </div>
       <CardContent
         className={`w-full mx-auto h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[1.5rem] flex flex-col items-center`}
       >
-        <h1 className="absolute top-4 left-1/2 line-clamp-1 md:text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
+        <h1 className="absolute top-5 md:top-4 left-1/2 line-clamp-1 text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
           {name}
         </h1>
-        <div className="w-full h-[270px] md:h-[210px] bg-black rounded-t-[0.5rem] relative">
+        <Link
+          to={`/user-pet-view/${id}`}
+          className="w-full h-[185px]  md:h-[210px] bg-black rounded-t-[0.5rem] relative"
+        >
+          {isListed && (
+            <span className="flex items-center gap-1 absolute bottom-2 p-1 bg-black backdrop-filter backdrop-blur-lg bg-opacity-10 right-1 z-20 text-[#FFC300] text-lg  w-fit rounded-md">
+              <GiTwoCoins />
+            </span>
+          )}
+
           <div className="flex flex-col text-white absolute top-2 gap-1 left-1 z-20">
             <span className="flex items-center gap-1 text-[#B22222] w-fit backdrop-blur-sm">
-              <GiMineralHeart />{" "}
-              <p className="text-white md:text-xs">{health}</p>
+              <GiMineralHeart /> <p className="text-white  text-xs">{health}</p>
             </span>
+            {isSystem && (
+              <span className="flex items-center gap-1 p-1  text-[#C0C0C0]  w-fit rounded-md">
+                <FaComputer />
+              </span>
+            )}
           </div>
           <div className="flex flex-col text-white absolute bottom-2 gap-1 left-1 z-20">
             <span className="flex items-center gap-1 text-[#FF4500] w-fit backdrop-blur-sm">
               <GiBouncingSword />{" "}
-              <p className="text-white md:text-xs">{attack}</p>
+              <p className="text-white  text-xs">{attack}</p>
             </span>
             <span className="flex items-center gap-1 text-[#4682B4] w-fit backdrop-blur-sm">
               <GiVibratingShield />{" "}
-              <p className="text-white md:text-xs">{defence}</p>
+              <p className="text-white  text-xs">{defence}</p>
             </span>
             <span className="flex items-center gap-1 text-[#6A5ACD] w-fit backdrop-blur-sm">
-              <GiMagicSwirl /> <p className="text-white md:text-xs">{mana}</p>
+              <GiMagicSwirl /> <p className="text-white  text-xs">{mana}</p>
             </span>
           </div>
           <img
@@ -233,26 +256,28 @@ const CardComp: React.FC<Props> = ({
             loading="lazy"
             className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
           />
-        </div>
-        <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-[3px] cardBg">
-          <div className="-top-5 md:-top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2">
+        </Link>
+        <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-2 cardBg">
+          <div className="  -top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2">
             {elementStyles.map((el, index) => (
               <div
                 key={index}
                 style={{ backgroundColor: el.color }}
-                className="md:w-7 md:h-7 w-10 h-10 p-1 flex items-center justify-center rounded-full text-xl border-white border-2"
+                className=" w-7  h-7 p-1 flex items-center justify-center rounded-sm rotate-[45deg] text-xl border-white border-[1px]"
               >
-                {el.icon}
+                <span className="-rotate-[45deg] text-[0.9rem]">{el.icon}</span>
               </div>
             ))}
             <div
               style={{ backgroundColor: classStyle.color }}
-              className="md:w-7 md:h-7 w-10 h-10 p-1 flex items-center  text-white justify-center rounded-full text-xl border-white border-2"
+              className=" w-7  h-7  p-1 rotate-[45deg] flex items-center  text-white justify-center rounded-sm text-xl border-white border-[1px]"
             >
-              {classStyle.icon}
+              <span className="-rotate-[45deg] text-[0.9rem]">
+                {classStyle.icon}
+              </span>
             </div>
           </div>
-          <p className="mt-5 md:mt-2 text-[0.8rem] md:text-[0.7rem] text-white tracking-tighter leading-3 md:line-clamp-4">
+          <p className="  mt-2   text-[0.7rem] text-white tracking-tighter leading-3  line-clamp-4">
             {description}
           </p>
         </div>

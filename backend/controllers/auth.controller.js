@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const OTP =require("../models/otp.model")
 const crypto =require("crypto")
 const mailer = require("../utils/sendMailConfig");
+const PetLibrary = require("../models/petLibary.model.js")
 
 
 const generateRandomCode = () => {
@@ -33,77 +34,26 @@ const shuffleArray = (array) => {
   return array;
 };
 
-const getPetsId = (pets) => {
-  // Extract IDs from the pets array
-  const ids = pets.map(pet => pet.id);
-
-  // Shuffle the IDs
-  const shuffledIds = shuffleArray(ids);
-
-  // Select the first 10 unique IDs
-  const petsId = shuffledIds.slice(0, 10);
-
-  return petsId;
+const getPetsId = async () => {
+  try {
+    // Fetch all pets from the library
+    const pets = await PetLibrary.find();
+    
+    // Extract IDs from the pets array
+    const ids = pets.map(pet => pet._id);
+    
+    // Shuffle the IDs
+    const shuffledIds = shuffleArray(ids);
+    
+    // Select the first 10 unique IDs
+    const petsId = shuffledIds.slice(0, 20);
+    
+    return petsId;
+  } catch (error) {
+    console.error("Error fetching pet IDs:", error.message);
+    throw error; // Optionally re-throw the error to handle it elsewhere
+  }
 };
-
-const pets = [
- {
-      "name": "Emberclaw",
-      "id": "669a9128a063f66e717131a4"
-    },
-    {
-      "name": "Flame Serpent",
-      "id": "669a9128a063f66e717131a7"
-    },
-    {
-      "name": "Inferno Guardian",
-      "id": "669a9128a063f66e717131aa"
-    },
-    {
-      "name": "Blaze Phoenix",
-      "id": "669a9128a063f66e717131ad"
-    },
-    {
-      "name": "Magma Titan",
-      "id": "669a9128a063f66e717131b0"
-    },
-    {
-      "name": "Fire Drake",
-      "id": "669a9128a063f66e717131b3"
-    },
-    {
-      "name": "Volcanic Behemoth",
-      "id": "669a9128a063f66e717131b6"
-    },
-    {
-      "name": "Lava Golem",
-      "id": "669a9128a063f66e717131b9"
-    },
-    {
-      "name": "Tide Guardian",
-      "id": "669a9128a063f66e717131bc"
-    },
-    {
-      "name": "Aqua Serpent",
-      "id": "669a9128a063f66e717131bf"
-    },
-    {
-      "name": "Coral Siren",
-      "id": "669a9128a063f66e717131c2"
-    },
-    {
-      "name": "Kraken",
-      "id": "669a9128a063f66e717131c5"
-    },
-    {
-      "name": "Leviathan",
-      "id": "669a9128a063f66e717131c8"
-    },
-    {
-      "name": "Tsunami Dragon",
-      "id": "669a9129a063f66e717131cb"
-    }
-];
 
 const generateJwt = (userId,expiresTime) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -177,33 +127,58 @@ const registerUser = async (req, res) => {
 
     const user = await newUser.save();
 
-    const createPetsForUser = async (userId,userName) => {
-      const randomPets = getPetsId(pets);
-      const petsData = [];
-      for (const petId of randomPets) {
-        const petData = new Pet({
-          petInfo: petId,
-          userProfile: {
-            userId: userId,
-            username:userName
-          }
-        });
-        const userPet = await petData.save();
-        petsData.push(userPet._id);
-      }
-      return petsData;
-    };
+   const createPetsForUser = async (userId, userName, coverImage) => {
+  try {
+    // Await the resolution of getPetsId
+    const randomPets = await getPetsId();
+    const petsData = [];
 
-    const userPets = await createPetsForUser(user._id,user.username);
-    user.pets.allPets = userPets;
-    user.pets.currentDeck = userPets;
+    for (const petId of randomPets) {
+      const petData = new Pet({
+        petInfo: petId,
+        userProfile: {
+          userId: userId,
+          username: userName,
+          coverImage: coverImage
+        }
+      });
+      const userPet = await petData.save();
+      petsData.push(userPet._id);
+    }
+
+    return petsData;
+  } catch (error) {
+    console.error("Error creating pets for user:", error.message);
+    throw error; // Optionally re-throw the error to handle it elsewhere
+  }
+};
+
+
+  const userPets = await createPetsForUser(user._id,user.username,user.profile.avatar);
+  user.pets.allPets = userPets;
+user.pets.availablePets = userPets.slice(10);
+user.pets.currentDeck = userPets.slice(0, 10);
     await user.save();
 
-    const userResponse = newUser.toObject();
+   const userResponse = await User.findById(user._id).populate({
+      path: 'pets.currentDeck',
+      populate: {
+        path: 'petInfo',
+        select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+      }
+    }).populate({
+      path: 'pets.favPet',
+      populate: {
+        path: 'petInfo',
+        select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+      }
+    });
+
     delete userResponse.password;
     delete userResponse.oldPassword;
     delete userResponse.notifications;
     delete userResponse.__v;
+
 
     const accessToken = generateJwt(newUser._id, "15m");
     const refreshToken = generateJwt(newUser._id, "14d");
@@ -247,9 +222,23 @@ const loginUser = async (req, res) => {
     const accessToken = generateJwt(user._id, "14d");
     const refreshToken = generateJwt(user._id, "14d");
 
-    const userResponse = user.toObject();
+     const userResponse = await User.findById(user._id).populate({
+      path: 'pets.currentDeck',
+      populate: {
+        path: 'petInfo',
+        select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+      }
+    }).populate({
+      path: 'pets.favPet',
+      populate: {
+        path: 'petInfo',
+        select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+      }
+    });
+
     delete userResponse.password;
     delete userResponse.oldPassword;
+    delete userResponse.notifications;
     delete userResponse.__v;
  
 

@@ -12,22 +12,23 @@ const { getSocketInstance } = require('../utils/socketio');
 const logger = require('../logger');
 
 
-const generateRandomCode = () => {
+const generateUniqueCode = (userId) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const codeLength = 6;
   let code = '';
 
-  // Generate random bytes (secure random number) and map them to characters
+  // Generate random bytes and map them to characters
   for (let i = 0; i < codeLength; i++) {
-    // Generate random byte (0 to 255)
     const randomByte = crypto.randomBytes(1)[0];
-    
-    // Map the random byte to a character from the defined set
     const characterIndex = randomByte % characters.length;
     code += characters.charAt(characterIndex);
   }
 
-  return code;
+  // Create a hash of the userId and random code
+  const hash = crypto.createHash('sha256').update(userId + code).digest('hex');
+  const uniquePart = hash.slice(0, 3).toUpperCase(); // Take the first 6 characters for uniqueness
+
+  return `${code.slice(0, 3)}${uniquePart}`;
 };
 
 
@@ -37,7 +38,17 @@ const createDuel = async (req, res, next) => {
     const { isPrivate } = req.body;
     const io = getSocketInstance()
 
-    const Arenas = ["669a9129a063f66e717131cd", "669a9129a063f66e717131d3", "669a9129a063f66e717131d6"];
+    const Arenas = [    "66b7ee874c4e461e9a83a728",
+    "66b7ee884c4e461e9a83a72b",
+    "66b7ee884c4e461e9a83a72e",
+    "66b7ee884c4e461e9a83a731",
+    "66b7ee884c4e461e9a83a734",
+    "66b7ee884c4e461e9a83a737",
+    "66b7ee884c4e461e9a83a73a",
+    "66b7ee884c4e461e9a83a73d",
+    "66b7ee884c4e461e9a83a740",
+    "66b7ee884c4e461e9a83a743",
+    "66b7ee884c4e461e9a83a746"];
 
     // Check for active duels
     const inActiveDuelCheck = await Duel.find({
@@ -64,7 +75,7 @@ const createDuel = async (req, res, next) => {
 
     const randomArenasIndex = Math.floor(Math.random() * Arenas.length);
     const randomArena = Arenas[randomArenasIndex];
-    const duelJoinKey = generateRandomCode();
+    const duelJoinKey = generateUniqueCode(playerOneId);
 
 
       const arena = await Arena.findById( randomArena);
@@ -86,12 +97,14 @@ const createDuel = async (req, res, next) => {
 
     // Deck size by rank
     const deckSizeByRank = {
-      "Unranked": 10,
-      "Rustic": 10,
-      "Arcane": 15,
-      "Mythic": 20,
-      "Exalted": 25,
-      "Ethereal": 30
+      "Wood": 10,
+      "Onyx": 10,
+      "Bronze": 15,
+      "Silver": 20,
+      "Gold":20 ,
+      "Ruby": 25,
+      "Master":30,
+      "Ametyst":30,
     };
 
     const requiredDeckSize = deckSizeByRank[user.playerRank];
@@ -116,6 +129,20 @@ const createDuel = async (req, res, next) => {
     // Check if user has specific elements
     const hasElement = (element) => user.pets.currentDeck.some(pet => pet.petInfo.element.includes(element));
 
+    // check if user pet is listed in the shop 
+
+
+    const isListed = user.pets.currentDeck.some(pet => pet.isListed);
+
+if (isListed) {
+  return res.status(400).json({ message: `Can't join a duel with a listed pet.` });
+}
+
+
+
+
+
+
     // Apply buffs
     let lightBuff = 1;
     let darkBuff = 1;
@@ -137,18 +164,20 @@ const createDuel = async (req, res, next) => {
     // Rank multiplier
     const getRankMultiplier = (rank) => {
       switch (rank) {
-        case "Rustic": return 1;
-        case "Arcane": return 1.2;
-        case "Mythic": return 1.4;
-        case "Exalted": return 1.6;
-        case "Ethereal": return 1.8;
-        case "Unranked": return 0.8;
+         case "Wood": return 1;
+        case "Onyx": return 1.2;
+        case "Bronze": return 1.4;
+        case "Silver": return 1.6;
+        case "Gold": return 1.8;
+        case "Ruby": return 1.9;
+        case "Master": return 2.0;
+        case "Amethyst": return 2.1;
         default: return 1;
       }
     };
 
     const userHealth = Math.round(Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500));
-    const userManaPool = Math.round(Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500));
+    const userManaPool = Math.round(Math.min(200 * getRankMultiplier(user.playerRank) * darkBuff, 500));
 
     // Set the active card and adjust the current deck
     const activeCard = user.pets.currentDeck[0];
@@ -159,26 +188,30 @@ const createDuel = async (req, res, next) => {
     // Determine rank range for matchmaking
     let rankRange = [];
     switch (user.playerRank) {
-      case "Unranked":
-        rankRange = ["Unranked", "Rustic"];
+      case "Wood":
+        rankRange = ["Wood", "Onyx"];
         break;
-      case "Rustic":
-        rankRange = ["Rustic", "Arcane"];
+      case "Onyx":
+        rankRange = ["Onyx", "Bronze"];
         break;
-      case "Arcane":
-        rankRange = ["Rustic", "Arcane", "Mythic"];
+      case "Bronze":
+        rankRange = ["Bronze", "Silver", "Gold"];
         break;
-      case "Mythic":
-        rankRange = ["Arcane", "Mythic", "Exalted"];
+      case "Silver":
+        rankRange = ["Silver", "Gold", "Ruby"];
         break;
-      case "Exalted":
-        rankRange = ["Mythic", "Exalted", "Ethereal"];
+      case "Gold":
+        rankRange = ["Gold", "Ruby", "Master"];
         break;
-      case "Ethereal":
-        rankRange = ["Exalted", "Ethereal"];
+      case "Ruby":
+        rankRange = ["Ruby", "Master"];
+      case "Master":
+        rankRange = ["Amethyst", "Master"];
+      case "Amethyst":
+        rankRange = ["Amethyst", "Master"];
         break;
       default:
-        rankRange = ["Rustic"];
+        rankRange = ["Wood"];
     }
 
     // Prepare player data
@@ -251,22 +284,28 @@ const joinDuel = async (req, res, next) => {
     const { duelJoinKey } = req.body;
 const io = getSocketInstance()
     const rankRanges = {
-      "Unranked": ["Unranked", "Rustic"],
-      "Rustic": ["Rustic", "Arcane"],
-      "Arcane": ["Rustic", "Arcane", "Mythic"],
-      "Mythic": ["Arcane", "Mythic", "Exalted"],
-      "Exalted": ["Mythic", "Exalted", "Ethereal"],
-      "Ethereal": ["Exalted", "Ethereal"]
+      "Wood": ["Wood", "Onyx"],
+      "Onyx": ["Onyx", "Bronze"],
+      "Bronze": ["Bronze", "Silver", "Gold"],
+      "Silver": ["Silver", "Gold", "Ruby"],
+      "Gold": ["Gold", "Ruby", "Master"],
+      "Ruby": ["Ruby", "Master"],
+      "Master": ["Amethyst", "Master"],
+      "Amethyst": ["Amethyst", "Master"],
     };
 
     const rewardMultipliers = {
-      "Unranked": { currency: 0.5, xp: 0.5 },
-      "Rustic": { currency: 1, xp: 1 },
-      "Arcane": { currency: 1.2, xp: 1.2 },
-      "Mythic": { currency: 1.4, xp: 1.4 },
-      "Exalted": { currency: 1.6, xp: 1.6 },
-      "Ethereal": { currency: 1.8, xp: 1.8 }
+      "Wood": { currency: 1, xp: 1 },
+      "Onyx": { currency: 1.25, xp: 1.25 },
+      "Bronze": { currency: 1.45, xp: 1.45 },
+      "Silver": { currency: 1.65, xp: 1.6 },
+      "Gold": { currency: 1.7, xp: 1.7 },
+      "Ruby": { currency: 1.8, xp: 1.8 },
+      "Master": { currency: 1.9, xp: 1.9 },
+      "Amethyst": { currency: 2, xp: 2 }
     };
+
+    
 
     // Find the user and populate their current deck with selected fields from petInfo
     const user = await User.findById(playerTwoId).populate({
@@ -290,7 +329,7 @@ const io = getSocketInstance()
       }
 
     } else {
-      const rankRange = rankRanges[user.playerRank] || ["Rustic"];
+      const rankRange = rankRanges[user.playerRank] || ["Wood"];
       const duels = await Duel.find({
         isOpen: true,
         isPrivate: false,
@@ -325,13 +364,16 @@ const io = getSocketInstance()
       return res.status(403).json({  message: 'Cannot join duel. The duel has started.' });
     }
 
-    const deckSizeByRank = {
-      "Unranked": 10,
-      "Rustic": 10,
-      "Arcane": 15,
-      "Mythic": 20,
-      "Exalted": 25,
-      "Ethereal": 30
+   const deckSizeByRank = {
+      "Wood": 10,
+      "Onyx": 10,
+      "Bronze": 15,
+      "Silver": 20,
+      "Gold":20 ,
+      "Ruby": 25,
+      "Master":30,
+      "Ametyst":30,
+     
     };
 
     const requiredDeckSize = deckSizeByRank[user.playerRank];
@@ -357,6 +399,13 @@ const io = getSocketInstance()
 
     const hasElement = (element) => user.pets.currentDeck.some(pet => pet.petInfo.element.includes(element));
 
+
+    const isListed = user.pets.currentDeck.some(pet => pet.isListed);
+
+    if (isListed) {
+    return res.status(400).json({ message: `Can't join a duel with a listed pet.` });
+    }
+
     if (hasElement('Light')) {
       user.pets.currentDeck.forEach(pet => elementBuffs.Light(pet));
       lightBuff = 1.1;
@@ -371,27 +420,22 @@ const io = getSocketInstance()
       user.pets.currentDeck.forEach(pet => elementBuffs.Nature(pet));
     }
 
-    const getRankMultiplier = (rank) => {
+      const getRankMultiplier = (rank) => {
       switch (rank) {
-        case "Ethereal":
-          return 1.8;
-        case "Exalted":
-          return 1.6;
-        case "Mythic":
-          return 1.4;
-        case "Arcane":
-          return 1.2;
-        case "Rustic":
-          return 1;
-        case "Unranked":
-          return 0.8;
-        default:
-          return 1;
+         case "Wood": return 1;
+        case "Onyx": return 1.2;
+        case "Bronze": return 1.4;
+        case "Silver": return 1.6;
+        case "Gold": return 1.8;
+        case "Ruby": return 1.9;
+        case "Master": return 2.0;
+        case "Amethyst": return 2.1;
+        default: return 1;
       }
     };
 
    const userHealth = Math.round(Math.min(500 * getRankMultiplier(user.playerRank) * lightBuff, 2500));
-    const userManaPool = Math.round(Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 1500));
+    const userManaPool = Math.round(Math.min(100 * getRankMultiplier(user.playerRank) * darkBuff, 500));
 
     const activeCard = user.pets.currentDeck[0];
     const currentDeck = user.pets.currentDeck.slice(1);

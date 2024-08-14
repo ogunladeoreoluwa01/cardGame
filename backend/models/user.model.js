@@ -8,7 +8,7 @@ const userSchema = new Schema(
   {
     phoneNumber: { type: Number },
     username: { type: String, required: true, unique: true, index: true },
-    playerRank: { type: String, enum: ["Unranked", "Rustic", "Exalted", "Mythic", "Ethereal", "Arcane", "Champion", "Legend"], default: "Unranked" },
+    playerRank: { type: String, enum: ["Wood", "Onyx", "Bronze", "Silver", "Gold", "Ruby", "Master", "Amethyst"], default: "Wood" },
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     password: { type: String, required: true },
     isVerified: { type: Boolean, required: true, default: false },
@@ -24,17 +24,14 @@ const userSchema = new Schema(
       level: { type: Number, default: 1 },
       experience: { type: Number, default: 0 },
       xpNeededToNextLevel: { type: Number, default: 100 },
-      Aureus: { type: Number, default: 2 },
-      Argentum: { type: Number, default: 30 }
+      Aureus: { type: Number, default: 10 },
+      followers:[{ type: Schema.Types.ObjectId, ref: "User", default: "" }],
+      Argentum: { type: Number, default: 500 }
     },
     userStats: {
       achievements: [{ type: Schema.Types.ObjectId, ref: "Achievements", default: [] }],
-      seasonsPlayed: { type: [String], default: [] },
-      currentSeason: { type: Object, default: {} },
       Duelpoints: { type: Number, default: 0 },
-      DuelPointsToNextLevel: { type: Number, default: 0 },
-      duelsWoninCurrentSeason: { type: Number, default: 0 },
-      duelsLostinCurrentSeason: { type: Number, default: 0 },
+      DuelPointsToNextLevel: { type: Number, default: 1000 },
       duelsWon: { type: Number, default: 0 },
       duelsLost: { type: Number, default: 0 },
     },
@@ -54,9 +51,9 @@ const userSchema = new Schema(
     pets: {
       favPet: { type: Schema.Types.ObjectId, ref: "Pet", index: true },
       allPets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
-      availablePets:[{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
+      availablePets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
       currentDeck: [{ type: Schema.Types.ObjectId, ref: "Pet", default: [], index: true }],
-    },
+    },   
     notifications: [{ type: Schema.Types.ObjectId, ref: "Notifications", default: [], index: true }],
     banned: { type: Boolean, default: false },
     banReason: { type: String, default: "" },
@@ -130,104 +127,97 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("userStats.Duelpoints")) {
     let pointsNeeded;
     switch (this.playerRank) {
-      case "unranked":
+      case "Wood":
         pointsNeeded = 0;
         break;
-      case "Rustic":
+      case "Onyx":
         pointsNeeded = 1000;
         break;
-      case "Exalted":
+      case "Bronze":
         pointsNeeded = 2000;
         break;
-      case "Mythic":
+      case "Silver":
         pointsNeeded = 3000;
         break;
-      case "Ethereal":
+      case "Gold":
         pointsNeeded = 4000;
         break;
-      case "Arcane":
+      case "Ruby":
         pointsNeeded = 5000;
         break;
-      case "Champion":
+      case "Master":
         pointsNeeded = 10000;
         break;
-      case "Legend":
+      case "Amethyst":
         pointsNeeded = 20000;
         break;
       default:
         pointsNeeded = 0;
     }
 
-    this.userStats.DuelPointsToNextLevel = pointsNeeded;
+    let accumulatedPoints = this.userStats.Duelpoints;
+    let newRank = this.playerRank;
+    let rankChanged = false;
 
-    while (this.userStats.Duelpoints >= pointsNeeded) {
-      this.userStats.Duelpoints -= pointsNeeded;
-      switch (this.playerRank) {
-        case "unranked":
-          this.playerRank = "Rustic";
-          break;
-        case "Rustic":
-          this.playerRank = "Exalted";
-          break;
-        case "Exalted":
-          this.playerRank = "Mythic";
-          break;
-        case "Mythic":
-          this.playerRank = "Ethereal";
-          break;
-        case "Ethereal":
-          this.playerRank = "Arcane";
-          break;
-        case "Arcane":
-          this.playerRank = "Champion";
-          break;
-        case "Champion":
-          this.playerRank = "Legend";
-          break;
-        case "Legend":
-          break;
-      }
-      switch (this.playerRank) {
-        case "unranked":
-          pointsNeeded = 0;
-          break;
-        case "Rustic":
+    // Determine the new rank based on accumulated points
+    while (accumulatedPoints >= pointsNeeded) {
+      rankChanged = true;
+      switch (newRank) {
+        case "Wood":
+          newRank = "Onyx";
           pointsNeeded = 1000;
           break;
-        case "Exalted":
+        case "Onyx":
+          newRank = "Bronze";
           pointsNeeded = 2000;
           break;
-        case "Mythic":
+        case "Bronze":
+          newRank = "Silver";
           pointsNeeded = 3000;
           break;
-        case "Ethereal":
+        case "Silver":
+          newRank = "Gold";
           pointsNeeded = 4000;
           break;
-        case "Arcane":
+        case "Gold":
+          newRank = "Ruby";
           pointsNeeded = 5000;
           break;
-        case "Champion":
+        case "Ruby":
+          newRank = "Master";
           pointsNeeded = 10000;
           break;
-        case "Legend":
+        case "Master":
+          newRank = "Amethyst";
           pointsNeeded = 20000;
+          break;
+        case "Amethyst":
+          // If already at the highest rank, exit the loop
+          pointsNeeded = Infinity;
           break;
         default:
           pointsNeeded = 0;
+          break;
       }
+    }
+
+    // Update player rank and points to next level only if the rank has changed
+    if (rankChanged) {
+      this.playerRank = newRank;
       this.userStats.DuelPointsToNextLevel = pointsNeeded;
     }
   }
   next();
 });
 
+
 // Pre-save middleware to handle currency conversion
 userSchema.pre("save", async function (next) {
   if (this.isModified("profile.Argentum")) {
-    if (this.profile.Argentum >= 100) {
-      const aureusToAdd = Math.floor(this.profile.Argentum / 100);
+    if (this.profile.Argentum >= 1000) {
+      const aureusToAdd = Math.round(Math.floor(this.profile.Argentum / 1000));
       this.profile.Aureus += aureusToAdd;
-      this.profile.Argentum = this.profile.Argentum % 100;
+      this.profile.Argentum = this.profile.Argentum % 1000;
     }
   }
   next();

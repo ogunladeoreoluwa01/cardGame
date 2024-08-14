@@ -12,6 +12,7 @@ const { initializeSocket, getSocketInstance } = require('./utils/socketio');
 // route imports
 const authRoute = require('./routes/auth.routes');
 const demoRoute = require('./routes/demo.routes');
+const userRoute = require('./routes/user.routes')
 
 const app = express();
 const Port = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/api/auth', authRoute);
+app.use('/api/user',userRoute)
 app.use('/api/demo', demoRoute);
 
 // Error handling middleware

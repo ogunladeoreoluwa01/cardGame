@@ -1,75 +1,61 @@
 {
-  "pets": [
-    {
-      "name": "Emberclaw",
-      "id": "669a9128a063f66e717131a4"
-    },
-    {
-      "name": "Flame Serpent",
-      "id": "669a9128a063f66e717131a7"
-    },
-    {
-      "name": "Inferno Guardian",
-      "id": "669a9128a063f66e717131aa"
-    },
-    {
-      "name": "Blaze Phoenix",
-      "id": "669a9128a063f66e717131ad"
-    },
-    {
-      "name": "Magma Titan",
-      "id": "669a9128a063f66e717131b0"
-    },
-    {
-      "name": "Fire Drake",
-      "id": "669a9128a063f66e717131b3"
-    },
-    {
-      "name": "Volcanic Behemoth",
-      "id": "669a9128a063f66e717131b6"
-    },
-    {
-      "name": "Lava Golem",
-      "id": "669a9128a063f66e717131b9"
-    },
-    {
-      "name": "Tide Guardian",
-      "id": "669a9128a063f66e717131bc"
-    },
-    {
-      "name": "Aqua Serpent",
-      "id": "669a9128a063f66e717131bf"
-    },
-    {
-      "name": "Coral Siren",
-      "id": "669a9128a063f66e717131c2"
-    },
-    {
-      "name": "Kraken",
-      "id": "669a9128a063f66e717131c5"
-    },
-    {
-      "name": "Leviathan",
-      "id": "669a9128a063f66e717131c8"
-    },
-    {
-      "name": "Tsunami Dragon",
-      "id": "669a9129a063f66e717131cb"
-    }
-  ],
   "arenas": [
     {
       "name": "Volcano Crater",
-      "id": "669a9129a063f66e717131cd"
+      "id": "66b7ee874c4e461e9a83a728"
     },
     {
       "name": "Ocean Abyss",
-      "id": "669a9129a063f66e717131d3"
+      "id": "66b7ee884c4e461e9a83a72b"
     },
     {
-      "name": "ice tribes ritual grounds",
-      "id": "669a9129a063f66e717131d6"
+      "name": "Ice Tribes Ritual Grounds",
+      "id": "66b7ee884c4e461e9a83a72e"
+    },
+    {
+      "name": "Sunlit Glade",
+      "id": "66b7ee884c4e461e9a83a731"
+    },
+    {
+      "name": "Shadowed Crypt",
+      "id": "66b7ee884c4e461e9a83a734"
+    },
+    {
+      "name": "Glistening Cavern",
+      "id": "66b7ee884c4e461e9a83a737"
+    },
+    {
+      "name": "Tempest Arena",
+      "id": "66b7ee884c4e461e9a83a73a"
+    },
+    {
+      "name": "Crystal Falls",
+      "id": "66b7ee884c4e461e9a83a73d"
+    },
+    {
+      "name": "Mountain Pass",
+      "id": "66b7ee884c4e461e9a83a740"
+    },
+    {
+      "name": "Sky Arena",
+      "id": "66b7ee884c4e461e9a83a743"
+    },
+    {
+      "name": "Stormwatch Keep",
+      "id": "66b7ee884c4e461e9a83a746"
     }
   ],
-  
+  "arenasIdS": [
+    "66b7ee874c4e461e9a83a728",
+    "66b7ee884c4e461e9a83a72b",
+    "66b7ee884c4e461e9a83a72e",
+    "66b7ee884c4e461e9a83a731",
+    "66b7ee884c4e461e9a83a734",
+    "66b7ee884c4e461e9a83a737",
+    "66b7ee884c4e461e9a83a73a",
+    "66b7ee884c4e461e9a83a73d",
+    "66b7ee884c4e461e9a83a740",
+    "66b7ee884c4e461e9a83a743",
+    "66b7ee884c4e461e9a83a746"
+  ]
 }

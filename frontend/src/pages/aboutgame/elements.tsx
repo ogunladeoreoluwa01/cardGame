@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/types";
-import NavBarComp from "@/components/navBarComponent";
-import { useToast } from "@/components/ui/use-toast";
+import { Outlet, useNavigate,Link } from "react-router-dom";
 import { Button } from "@/components/ui/button"; // Import Button component
-import HeaderComp from "@/components/headerComponent";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 
 import fireBackground from "@/assets/static/aboutPage/Default_Fire_Arena_Volcanic_CraterDescription_The_Fire_Arena_i_0.jpg";
 import fireCreature from "@/assets/static/aboutPage/Default_Fire_Element_PhoenixDescription_The_Phoenix_is_a_majes_0.jpg";
@@ -16,8 +11,8 @@ import earthCreature from "@/assets/static/aboutPage/Default_Creature_Earth_Gole
 import earthBackground from "@/assets/static/aboutPage/Default_Arena_Mountain_StrongholdDescription_The_Mountain_Stro_2.jpg";
 import airCreature from "@/assets/static/aboutPage/Default_Creature_GriffinDescription_Griffins_are_majestic_crea_1.jpg";
 import airBackground from "@/assets/static/aboutPage/Default_Arena_Sky_TempleDescription_The_Sky_Temple_arena_float_2.jpg";
-import electricCreature from "@/assets/static/aboutPage/Default_Creature_ThunderbirdDescription_The_Thunderbird_is_a_m_1.jpg";
-import electricBackground from "@/assets/static/aboutPage/Default_Arena_Stormy_PeakDescription_The_Stormy_Peak_arena_is_2.jpg";
+import LightningCreature from "@/assets/static/aboutPage/Default_Creature_ThunderbirdDescription_The_Thunderbird_is_a_m_1.jpg";
+import LightningBackground from "@/assets/static/aboutPage/Default_Arena_Stormy_PeakDescription_The_Stormy_Peak_arena_is_2.jpg";
 import natureCreature from "@/assets/static/aboutPage/Default_Creature_TreantDescription_Treants_are_ancient_sentien_1.jpg";
 import natureBackground from "@/assets/static/aboutPage/Default_Arena_Enchanted_ForestDescription_The_Enchanted_Forest_2.jpg";
 import iceCreature from "@/assets/static/aboutPage/Default_Creature_YetiDescription_The_Yeti_or_Abominable_Snowma_3.jpg";
@@ -39,15 +34,27 @@ import {
   GiMoon,
   GiVineLeaf,
   GiMetalBar,
+  GiCompass,
+  GiGems,
+  GiBattleGear,
+  GiRollingDices,
+  GiSpellBook 
 } from "react-icons/gi";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const elementData: Record<
   string,
@@ -88,8 +95,8 @@ const elementData: Record<
     icon: <GiDrop />,
     effect:
       "Cools and calms the battlefield, providing defensive barriers and restorative healing that flows like a gentle stream.",
-    strengths: ["Fire", "Electric"],
-    weaknesses: ["Electric", "Earth"],
+    strengths: ["Fire", "Lightning"],
+    weaknesses: ["Lightning", "Earth"],
     creature: "Mermaid",
     illustration: waterCreature,
     creatureDescription:
@@ -104,7 +111,7 @@ const elementData: Record<
     icon: <GiStonePile />,
     effect:
       "Provides unmatched stability and defensive strength, forming unbreakable barriers of stone and soil that withstand any assault.",
-    strengths: ["Electric", "Fire"],
+    strengths: ["Lightning", "Fire"],
     weaknesses: ["Water", "Nature"],
     creature: "Earth Golem",
     illustration: earthCreature,
@@ -121,7 +128,7 @@ const elementData: Record<
     effect:
       "Brings swift and evasive maneuvers, enhancing agility and allowing rapid, unpredictable strikes like the wind itself.",
     strengths: ["Earth", "Nature"],
-    weaknesses: ["Electric", "Ice"],
+    weaknesses: ["Lightning", "Ice"],
     creature: "Griffin",
     illustration: airCreature,
     creatureDescription:
@@ -129,21 +136,21 @@ const elementData: Record<
     elementDescription:
       "Air embodies freedom, movement, and the unseen forces of the sky. It is the breath of life and the winds of change. Masters of Air harness the breeze to move with unmatched speed, creating whirlwinds and gusts that confound and scatter their enemies.",
   },
-  Electric: {
+  Lightning: {
     color: "#DAA520",
-    arena: electricBackground,
-    element: "Electric",
+    arena: LightningBackground,
+    element: "Lightning",
     icon: <GiLightningTrio />,
     effect:
       "Electrifies attacks with shocking damage, unleashing bolts of lightning that stun and paralyze foes, leaving them vulnerable.",
     strengths: ["Water", "Air"],
     weaknesses: ["Earth", "Metal"],
     creature: "Thunderbird",
-    illustration: electricCreature,
+    illustration: LightningCreature,
     creatureDescription:
       "The Thunderbird is a mythic avian creature capable of summoning storms and wielding the power of lightning. Its mighty wings stir the skies, and its call heralds thunder and rain.",
     elementDescription:
-      "Electricity represents raw energy, innovation, and the unpredictable power of the storm. It is the spark of life and the pulse of the universe. Those who control Electricity can channel immense voltage to shock, paralyze, and devastate their adversaries.",
+      "Lightningity represents raw energy, innovation, and the unpredictable power of the storm. It is the spark of life and the pulse of the universe. Those who control Lightningity can channel immense voltage to shock, paralyze, and devastate their adversaries.",
   },
   Nature: {
     color: "#2E8B57",
@@ -169,7 +176,7 @@ const elementData: Record<
     effect:
       "Freezes enemies solid and slows their movements, encasing them in frost and sapping their strength with the chill of winter.",
     strengths: ["Air", "Water"],
-    weaknesses: ["Fire", "Electric"],
+    weaknesses: ["Fire", "Lightning"],
     creature: "Yeti",
     illustration: iceCreature,
     creatureDescription:
@@ -200,8 +207,8 @@ const elementData: Record<
     icon: <GiSundial />,
     effect:
       "Illuminates and heals, providing clarity, purification, and radiant energy that dispels darkness and restores vitality.",
-    strengths: ["Dark", "Nature"],
-    weaknesses: ["Dark", "Metal"],
+    strengths: ["Shadow", "Nature"],
+    weaknesses: ["Shadow", "Metal"],
     creature: "Unicorn",
     illustration: lightCreature,
     creatureDescription:
@@ -216,7 +223,7 @@ const elementData: Record<
     icon: <GiMetalBar />,
     effect:
       "Strengthens defenses and enhances durability, creating unbreakable armor and weapons forged from the hardest metals.",
-    strengths: ["Electric", "Light"],
+    strengths: ["Lightning", "Light"],
     weaknesses: ["Nature", "Water"],
     creature: "Iron Golem",
     illustration: metalCreature,
@@ -230,55 +237,36 @@ const getElementData = (elementName) => {
   return elementData[elementName];
 };
 
+const AboutElement: React.FC = () => {
+
+  const [activeElement, setActiveElement] = useState("");
 
 
-const AboutGame: React.FC = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-   const [activeElement, setActiveElement] = useState("");
-    const [lastScrollTop, setLastScrollTop] = useState(0);
-    const [navbarVisible, setNavbarVisible] = useState(true);
 
-    useEffect(() => {
-      const handleScroll = () => {
-        const currentScrollTop = window.pageYOffset;
+  useEffect(() => {
+    getElementData(activeElement);
+  }, []);
 
-        if (currentScrollTop > lastScrollTop) {
-          // User is scrolling down
-          setNavbarVisible(false);
-        } else {
-          // User is scrolling up
-          setNavbarVisible(true);
-        }
-        setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop); // For Mobile or negative scrolling
-      };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveElement(entry.target.id);
+           
+          }
+        });
+      },
+      { threshold: 0.5 } // Adjust threshold as needed
+    );
 
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, [lastScrollTop]);
+    const sections = document.querySelectorAll("section");
+    sections.forEach((section) => observer.observe(section));
 
-
-     useEffect(() => {
-       const observer = new IntersectionObserver(
-         (entries) => {
-           entries.forEach((entry) => {
-             if (entry.isIntersecting) {
-               setActiveElement(entry.target.id);
-               console.log(entry.target.id);
-             }
-           });
-         },
-         { threshold: 0.5 } // Adjust threshold as needed
-       );
-
-       const sections = document.querySelectorAll("section");
-       sections.forEach((section) => observer.observe(section));
-
-       return () => {
-         sections.forEach((section) => observer.unobserve(section));
-       };
-     }, []);
-   
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -313,187 +301,238 @@ const AboutGame: React.FC = () => {
 
   return (
     <>
-      <section className="">
-        <div className="">
-          <header
-            className={`${
-              navbarVisible ? "fixed" : "hidden"
-            } lg:px-6 px-3 bg-background  w-full py-[0.5px]  top-0 z-50`}
-          >
-            {" "}
-            <HeaderComp />
-          </header>
-          <main className="px-2  md:px-0   flex   flex-wrap overflow-hidden  ">
-            {Object.keys(elementData).map((element, index) => {
-              return (
-                <section
-                  id={elementData[element].element}
-                  className={`w-full relative bg-black h-[100vh]   `}
-                >
-                  <img
-                    src={elementData[element].arena}
-                    alt=""
-                    className="w-full h-full opacity-20 object-cover"
-                     fetchpriority="high"
-        loading="lazy"
-                  />
+      <section className="md:px-2  px-0   flex   flex-wrap overflow-hidden  ">
+        {Object.keys(elementData).map((element, index) => {
+          return (
+            <section
+              id={elementData[element].element}
+              className={`w-full  h-screen relative bg-black   `}
+            >
+              <img
+                src={elementData[element].arena}
+                alt=""
+                className="w-full h-full opacity-20 object-cover"
+                fetchpriority="high"
+                loading="lazy"
+              />
 
-                  <div
-                    className={`
+              <div
+                className={`
                       ${index % 2 === 0 ? "flex-row-reverse" : ""}  
                      
                   absolute z-0 p-4 top-1/2 left-1/2 -translate-x-[50%] -translate-y-[65%] md:-translate-y-[50%] flex gap-5 flex-wrap items-start justify-center w-full
                   
                   `}
+              >
+                <Card
+                  style={{ backgroundColor: elementData[element].color }}
+                  className={` hidden md:inline-block  md:w-[210px] card md:h-[310px] w-[150px] h-[250px] text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden  ${
+                    index % 2 === 0 ? "hidden1" : "hidden2"
+                  }`}
+                >
+                  <CardContent className="w-full h-full bg-muted p-0 z-0 relative bg-black">
+                    <img
+                      src={elementData[element].illustration}
+                      alt="hello"
+                      fetchpriority="high"
+                      loading="lazy"
+                      className="w-full h-full object-fill text-center shimmer opacity-80"
+                    />
+                  </CardContent>
+                </Card>
+                <div
+                  className={` ${
+                    index % 2 === 0 ? "hidden2" : "hidden1"
+                  } w-full md:w-[60%] h-[300px] text-sm text-white rounded-lg flex flex-col gap-1 bg-transparent border-transparent `}
+                >
+                  <div
+                    style={{ backgroundColor: elementData[element].color }}
+                    className="p-2 font-bold w-[100px] gap-1 h-[35px] text-white   rounded-full text-center flex items-center justify-center"
                   >
-                    <Card
-                      style={{ backgroundColor: elementData[element].color }}
-                      className={`md:w-[250px] card md:h-[350px] w-[150px] h-[250px] text-white rounded-[0.2rem] p-[0.35rem] relative overflow-hidden  ${
-                        index % 2 === 0 ? "hidden1" : "hidden2"
-                      }`}
-                    >
-                      <CardContent className="w-full h-full bg-muted p-0 z-0 relative bg-black">
-                        <img
-                          src={elementData[element].illustration}
-                          alt="hello"
-                           fetchpriority="high"
-        loading="lazy"
-                          className="w-full h-full object-fill text-center shimmer opacity-80"
-                        />
-                      </CardContent>
-                    </Card>
-                    <div
-                      className={` ${
-                        index % 2 === 0 ? "hidden2" : "hidden1"
-                      } w-full md:w-[60%] h-[300px] text-sm text-white rounded-lg flex flex-col gap-1 bg-transparent border-transparent `}
-                    >
-                      <div
-                        style={{ backgroundColor: elementData[element].color }}
-                        className="p-2 font-bold w-[100px] gap-1 h-[35px] text-white   rounded-full text-center flex items-center justify-center"
-                      >
+                    
+                       <span className="text-lg">
                         {elementData[element].icon}
-                        {elementData[element].element}
-                      </div>
-                      <p className="text-muted-foreground  pb-2 ">
-                        {" "}
-                        {elementData[element].elementDescription}{" "}
-                        {elementData[element].effect}
-                      </p>
-                      <h1>
-                        {" "}
-                        <strong>{elementData[element].creature}</strong>{" "}
-                      </h1>
-                      <p className="text-muted-foreground  pb-2 ">
-                        A common creature of the {elementData[element].element}{" "}
-                        element {elementData[element].creatureDescription}
-                      </p>
-
-                      <p className="mb-1 p-0">
-                        <strong>Strengths</strong>{" "}
-                      </p>
-                      <div className="flex flex-wrap md:gap-2 gap-2 mb-1">
-                        {elementData[element].strengths.map(
-                          (strength, index) => (
-                            <Button
-                              key={index}
-                              className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
-                              style={{ color: elementData[strength].color }}
-                              onClick={() => {
-                                const elementSection = document.getElementById(
-                                  elementData[strength].element
-                                );
-                                if (elementSection) {
-                                  elementSection.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start",
-                                  });
-                                }
-                              }}
-                            >
-                              {elementData[strength].icon}
-                              {elementData[strength].element}
-                            </Button>
-                          )
-                        )}
-                      </div>
-                      <p className="mb-1  p-0">
-                        <strong>Weaknesses:</strong>{" "}
-                      </p>
-                      <div className="flex flex-wrap md:gap-2 gap-2">
-                        {elementData[element].weaknesses.map(
-                          (weakness, index) => (
-                            <Button
-                              key={index}
-                              className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
-                              style={{ color: elementData[weakness].color }}
-                              onClick={() => {
-                                const elementSection = document.getElementById(
-                                  elementData[weakness].element
-                                );
-                                if (elementSection) {
-                                  elementSection.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start",
-                                  });
-                                }
-                              }}
-                            >
-                              {elementData[weakness].icon}
-                              {elementData[weakness].element}
-                            </Button>
-                          )
-                        )}
-                      </div>
-                    </div>
+                        </span>
+                    {elementData[element].element}
                   </div>
-                </section>
-              );
-            })}
-            <div className="flex justify-center items-center w-full  ">
-              <div className="flex flex-wrap gap-3 justify-center fixed bottom-1 bg-muted p-2  items-center w-fit rounded-[0.75rem] scale-90">
-                {Object.keys(elementData).map((element) => {
-                  let isActive = false;
-                  if (elementData[element].element === activeElement) {
-                    isActive = true;
-                  } else {
-                    isActive = false;
-                  }
+                  <p className="text-muted-foreground  pb-2 ">
+                    {" "}
+                    {elementData[element].elementDescription}{" "}
+                    {elementData[element].effect}
+                  </p>
+                  <h1>
+                    {" "}
+                    <strong>{elementData[element].creature}</strong>{" "}
+                  </h1>
+                  <p className="text-muted-foreground  pb-2 ">
+                    A common creature of the {elementData[element].element}{" "}
+                    element {elementData[element].creatureDescription}
+                  </p>
 
-                  const elementColor = elementData[element].color;
-                  return (
-                    <Button
-                      key={element}
-                      className={`p-2 font-bold hover:bg-elementColor bg-black dark:bg-opacity-30 bg-opacity-50 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center ${
-                        isActive ? "text-white" : ""
-                      } ${isActive ? "" : ""}`}
-                      style={{
-                        backgroundColor: isActive ? elementColor : undefined,
-                        color: isActive ? "white" : elementColor,
-                      }}
-                      onClick={() => {
-                        const elementSection = document.getElementById(
-                          elementData[element].element
-                        );
-                        if (elementSection) {
-                          elementSection.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                          });
-                        }
-                      }}
-                    >
-                      {elementData[element].icon}
-                      {elementData[element].element}
-                    </Button>
-                  );
-                })}
+                  <p className="mb-1 p-0">
+                    <strong>Strengths</strong>{" "}
+                  </p>
+                  <div className="flex flex-wrap md:gap-2 gap-2 mb-1">
+                    {elementData[element].strengths.map((strength, index) => (
+                      <Button
+                        key={index}
+                        className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                        style={{ color: elementData[strength].color }}
+                        onClick={() => {
+                          const elementSection = document.getElementById(
+                            elementData[strength].element
+                          );
+                          if (elementSection) {
+                            elementSection.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                            });
+                          }
+                        }}
+                      >
+                        <span className="text-lg">
+                         {elementData[strength].icon}
+                        </span>
+                        
+                        {elementData[strength].element}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="mb-1  p-0">
+                    <strong>Weaknesses:</strong>{" "}
+                  </p>
+                  <div className="flex flex-wrap md:gap-2 gap-2">
+                    {elementData[element].weaknesses.map((weakness, index) => (
+                      <Button
+                        key={index}
+                        className="p-2 font-bold hover:bg-elementColor  bg-opacity-70 hover:scale-105 transition-all duration-300 ease w-[100px] hover:bg-elementColor hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center bg-black"
+                        style={{ color: elementData[weakness].color }}
+                        onClick={() => {
+                          const elementSection = document.getElementById(
+                            elementData[weakness].element
+                          );
+                          if (elementSection) {
+                            elementSection.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                            });
+                          }
+                        }}
+                      >
+                        <span className="text-lg">
+                          {elementData[weakness].icon}
+                        </span>
+                        {elementData[weakness].element}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </main>
+            </section>
+          );
+        })}
+        <div className="flex justify-center items-center w-full  ">
+          <div className="flex flex-wrap gap-3 justify-center fixed bottom-3 md:bottom-4  transition-all duration-300 ease-in-out bg-white backdrop-filter backdrop-blur-lg bg-opacity-10 p-2  items-center w-fit rounded-[0.75rem] scale-90">
+            <Sheet>
+              <SheetTrigger asChild>
+                <span className="text-2xl text-white hover:scale-110 transition-all duration-300 ease-in-out">
+                  <GiCompass />
+                </span>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle className="font-bold">The Elemenets</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-wrap gap-3 py-3">
+                  {Object.keys(elementData).map((element) => {
+                    let isActive = false;
+                    if (elementData[element].element === activeElement) {
+                      isActive = true;
+                    } else {
+                      isActive = false;
+                    }
+
+                    const elementColor = elementData[element].color;
+                    return (
+                      <Button
+                        key={element}
+                        className={`p-2 font-bold hover:bg-elementColor shadow-md bg-muted hover:scale-105 transition-all duration-300 ease min-w-[100px]  hover:text-white gap-1 h-[35px] rounded-full text-center flex items-center justify-center ${
+                          isActive ? "text-white" : ""
+                        } ${isActive ? "" : ""}`}
+                        style={{
+                          backgroundColor: isActive ? elementColor : undefined,
+                          color: isActive ? "white" : elementColor,
+                        }}
+                        onClick={() => {
+                          const elementSection = document.getElementById(
+                            elementData[element].element
+                          );
+                          if (elementSection) {
+                            elementSection.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                            });
+                          }
+                        }}
+                      >
+                        <span className="text-lg">
+                          {elementData[element].icon}
+                        </span>
+
+                        {elementData[element].element}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <SheetHeader>
+                  <SheetTitle className="font-bold"> About The Game</SheetTitle>
+                </SheetHeader>
+                <SheetDescription className="flex flex-col gap-2 py-3">
+                  <Link
+                    to="/about-game/element"
+                    className="text-md flex items-center scale-105 justify-between p-2 rounded-sm font-bold bg-transparent bg-gradient-to-r from-red-400 via-yellow-400 to-blue-400 transition-all duration-300 ease-in-out dark:text-white text-black hover:text-white"
+                  >
+                    Elements
+                    <span className="text-xl">
+                      <GiGems />
+                    </span>
+                  </Link>
+                  <Link
+                    to="/about-game/Class"
+                    className="text-md flex items-center hover:scale-105 justify-between p-2 rounded-sm font-bold bg-transparent hover:bg-gradient-to-r from-gray-400 to-gray-600 transition-all duration-300 ease-in-out dark:text-white text-black hover:text-white"
+                  >
+                    Class
+                    <span className="text-xl">
+                      <GiBattleGear />
+                    </span>
+                  </Link>
+                  <Link
+                    to="/about-game/how-to-play"
+                    className="text-md flex items-center hover:scale-105 justify-between p-2 rounded-sm font-bold bg-transparent hover:bg-gradient-to-r from-green-400 to-teal-400 transition-all duration-300 ease-in-out dark:text-white text-black hover:text-white"
+                  >
+                    How to Play
+                    <span className="text-xl">
+                      <GiRollingDices />
+                    </span>
+                  </Link>
+                  <Link
+                    to="/about-game/general-knowledge"
+                    className="text-md flex items- hover:scale-105 justify-between p-2 rounded-sm font-bold bg-transparent hover:bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300 ease-in-out dark:text-white text-black hover:text-white"
+                  >
+                    General Knowledge
+                    <span className="text-xl">
+                      <GiSpellBook />
+                    </span>
+                  </Link>
+                </SheetDescription>
+                <SheetFooter></SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </section>
     </>
   );
 };
 
-export default AboutGame;
+export default AboutElement;

@@ -8,20 +8,21 @@ const itemSchema = new mongoose.Schema({
     type: {
     type: String,
     required: true,
-    enum: ['pet', "account", 'comingsoon']
+    enum: ['pet', "account", 'lootBox']
   },
   effectType: {
     type: String,
     required: true,
-    enum: ['tier1', 'tier2', 'tier3', 'tier4']
+    enum: ['tier1', 'tier2', 'tier3', 'tier4','tier5']
   },
   itemImage: {
     type: String,
     required: true,
   },
   effect: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    default:1
   },
   value: {
     type: Number,
@@ -31,11 +32,11 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+  
+},
+{
+    timestamps: true
+  });
 
 const Item = mongoose.model('Item', itemSchema);
 

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const PetLibrary = require("./petLibary.model");
+const  User = require("./user.model.js")
 const { Schema } = mongoose;
 
 // Function to determine rarity multiplier based on rarity
@@ -34,9 +35,10 @@ const assignRandomRarity = () => {
 const petSchema = new Schema(
   {
     userProfile: {
-      userId: { type: Schema.Types.ObjectId, ref: "User", required: true, },
-      username: { type: String, required: true },
-      coverImage: { type: String, default: "" }
+      userId: { type: Schema.Types.ObjectId, ref: "User"},
+      username: { type: String },
+      coverImage: { type: String, default: "" },
+      previousUsers:[{ type: Schema.Types.ObjectId, ref: "User", default: [], index: true }],
     },
     petInfo: { type: Schema.Types.ObjectId, ref: "PetLibrary", required: true,  },
     experience: { type: Number, default: 0 },
@@ -46,45 +48,128 @@ const petSchema = new Schema(
     currentAttack: { type: Number, default: 10 },
     currentDefense: { type: Number, default: 10 },
     currentManaCost: { type: Number, default: 5 },
+    currentCost:{type:Number},
     level: { type: Number, default: 1 }, // Adding level field to the schema
+    isListed:{type:Boolean , default:false},
+    listingNo:{type:String,default:""},
+    listingPrice:{type:Number,default:0},
+    isSystemOwned:{type:Boolean , default:false},
   },
   {
     timestamps: true // Automatically include createdAt and updatedAt fields
   }
 );
+   
+
+petSchema.pre("save", async function (next) {
+  
+
+  // Skip the middleware if userProfile.userId exists
+  if ( !this.userProfile.userId) {
+    return next();
+  }
+
+  if (this.isSystemOwned) {
+    
+
+    try {
+      const user = await User.findById(this.userId);
+
+      if (!user) {
+      
+        throw new Error(`User not found: ${this.userId}`);
+      } else {
+        if (user.pets.favPet.toString() === this._id.toString()) {
+          user.pets.favPet = "";
+        }
+        user.pets.currentDeck = user.pets.currentDeck.filter(petId => petId.toString() !== this._id.toString());
+        user.pets.allPets = user.pets.allPets.filter(petId => petId.toString() !== this._id.toString());
+
+        await user.save();
+        this.previousUsers.push(this.userId);
+        this.userId = "";
+        this.username = "";
+        this.coverImage = "";
+      }
+    } catch (error) {
+      
+      return next(error); // Properly pass the error to the next middleware
+    }
+  }
+  next();
+});
+
 
 // Pre-save middleware to update stats based on level and rarity
 petSchema.pre("save", async function (next) {
-  console.log("Pre-save hook triggered for pet:", this._id);
 
+
+  // Find the pet species data in the library
   const petData = await PetLibrary.findById(this.petInfo);
 
   if (!petData) {
-    console.error("Pet species not found in library:", this.petInfo);
+  
     throw new Error("Pet species not found in library");
   }
 
   const rarityMultiplier = getRarityMultiplier(this.rarity);
-  console.log("Rarity multiplier:", rarityMultiplier);
 
-  // Update pet's stats based on base stats, level, and rarity multiplier
-  this.currentHealth =Math.round(petData.baseHealth * this.level * rarityMultiplier) ;
-  this.currentAttack =Math.round(petData.baseAttack * this.level * rarityMultiplier);
-  this.currentDefense =Math.round(petData.baseDefense * this.level * rarityMultiplier);
-  this.currentManaCost =Math.round(petData.baseManaCost * this.level * rarityMultiplier);
 
-  console.log("Updated stats - Health:", this.currentHealth, "Attack:", this.currentAttack, "Defense:", this.currentDefense, "Mana Cost:", this.currentManaCost);
+  // Define maximum values for level 1 pet
+  const maxHealth = 1000;  // Maximum health for a level 1 pet
+  const maxAttack = 400;   // Maximum attack for a level 1 pet
+  const maxDefense = 300;  // Maximum defense for a level 1 pet
+  const maxManaCost = 200; // Maximum mana cost for a level 1 pet
+
+  // Wiggle room to extend the stats for rare pets
+  const wiggleRoom = 500;
+
+  // Calculate the pet's stats with constraints
+  this.currentHealth = Math.min(
+    Math.round(petData.baseHealth * this.level * rarityMultiplier),
+    maxHealth + wiggleRoom
+  );
+
+  this.currentAttack = Math.min(
+    Math.round(petData.baseAttack * this.level * rarityMultiplier),
+    maxAttack + wiggleRoom
+  );
+
+  this.currentDefense = Math.min(
+    Math.round(petData.baseDefense * this.level * rarityMultiplier),
+    maxDefense + wiggleRoom
+  );
+
+  this.currentManaCost = Math.min(
+    Math.round(petData.baseManaCost * this.level * rarityMultiplier),
+    maxManaCost + wiggleRoom
+  );
+
+  // Cost Calculation Parameters
+  const baseCost = petData.baseCost;  // Base cost of the pet
+  const maxCostCap = 10000;  // Define the maximum cap for the cost
+
+  // Calculate the variable part of the cost based on stats
+  const variableCost = Math.round(
+    (this.currentHealth + this.currentAttack + this.currentDefense + this.currentManaCost) *
+    rarityMultiplier
+  );
+
+  // Calculate total cost and apply the max cost cap
+  this.currentCost = Math.min(baseCost + variableCost, maxCostCap);
+
+
 
   next();
 });
 
 // Pre-save middleware to add experience and level up if needed
 petSchema.pre("save", async function (next) {
-  console.log("Pre-save hook for adding experience triggered for pet:", this._id);
+
 
   // Stop gaining experience if the pet is already at max level (100)
   if (this.level >= 100) {
-    console.log("Pet is already at max level (100). No XP added.");
+   
     next();
     return;
   }
@@ -105,13 +190,13 @@ petSchema.pre("save", async function (next) {
 
   // Set xpNeededToNextLevel for the current level
   this.xpNeededToNextLevel = xpNeeded;
-  console.log("XP needed for next level:", this.xpNeededToNextLevel);
+ 
 
   // Check if enough experience has been accumulated for a level up
   if (this.experience >= xpNeeded && this.level < 100) {
     this.level += 1;
     this.experience -= xpNeeded;
-    console.log("Pet leveled up to level:", this.level);
+    
     await this.updateStats();
   }
 

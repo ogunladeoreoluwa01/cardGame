@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import NumberCounter from "./numberCounterprop";
 import {gold,silver} from "@/assets"
+import { useNavigate } from "react-router-dom";
 
 interface Prop {
   allPets: any[] | null;
@@ -9,18 +10,21 @@ interface Prop {
   Aureus: number;
   Argentum: number;
   username:string;
+  userId:string;
 }
 
 const DashInventoryComp: React.FC<Prop> = ({
   allPets,
   inventory,
-  Aureus = 4200,
-  Argentum = 5330,
-  username
+  Aureus ,
+  Argentum ,
+  username,
+  userId
 }) => {
-  const [noOfPets, setNoOfPets] = useState(allPets ? allPets.length : 100000);
+  const navigate = useNavigate()
+  const [noOfPets, setNoOfPets] = useState(allPets ? allPets.length : 0);
   const [noOfItems, setNoOfItems] = useState(
-    inventory ? inventory.length : 1234
+    inventory ? inventory.length :0
   );
 
   useEffect(() => {
@@ -32,13 +36,16 @@ const DashInventoryComp: React.FC<Prop> = ({
     }
   }, [allPets, inventory]);
 
+
+  
+
   return (
     <>
-      <section className="lg:min-w-[25vw]  md:w-fit   h-[10rem] bg-muted p-2 rounded-[0.75rem] ">
+      <section className="lg:min-w-[27vw]  md:w-fit w-full  h-[10rem] bg-muted p-2 rounded-[0.75rem] ">
         <h1 className="ml-4 uppercase font-bold text-sm">
           {username}'s Inventory
         </h1>
-        <section className="flex gap-6 items-center">
+        <section className="flex gap-6 items-center  justify-around">
           <section className="flex items-center gap-2">
             <div className="flex flex-col  justify-center items-center w-20">
               <p className="text-muted-foreground uppercase text-sm">Aureus</p>
@@ -88,11 +95,13 @@ const DashInventoryComp: React.FC<Prop> = ({
               </p>{" "}
               <p className="text-muted-foreground uppercase text-sm">Items</p>
             </div>
-            <Button variant="outline" size="sm" className="mt-2  w-24 ">
+            <Button 
+            onClick={()=>{navigate(`/inventory/${userId}/pet`);}}
+            size="sm" className="mt-2  w-24 ">
               {" "}
               Inventory
             </Button>
-            <Button variant="outline" size="sm" className="mt-2  w-24 ">
+            <Button onClick={()=>{navigate(`/market/${userId}/pet`);}} size="sm" className="mt-2  w-24 ">
               {" "}
               Black Market
             </Button>

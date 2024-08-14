@@ -10,7 +10,7 @@ import {
 import {
   GiTurtleShell,
   GiTigerHead,
-  GiFox,
+  GiFairyWings,
   GiPorcupine,
   GiSmallFire,
   GiDrop,
@@ -50,7 +50,7 @@ interface Props {
   description: any;
   name: any;
   level: any;
-  health:any;
+  health: any;
   attack: any;
   defence: any;
   mana: any;
@@ -96,7 +96,7 @@ const elementData: Record<
     icon: <GiIceBolt />,
     effect: "Freezes enemies and slows their actions.",
   },
-  Dark: {
+  Shadow: {
     color: "#4B0082",
     icon: <GiMoon />,
     effect: "Obscures vision and deals shadowy damage.",
@@ -134,7 +134,7 @@ const classData: Record<
   },
   Nimble: {
     color: "#AD1457",
-    icon: <GiFox />,
+    icon: <GiFairyWings />,
     effect: "Dodges attacks and strikes with precision and agility.",
   },
 };
@@ -242,7 +242,7 @@ const BattleCardComp: React.FC<Props> = ({
             className="w-full h-full object-center text-center rounded-t-[0.5rem] opacity-50"
           />
         </div>
-        <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-[3px] cardBg">
+        <div className="w-full rounded-b-[0.5rem] relative p-2 h-[80px] object-cover border-white border-t-2 cardBg">
           <div
             className="
       -top-4 left-1/2 -translate-x-[50%] text-white absolute flex justify-center items-center gap-2"
@@ -251,16 +251,18 @@ const BattleCardComp: React.FC<Props> = ({
               <div
                 key={index}
                 style={{ backgroundColor: el.color }}
-                className="w-7 h-7 p-1 flex items-center justify-center rounded-full text-xl border-white border-2"
+                className=" w-7  h-7 p-1 flex items-center justify-center rounded-sm rotate-[45deg] text-xl border-white border-[1px]"
               >
-                {el.icon}
+                <span className="-rotate-[45deg] text-[0.9rem]">{el.icon}</span>
               </div>
             ))}
             <div
               style={{ backgroundColor: classStyle.color }}
-              className="w-7 h-7  p-1 flex items-center  text-white justify-center rounded-full text-xl border-white border-2"
+              className=" w-7  h-7  p-1 rotate-[45deg] flex items-center  text-white justify-center rounded-sm text-xl border-white border-[1px]"
             >
-              {classStyle.icon}
+              <span className="-rotate-[45deg] text-[0.9rem]">
+                {classStyle.icon}
+              </span>
             </div>
           </div>
           <p className="mt-2 text-[0.7rem] text-white tracking-tighter leading-3 line-clamp-4">

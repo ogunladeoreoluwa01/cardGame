@@ -124,11 +124,19 @@ html {
   background-image: url(https://i.pinimg.com/originals/21/6b/f1/216bf168f17efdf1fea5e9cd99150b99.gif);
   filter: blur(0.7px);
 }
+
 .bglogin {
   background-image: url(https://i.pinimg.com/originals/bc/e7/ed/bce7ed4acd55045b1f454a6a32ea4f9c.jpg);
   filter: blur(0.7px);
   background-repeat: no-repeat;
   background-size: cover;
+}
+.bgLeaderBoard{
+   background-image: url(https://cdnb.artstation.com/p/assets/images/images/049/370/081/large/-psc.jpg?1652333554);
+  filter: blur(0.7px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 .clip {
   clip-path: polygon(0 2%, 89% 1%, 100% 98%, 0% 100%);
@@ -185,8 +193,8 @@ background-size: cover;
 }
 
 @keyframes shine {
-  from { box-shadow: 0 0 3px rgba(192, 192, 192, 0.5); }
-  to { box-shadow: 0 0 6px rgba(224, 224, 224, 0.7); }
+  from { box-shadow: 0 0 1.5px rgba(192, 192, 192, 0.5); }
+  to { box-shadow: 0 0 3px rgba(224, 224, 224, 0.7); }
 }
 
 @keyframes etherealGlow {
@@ -227,7 +235,7 @@ background-size: cover;
 }
 
 .rustic-text {
-   background: linear-gradient(135deg, #556b2f 0%, #8fbc8f 35%, #6b8e23 100%);
+   background: linear-gradient(135deg,  rgba(105, 57, 36, 0.3) 0%, #e6a865 35%,  #e6a865 70%,rgba(105, 57, 36, 0.6) 100%);
   animation: glowText 20s infinite alternate, shimmerText 20s linear infinite;
   background-clip: text;
   -webkit-background-clip: text;
@@ -270,13 +278,13 @@ background-size: cover;
 }
 
 .rustic-card {
-  background: linear-gradient(135deg, #556b2f 0%, #8fbc8f 35%, #6b8e23 100%);
-  animation: shine 20s linear infinite;
+  background: linear-gradient(135deg,  rgba(105, 57, 36, 0.3) 0%, #e6a865 35%,  #e6a865 70%,rgba(105, 57, 36, 0.6) 100%);
+  animation: shine 20s linear infinite,glow 20s linear infinite;
 }
 
 .arcane-card {
   background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
-  animation: shine 20s linear infinite;
+  animation: shine 20s linear infinite,glow 20s linear infinite;
 }
 
 .mythic-card {
@@ -492,6 +500,24 @@ background-size: cover;
       background-position: center;
 
 }
+
+.inventoryBg {
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+    url('https://i.pinimg.com/originals/a3/a4/19/a3a41950f8cec20a1add0021e07b02e9.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.leaderBoardBg {
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+    url('https://i.pinimg.com/originals/2b/98/08/2b98081c53287cd9e041ef25ad26ca62.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .UnrankedStyle {
   animation: shine 20s linear infinite;
   border: 2px solid #ccc;
@@ -512,7 +538,7 @@ background: linear-gradient(135deg, #aae5fc 0%, #a6ccfd 50%, #7cd4f7 100%);
 .MythicStyle {
  background: linear-gradient(135deg, #800080 0%, #9932cc 50%, #d8bfd8 100%);
   background-size: 200% 100%;
-  animation: shimmer 20s infinite;
+  animation: shine 20s infinite;
 }
 
 .ExaltedStyle {
@@ -700,3 +726,150 @@ top:-6rem;
   }
 }
 
+.stroke{
+       text-shadow:
+                0.5px 0.5px 0 rgba(0, 0, 0, 1),
+                1px 1px 0 rgba(0, 0, 0, 1),
+                1.5px 1.5px 0 rgba(0, 0, 0, 1),
+                2px 2px 0 rgba(0, 0, 0, 1);
+                
+        }
+
+        /* From Uiverse.io by mrhyddenn */ 
+.spinner {
+  font-size: 19px;
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
+
+
+.spinner .spinner-blade {
+  position: absolute;
+  left: 0.4629em;
+  bottom: 0;
+  width: 0.074em;
+  height: 0.2777em;
+  border-radius: 0.0555em;
+  background-color: transparent;
+  -webkit-transform-origin: center -0.2222em;
+  -ms-transform-origin: center -0.2222em;
+  transform-origin: center -0.2222em;
+  animation: spinner-fade9234 1s infinite linear;
+}
+
+.spinner .spinner-blade:nth-child(1) {
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
+.spinner .spinner-blade:nth-child(2) {
+  -webkit-animation-delay: 0.083s;
+  animation-delay: 0.083s;
+  -webkit-transform: rotate(30deg);
+  -ms-transform: rotate(30deg);
+  transform: rotate(30deg);
+}
+
+.spinner .spinner-blade:nth-child(3) {
+  -webkit-animation-delay: 0.166s;
+  animation-delay: 0.166s;
+  -webkit-transform: rotate(60deg);
+  -ms-transform: rotate(60deg);
+  transform: rotate(60deg);
+}
+
+.spinner .spinner-blade:nth-child(4) {
+  -webkit-animation-delay: 0.249s;
+  animation-delay: 0.249s;
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.spinner .spinner-blade:nth-child(5) {
+  -webkit-animation-delay: 0.332s;
+  animation-delay: 0.332s;
+  -webkit-transform: rotate(120deg);
+  -ms-transform: rotate(120deg);
+  transform: rotate(120deg);
+}
+
+.spinner .spinner-blade:nth-child(6) {
+  -webkit-animation-delay: 0.415s;
+  animation-delay: 0.415s;
+  -webkit-transform: rotate(150deg);
+  -ms-transform: rotate(150deg);
+  transform: rotate(150deg);
+}
+
+.spinner .spinner-blade:nth-child(7) {
+  -webkit-animation-delay: 0.498s;
+  animation-delay: 0.498s;
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.spinner .spinner-blade:nth-child(8) {
+  -webkit-animation-delay: 0.581s;
+  animation-delay: 0.581s;
+  -webkit-transform: rotate(210deg);
+  -ms-transform: rotate(210deg);
+  transform: rotate(210deg);
+}
+
+.spinner .spinner-blade:nth-child(9) {
+  -webkit-animation-delay: 0.664s;
+  animation-delay: 0.664s;
+  -webkit-transform: rotate(240deg);
+  -ms-transform: rotate(240deg);
+  transform: rotate(240deg);
+}
+
+.spinner .spinner-blade:nth-child(10) {
+  -webkit-animation-delay: 0.747s;
+  animation-delay: 0.747s;
+  -webkit-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+
+.spinner .spinner-blade:nth-child(11) {
+  -webkit-animation-delay: 0.83s;
+  animation-delay: 0.83s;
+  -webkit-transform: rotate(300deg);
+  -ms-transform: rotate(300deg);
+  transform: rotate(300deg);
+}
+
+.spinner .spinner-blade:nth-child(12) {
+  -webkit-animation-delay: 0.913s;
+  animation-delay: 0.913s;
+  -webkit-transform: rotate(330deg);
+  -ms-transform: rotate(330deg);
+  transform: rotate(330deg);
+}
+
+@keyframes spinner-fade9234 {
+  0% {
+    background-color: #69717d;
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+div[style*="--hover-bg-color"] {
+  transition: background-color 0.3s ease-in-out;
+}
+
+div[style*="--hover-bg-color"]:hover {
+  background-color: var(--hover-bg-color);
+}

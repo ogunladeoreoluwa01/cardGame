@@ -12,22 +12,30 @@ import "./index.css";
 import LoginPage from "@/pages/loginPage";
 import SignupPage from "./pages/signupPage";
 import Layout from "@/layout"; // Adjust the import path
-import Dashboard from "@/pages/dashboard"
-import PetView from "@/pages/petViewPage"
-import InventoryPage from "./pages/inventoryPage";
-import PetInventoryPage from "./pages/petInventoryPage";
-import ItemInventoryPage from "./pages/itemsInventoryPage";
-import AboutGame from "./pages/infoAboutpets";
-import DuelsPage from "./pages/duelsPage"
+import Dashboard from "@/pages/dashboard";
+import PetView from "@/pages/petViewPage";
+import InventoryPage from "./pages/inventory/inventoryPage";
+
+import AboutGame from "./pages/infoAbout";
+import DuelsPage from "./pages/duelsPage";
 import GamesPage from "./pages/gamePage";
 import JoinGameLinkPage from "./pages/joinGamesLinkPage";
+import UserLeaderBoards from "./pages/leaderBoard";
+import AboutElement from "./pages/aboutgame/elements";
+import AboutClass from "./pages/aboutgame/class";
+import PetInventoryPage from "./pages/inventory/petInventory";
+import DeckInventoryPage from "./pages/inventory/deckInventoryPage";
+import ItemInventoryPage from "./pages/inventory/itemInventory";
+import MarketPage from "./pages/marketPlace/marketPage";
+import PetMarketPage from "./pages/marketPlace/petMarketPage";
+import ItemMarketPage from "./pages/marketPlace/itemMarketPage";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />, // Use Layout component here
+    element: <Layout />,
     children: [
       {
         path: "",
@@ -38,23 +46,8 @@ const router = createBrowserRouter([
         element: <App />,
       },
       {
-        path: "user-pet-view",
+        path: "user-pet-view/:petId?",
         element: <PetView />,
-      },
-
-      {
-        path: "user-Inventory",
-        element: <InventoryPage />,
-        children: [
-          {
-            path: "pet",
-            element: <PetInventoryPage />,
-          },
-          {
-            path: "items",
-            element: <ItemInventoryPage />,
-          },
-        ],
       },
     ],
   },
@@ -63,13 +56,12 @@ const router = createBrowserRouter([
     element: <DuelsPage />,
   },
   {
-      // path: "/games-page/:duelId/duelJoinKey/:duelJoinKey",
     path: "/games-page",
     element: <GamesPage />,
   },
   {
     path: "/join-game/:duelJoinKey",
-    element: <JoinGameLinkPage/>,
+    element: <JoinGameLinkPage />,
   },
   {
     path: "/login",
@@ -80,8 +72,54 @@ const router = createBrowserRouter([
     element: <SignupPage />,
   },
   {
-    path: "about-game",
+    path: "/about-game",
     element: <AboutGame />,
+    children: [
+      {
+        path: "element",
+        element: <AboutElement />,
+      },
+      {
+        path: "class",
+        element: <AboutClass />,
+      },
+    ],
+  },
+  {
+    path: "/leaderboard/:userId",
+    element: <UserLeaderBoards />,
+  },
+  {
+    path: "/inventory/:userId",
+    element: <InventoryPage />,
+    children: [
+      {
+        path: "pet",
+        element: <PetInventoryPage />,
+      },
+      {
+        path: "item",
+        element: <ItemInventoryPage />,
+      },
+      {
+        path: "deck",
+        element: <DeckInventoryPage />,
+      },
+    ],
+  },
+  {
+    path: "/market",
+    element: <MarketPage />,
+    children: [
+      {
+        path: "pet",
+        element: <PetMarketPage />,
+      },
+      {
+        path: "item",
+        element: <ItemMarketPage />,
+      },
+    ],
   },
 ]);
 
@@ -97,4 +135,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </Provider>
   </React.StrictMode>
 );
-

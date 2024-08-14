@@ -1,8 +1,7 @@
-
 import fireBackground from "@/assets/static/aboutPage/Default_Fire_Arena_Volcanic_CraterDescription_The_Fire_Arena_i_0.jpg";
 import waterBackground from "@/assets/static/aboutPage/Default_Description_The_Oceanic_Abyss_arena_is_a_vast_underwat_3.jpg";
 import earthBackground from "@/assets/static/aboutPage/Default_Arena_Mountain_StrongholdDescription_The_Mountain_Stro_2.jpg";
-import airBackground from "@/assets/static/aboutPage/Default_Arena_Sky_TempleDescription_The_Sky_Temple_arena_float_2.jpg"
+import airBackground from "@/assets/static/aboutPage/Default_Arena_Sky_TempleDescription_The_Sky_Temple_arena_float_2.jpg";
 import electricBackground from "@/assets/static/aboutPage/Default_Arena_Stormy_PeakDescription_The_Stormy_Peak_arena_is_2.jpg";
 import natureBackground from "@/assets/static/aboutPage/Default_Arena_Enchanted_ForestDescription_The_Enchanted_Forest_2.jpg";
 import iceBackground from "@/assets/static/aboutPage/Default_Arena_Frozen_TundraDescription_The_Frozen_Tundrais_a_v_2.jpg";
@@ -10,21 +9,23 @@ import darkBackground from "@/assets/static/aboutPage/Default_Arena_Haunted_Cast
 import lightBackground from "@/assets/static/aboutPage/Default_Arena_Radiant_GardenDescription_The_Radiant_Garden_are_3.jpg";
 import metalBackground from "@/assets/static/aboutPage/Default_Arena_Forge_of_TitansDescription_The_Forge_of_Titans_a_3.jpg";
 import styles from "../styles/styles";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/types";
+import { useToast } from "@/components/ui/use-toast";
 
-
-
-
-
-
-
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import getPetDetails from "@/services/petServices/getAPet";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import DateConverter from '@/components/dateConverterComponent';
+import DateConverter from "@/components/dateConverterComponent";
 import NumberCounter from "@/components/numberCounterprop";
 import {
   GiTurtleShell,
   GiTigerHead,
-  GiFox,
+  GiFairyWings,
   GiPorcupine,
   GiSmallFire,
   GiDrop,
@@ -32,7 +33,7 @@ import {
   GiTornado,
   GiLightningTrio,
   GiIceBolt,
-  GiStarCycle,
+  GiTwoCoins,
   GiSundial,
   GiMoon,
   GiVineLeaf,
@@ -41,9 +42,8 @@ import {
   GiVibratingShield,
   GiMetalBar,
   GiMineralHeart,
+  GiConvergenceTarget,
 } from "react-icons/gi";
-
-
 
 const backgroundImages: Record<string, string> = {
   Fire: fireBackground,
@@ -100,9 +100,9 @@ const elementData: Record<
     description:
       "Harness the winds to enhance speed and agility. Air elements are masters of evasion and rapid movement, allowing them to outmaneuver enemies and strike with precision. They excel in hit-and-run tactics.",
   },
-  Electric: {
+  Lightning: {
     color: "#DAA520",
-    element: "Electric",
+    element: "Lightning",
     icon: <GiLightningTrio />,
     effect: "Electrifies attacks with shocking damage and stunning effects.",
     description:
@@ -127,7 +127,7 @@ const elementData: Record<
   Shadow: {
     color: "#4B0082",
     icon: <GiMoon />,
-    element: "Dark",
+    element: "Shadow",
     effect: "Obscures vision and deals shadowy damage.",
     description:
       "Harness the dark energies of the shadow realm. Shadow elements are adept at inflicting debilitating effects and dealing damage from the darkness. They excel in stealth and debuffing enemies.",
@@ -149,7 +149,6 @@ const elementData: Record<
       "Command the strength of metal to fortify and enhance. Metal elements are known for their durability and ability to improve defenses. They excel in bolstering allies and resisting damage.",
   },
 };
-
 
 const classData: Record<
   string,
@@ -188,41 +187,43 @@ const classData: Record<
   Nimble: {
     color: "#AD1457",
     class: "Nimble",
-    icon: <GiFox />,
+    icon: <GiFairyWings />,
     effect: "Dodges attacks and strikes with precision and agility.",
     description:
       "The Nimble class is characterized by its agility and precision. Nimble characters excel at avoiding attacks and delivering accurate strikes, making them elusive and deadly opponents.",
   },
 };
 
-
-const demoDate = new Date()
-
 const PetView = () => {
+  const { petId } = useParams();
 
-// Define state variables
-  const [elements, setElements] = useState(["Fire"]);
-  const [classy, setClassy] = useState("Guardian");
-  const [illustration, setIllustration] = useState("https://i.pinimg.com/originals/16/ee/c1/16eec1ba2375e94335144ebce70f0632.jpg");
-  const [description, setDescription] = useState("A majestic and wise creature of the forest, embodying the essence of nature and balance. It wields the powers of growth and healing, restoring life and harmony wherever it roams.");
-  const [name, setName] = useState("Verdant Dragon");
-  const [level, setLevel] = useState(85);
-  const [health, setHealth] = useState(1200);
-  const [attack, setAttack] = useState(90);
-  const [defense, setDefense] = useState(150);
-  const [mana, setMana] = useState(200);
-  const [rarity, setRarity] = useState("Ethereal");
-  const [weakAgainst, setWeakAgainst] = useState(["Fire", "Ice", "Metal"]);
-  const [strongAgainst, setStrongAgainst] = useState(["Water", "Earth", "Electric"]);
-  const [username, setUsername] = useState("forest_keeper");
-  const [date, setDate] = useState(new Date()); // Replace with your `demoDate`
-  const [xpNeededToNextLevel, setXpNeededToNextLevel] = useState(80000);
-  const [experience, setExperience] = useState(45000);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const userState: any | null = useSelector((state: RootState) => state.user);
 
+  const refreshTokenState = useSelector(
+    (state: RootState) => state.refreshToken
+  );
+  const accessTokenState = useSelector((state: RootState) => state.accessToken);
 
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ["gatPet", petId],
+    queryFn: () =>
+      getPetDetails({
+        petId: petId,
+      }),
+  });
+
+  console.log(data);
 
   const [elementStyles, setElementStyles] = useState<
-    { color: string; element: string; icon: JSX.Element; effect: string; description: string; }[]
+    {
+      color: string;
+      element: string;
+      icon: JSX.Element;
+      effect: string;
+      description: string;
+    }[]
   >([]);
   const [classStyle, setClassStyle] = useState<{
     color: string;
@@ -245,286 +246,361 @@ const PetView = () => {
   const [strongAgainstStyles, setStrongAgainstStyles] = useState<
     { color: string; element: string; icon: JSX.Element; effect: string }[]
   >([]);
- 
 
   useEffect(() => {
-    setElementStyles(elements.map((el) => elementData[el]));
-  }, [elements]);
+    if (!isLoading) {
+      setElementStyles(data?.pet.petInfo.element.map((el) => elementData[el]));
+      setClassStyle(classData[data?.pet.petInfo.class]);
+      setWeakAgainstStyles(
+        data?.pet.petInfo.weaknesses.map((el) => elementData[el])
+      );
+      setStrongAgainstStyles(
+        data?.pet.petInfo.strengths.map((el) => elementData[el])
+      );
+      switch (data?.pet.rarity) {
+        case "Rustic":
+          setRarityStyle("rustic-card");
+          setTextStyle("rustic-text ");
 
-  useEffect(() => {
-    if (classData[classy]) {
-      setClassStyle(classData[classy]);
+          break;
+        case "Arcane":
+          setRarityStyle("arcane-card");
+          setTextStyle("arcane-text ");
+          break;
+        case "Mythic":
+          setRarityStyle("mythic-card");
+          setTextStyle("mythic-text ");
+          break;
+        case "Exalted":
+          setRarityStyle("exalted-card");
+          setTextStyle("exalted-text ");
+          break;
+        case "Ethereal":
+          setRarityStyle("ethereal-card ");
+          setTextStyle("ethereal-text ");
+          break;
+        default:
+          setRarityStyle("bg-primary");
+          break;
+      }
+      const calculatedPercent =
+        (data?.pet.experience / data?.pet.xpNeededToNextLevel) * 100;
+      if (calculatedPercent > 100) {
+        setPercent(100);
+      } else {
+        setPercent(calculatedPercent);
+      }
     }
-  }, [classy]);
+  }, [data?.pet]);
 
   useEffect(() => {
-    setWeakAgainstStyles(weakAgainst.map((el) => elementData[el]));
-  }, [weakAgainst]);
-
-  useEffect(() => {
-    setStrongAgainstStyles(strongAgainst.map((el) => elementData[el]));
-  }, [strongAgainst]);
-
-  useEffect(() => {
-    switch (rarity) {
-      case "Rustic":
-        setRarityStyle("rustic-card");
-        setTextStyle("rustic-text ");
-
-        break;
-      case "Arcane":
-        setRarityStyle("arcane-card");
-        setTextStyle("arcane-text ");
-        break;
-      case "Mythic":
-        setRarityStyle("mythic-card");
-        setTextStyle("mythic-text ");
-        break;
-      case "Exalted":
-        setRarityStyle("exalted-card");
-        setTextStyle("exalted-text ");
-        break;
-      case "Ethereal":
-        setRarityStyle("ethereal-card ");
-        setTextStyle("ethereal-text ");
-        break;
-      default:
-        setRarityStyle("bg-primary");
-        break;
+    if (!userState.userInfo || !refreshTokenState.userRefreshToken) {
+      toast({
+        variant: "warning",
+        description: "user needs to login",
+      });
+      navigate("/login");
     }
-  }, [rarity]);
-  useEffect(() => {
-    const calculatedPercent = (experience / xpNeededToNextLevel) * 100;
-    if (calculatedPercent > 100) {
-      setPercent(100);
-    } else {
-      setPercent(calculatedPercent);
-    }
-  }, [experience, xpNeededToNextLevel]);
+  }, [
+    navigate,
+    userState.userInfo,
+    refreshTokenState.userRefreshToken,
+    accessTokenState.userAccessToken,
+  ]);
   return (
     <>
-      <section
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url(${
-            backgroundImages[elements[0]]
-          })`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-        className="rounded-[0.75rem] text-white lg:w-[820px]  md:w-full  overflow-auto h-[60%] p-3 md:p-6  w-full flex flex-col  gap-3 items-start justify-start "
-      >
-        <section className=" flex gap-10 items-start justify-center flex-col md:flex-row my-6 md:mt-12">
-          <section className="w-[25%] flex justify-start items-center flex-wrap flex-col md:flex-row">
-            <Card
-              className={`w-[150px] h-[150px] text-white rounded-full p-[0.25rem] relative overflow-hidden ${rarityStyle}`}
-            >
-              <CardContent className="w-full h-full bg-muted p-0 rounded-full relative bg-black">
-                <img
-                  src={illustration}
-                  alt={name}
-                  fetchpriority="auto"
-                  loading="lazy"
-                  className="w-full h-full rounded-full object-center text-center shimmer dark:opacity-50 "
-                />
-              </CardContent>
-            </Card>
-          </section>
-
-          <section className="w-[100%] md:w-[70%] flex flex-col md:flex-row items-start gap-4 flex-wrap">
-            <section className="w-full flex justify-between items-center">
-              <div className=" font-bold text-2xl pb-1">
-                {name}
-
-                <p className="text-muted-foreground text-sm  ">@{username}</p>
-              </div>
-              <div
-                className={`font-bold text-2xl w-[90px] rounded-[0.75rem] p-[0.1rem] ${rarityStyle}  `}
+      {isLoading ? (
+        <Skeleton className="lg:w-[60vw]  md:w-full h-[60%] p-3 md:p-6  w-full rounded-xl" />
+      ) : (
+        <ScrollArea
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url(${
+              backgroundImages[data.pet.petInfo.element[0]]
+            })`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+          className="rounded-[0.75rem] border-[1px] text-white lg:w-[60vw]  md:w-full  overflow-auto h-[60vh] md:h-[55vh] lg:h-[80vh] p-3 md:p-6  w-full flex flex-col  gap-3 items-start justify-start "
+        >
+          <section className=" flex  items-start justify-center flex-col md:flex-row my-6 ">
+            <section className="w-[25%] flex justify-start items-center flex-wrap flex-col md:flex-row">
+              <Card
+                className={`w-[200px] md:w-[150px] h-[250px] text-white  p-[0.25rem] relative overflow-hidden ${rarityStyle}`}
               >
-                <div className="bg-muted rounded-[0.75rem]">
-                  <p
-                    className={`text-muted-foreground  rounded-[0.75rem]  text-base text-center  font-bold ${textStyle} `}
-                  >
-                    {rarity}
-                  </p>
-                </div>
-              </div>
+                <CardContent className="w-full h-full bg-muted p-0 rounded-[0.65rem] relative bg-black">
+                  <img
+                    src={data.pet.petInfo.illustration}
+                    alt={data.pet.petInfo.name}
+                    fetchPriority="auto"
+                    loading="lazy"
+                    className="w-full h-full  rounded-[0.65rem] object-cover   object-center text-center shimmer dark:opacity-50 "
+                  />
+                </CardContent>
+              </Card>
             </section>
 
-            <p className="text-muted-foreground  pb-1">
-              {description}{" "}
-              <p className="text-muted-foreground text-sm font-bold w-fit  pt-2 ">
-                pulled on -{" "}
-                <span className="text-white">
-                  {" "}
-                  <DateConverter date={date} />{" "}
-                </span>
-              </p>
-            </p>
+            <section className="w-[100%] md:w-[70%] flex flex-col md:flex-row items-start gap-4 flex-wrap">
+              <section className="w-full flex justify-between items-center">
+                <div className=" font-bold flex flex-col text-2xl pb-1">
+                  <h1> {data.pet.petInfo.name}</h1>
 
-            <h1 className=" font-bold text-lg  ">Experience</h1>
-            <section className="w-full">
-              <section className=" w-full  items-center   ">
-                <div
-                  className={`w-full h-3 ${styles.glassEffect}  rounded-[0.25rem] relative overflow-hidden`}
-                >
-                  <div
-                    style={{ width: `${percent}%` }}
-                    className={`absolute rounded-[0.75rem] opacity-90 ${rarityStyle} h-3 blur-[0.5px] transition-all duration-700 ease-in-out`}
-                  ></div>
-                </div>
-                <h1 className="  text-[0.6rem] text-center bg-transparent text-muted-foreground mt-1 ">
-                  {percent.toFixed()}%
-                </h1>
-              </section>
-            </section>
+                  {data.pet.isSystem ? (
+                    <p className="text-muted-foreground text-sm">@System</p>
+                  ) : (
+                    <Link
+                      to={`/user-profile/${data.pet.userProfile.userId}`}
+                      className="text-muted-foreground text-sm  "
+                    >
+                      @{data.pet.userProfile.username}
+                    </Link>
+                  )}
 
-            <h1 className=" font-bold text-lg ">Stats</h1>
-            <div className="flex flex-wrap gap-2 ">
-              <div
-                className={`flex gap-2  items-center justify-center h-[35px]  p-2 rounded-[0.75rem] rounded-full ${styles.glassEffect}  min-w-[100px] `}
-              >
-                <div className=" font-bold text-sm uppercase text-white flex gap-1 items-center justify-center ">
-                  <span className="text-[#B22222] text-lg">
-                    <GiMineralHeart />
-                  </span>
-                  Hp
-                </div>
-                <h1 className="text-sm font-medium "> {health} </h1>
-              </div>
-
-              <div
-                className={`flex gap-2  items-center justify-center h-[35px]  p-2 rounded-[0.75rem] rounded-full ${styles.glassEffect}  min-w-[100px] `}
-              >
-                <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
-                  <span className="text-[#FFD700] text-lg">
-                    <GiStarCycle />
-                  </span>
-                  Lvl
-                </div>
-                <h1 className="text-sm font-medium ">
-                  {" "}
-                  <NumberCounter number={level} />{" "}
-                </h1>
-              </div>
-              <div
-                className={`flex gap-2  items-center justify-center h-[35px]  p-2 rounded-[0.75rem] rounded-full ${styles.glassEffect}  min-w-[100px] `}
-              >
-                <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
-                  <span className="text-[#FF4500] text-lg">
-                    <GiBouncingSword />
-                  </span>
-                  att
-                </div>
-                <h1 className="text-sm font-medium "> {attack} </h1>
-              </div>
-              <div
-                className={`flex gap-2  items-center justify-center h-[35px]  p-2 rounded-[0.75rem] rounded-full ${styles.glassEffect}  min-w-[100px] `}
-              >
-                <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
-                  <span className="text-[#4682B4] text-lg">
-                    <GiVibratingShield />
-                  </span>
-                  def
-                </div>
-                <h1 className="text-sm font-medium "> {defense}</h1>
-              </div>
-              <div
-                className={`flex gap-2  items-center justify-center h-[35px]  p-2 rounded-[0.75rem] rounded-full ${styles.glassEffect}  min-w-[100px] `}
-              >
-                <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
-                  <span className="text-[#6A5ACD] text-lg">
-                    <GiMagicSwirl />
-                  </span>
-                  mp
-                </div>
-                <h1 className="text-sm font-medium "> {mana} </h1>
-              </div>
-            </div>
-            <section className="flex gap-4 flex-wrap">
-              <div>
-                <div className="flex flex-col gap-2 ">
-                  <div>
-                    <div className=" font-bold text-lg  pb-1">Class</div>
-                    <div className="flex flex-wrap gap-2 pb-1">
-                      <div
-                        style={{ backgroundColor: classStyle.color }}
-                        className="p-2  px-3 font-bold min-w-[100px] gap-1 h-[35px]   rounded-full  flex items-center justify-center"
-                      >
-                        {classStyle.icon}
-                        {classStyle.class}
-                      </div>
-
-                      <p className="text-muted-foreground text-sm  leading-relaxed ">
-                        {classStyle.effect},<br />
-                        {classStyle.description}
+                  <span className="text-muted-foreground text-sm">
+                    {" "}
+                    {data.pet.userProfile.previousUsers.length > 0 && (
+                      <p>
+                        previously owned -{" "}
+                        {data.pet.userProfile.previousUsers.length} ppl
                       </p>
-                    </div>
+                    )}
+                  </span>
+                </div>
+                <div
+                  className={`font-bold text-2xl w-[95px] rounded-[0.75rem] p-[0.1rem] ${rarityStyle}  `}
+                >
+                  <div className="bg-muted rounded-[0.75rem]">
+                    <p
+                      className={`text-muted-foreground  rounded-[0.75rem]  text-base text-center  font-bold ${textStyle} `}
+                    >
+                      {data.pet.rarity}
+                    </p>
                   </div>
                 </div>
-                <h1 className=" font-bold text-lg  pb-2">Elements</h1>
-                <div className="flex flex-wrap md:gap-3 gap-2 ">
-                  {elementStyles.map((el, index) => (
-                    <div className="flex flex-wrap gap-2 pb-1">
+              </section>
+
+              <div className="text-muted-foreground text-sm  pb-1">
+                <p className=" py-1">{data.pet.petInfo.description}</p>
+
+                <span className="text-white font-bold  py-1 text-md">
+                  {" "}
+                  Lore{" "}
+                </span>
+
+                <p>{data.pet.petInfo.lore}</p>
+
+                <p className="text-muted-foreground text-sm  w-fit  pt-1 ">
+                  pulled on -{" "}
+                  <span className="text-white font-medium text-md">
+                    {" "}
+                    <DateConverter dateString={data.pet.createdAt} />{" "}
+                  </span>
+                </p>
+                <p className="text-muted-foreground text-sm  w-fit  pt-1 ">
+                  level -{" "}
+                  <span className="text-white font-medium text-md normal-num">
+                    {" "}
+                    {data.pet.level}
+                  </span>
+                </p>
+
+                {data.pet.isListed && (
+                  <section className="my-2 flex items-center gap-2 justify-start">
+                    <Link
+                      to={`/view-listing/${data.pet.listingNo}`}
+                      className={`flex gap-2 group  items-center  justify-center min-w-[95px] h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                    >
+                      <div className=" font-bold group-hover:text-[#32CD32] transition-all duration-300 ease-in-out scale-90 text-sm uppercase text-white flex gap-1 items-center justify-center ">
+                        <span className="text-[#32CD32] text-lg">
+                          <GiConvergenceTarget />
+                        </span>
+                        see Listing
+                      </div>
+                    </Link>
+                    <p className="text-muted-foreground text-sm  captitalize w-fit  pt-1 ">
+                      Items is Listed for -{" "}
+                      <span className="text-white font-medium text-sm">
+                        <NumberCounter number={data.pet.listingPrice} />{" "}
+                      </span>
+                    </p>
+                  </section>
+                )}
+              </div>
+
+              <h1 className=" font-bold text-lg  ">Experience</h1>
+              <section className="w-full">
+                <section className=" w-full  items-center   ">
+                  <div
+                    className={`w-full h-2 ${styles.glassEffect}  rounded-[0.25rem] relative overflow-hidden`}
+                  >
+                    <div
+                      style={{ width: `${percent}%` }}
+                      className={`absolute rounded-[0.75rem] opacity-90 ${rarityStyle} h-2 blur-[0.5px] transition-all duration-700 ease-in-out`}
+                    ></div>
+                  </div>
+                </section>
+              </section>
+
+              <h1 className=" font-bold text-lg ">Stats</h1>
+              <div className="flex flex-wrap gap-2 ">
+                <div
+                  className={`flex gap-2  items-center justify-center h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                >
+                  <div className=" font-bold text-sm uppercase text-white flex gap-1 items-center justify-center ">
+                    <span className="text-[#B22222] text-lg">
+                      <GiMineralHeart />
+                    </span>
+                    Hp
+                  </div>
+                  <h1 className="text-sm font-medium ">
+                    {" "}
+                    <NumberCounter number={data.pet.currentHealth} />{" "}
+                  </h1>
+                </div>
+
+                <div
+                  className={`flex gap-2  items-center min-w-[95px] justify-center h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                >
+                  <div className=" font-bold text-sm  uppercase text-muted-foreground flex gap-1 items-center justify-center ">
+                    <span className="text-stone-300 text-lg">
+                      <GiTwoCoins />
+                    </span>
+                    AR
+                  </div>
+                  <h1 className="text-sm font-medium ">
+                    {" "}
+                    <NumberCounter number={data.pet.currentCost} />{" "}
+                  </h1>
+                </div>
+                <div
+                  className={`flex gap-2  items-center justify-center min-w-[95px] h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                >
+                  <div className=" font-bold text-sm  uppercase text-muted-foreground flex gap-1 items-center justify-center ">
+                    <span className="text-[#FF4500] text-lg">
+                      <GiBouncingSword />
+                    </span>
+                    att
+                  </div>
+                  <h1 className="text-sm font-medium ">
+                    {" "}
+                    <NumberCounter number={data.pet.currentAttack} />{" "}
+                  </h1>
+                </div>
+                <div
+                  className={`flex gap-2  items-center min-w-[95px] justify-center h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                >
+                  <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
+                    <span className="text-[#4682B4] text-lg">
+                      <GiVibratingShield />
+                    </span>
+                    def
+                  </div>
+                  <h1 className="text-sm font-medium ">
+                    {" "}
+                    <NumberCounter number={data.pet.currentDefense} />
+                  </h1>
+                </div>
+                <div
+                  className={`flex gap-2  items-center min-w-[95px] justify-center h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                >
+                  <div className=" font-bold text-sm uppercase text-muted-foreground flex gap-1 items-center justify-center ">
+                    <span className="text-[#6A5ACD] text-lg">
+                      <GiMagicSwirl />
+                    </span>
+                    mp
+                  </div>
+                  <h1 className="text-sm font-medium ">
+                    {" "}
+                    <NumberCounter number={data.pet.currentManaCost} />{" "}
+                  </h1>
+                </div>
+              </div>
+              <section className="flex gap-4 flex-col flex-wrap">
+                <div>
+                  <div className="flex flex-col gap-2 ">
+                    <div>
+                      <div className=" font-bold text-lg  pb-1">Class</div>
+                      <div className="flex flex-wrap gap-2 pb-1">
+                        <div
+                          style={{ backgroundColor: classStyle.color }}
+                          className="p-2  px-3 font-bold min-w-[95px] gap-1 h-[30px]  rounded-[0.75rem]   flex items-center justify-center"
+                        >
+                          {classStyle.icon}
+                          {classStyle.class}
+                        </div>
+
+                        <p className="text-muted-foreground text-sm  leading-relaxed ">
+                          {classStyle.effect},<br />
+                          {classStyle.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <h1 className=" font-bold text-lg  pb-1">Elements</h1>
+                  <div className="flex flex-wrap md:gap-3 gap-2 ">
+                    {elementStyles.map((el, index) => (
+                      <div className="flex flex-wrap gap-2 pb-1">
+                        <div
+                          key={index}
+                          style={{ backgroundColor: el.color }}
+                          className="p-2 font-bold gap-1 min-w-[95px] h-[30px]  rounded-[0.75rem]  text-center flex items-center justify-center"
+                        >
+                          {el.icon}
+                          {el.element}
+                        </div>
+                        <p className="text-muted-foreground text-sm  leading-relaxed ">
+                          {el.effect},<br />
+                          {el.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <section className="flex gap-4 flex-wrap">
+                <div>
+                  <h1 className=" font-bold text-lg  pb-1">
+                    Elements Strong Against
+                  </h1>
+                  <div className="flex flex-wrap md:gap-3 gap-2">
+                    {strongAgainstStyles.map((el, index) => (
                       <div
                         key={index}
                         style={{ backgroundColor: el.color }}
-                        className="p-2 font-bold gap-1 min-w-[100px] h-[35px]  rounded-full text-center flex items-center justify-center"
+                        className="p-2 font-bold gap-1 min-w-[95px] h-[30px]  rounded-[0.75rem]  text-center flex items-center justify-center"
                       >
                         {el.icon}
                         {el.element}
                       </div>
-                      <p className="text-muted-foreground text-sm  leading-relaxed ">
-                        {el.effect},<br />
-                        {el.description}
-                      </p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+              <br />
 
-            <section className="flex gap-4 flex-wrap">
-              <div>
-                <h1 className=" font-bold text-lg  pb-2">
-                  Elements Strong Against
-                </h1>
-                <div className="flex flex-wrap md:gap-3 gap-2">
-                  {strongAgainstStyles.map((el, index) => (
-                    <div
-                      key={index}
-                      style={{ backgroundColor: el.color }}
-                      className="p-2 font-bold gap-1 min-w-[100px] h-[35px] ${styles.glassEffect}  rounded-full text-center flex items-center justify-center"
-                    >
-                      {el.icon}
-                      {el.element}
-                    </div>
-                  ))}
+              <section className="flex gap-4 flex-wrap">
+                <div>
+                  <h1 className=" font-bold text-lg  pb-1 ">
+                    Elements weak Against
+                  </h1>
+                  <div className="flex flex-wrap md:gap-3 gap-2">
+                    {weakAgainstStyles.map((el, index) => (
+                      <div
+                        key={index}
+                        style={{ backgroundColor: el.color }}
+                        className="p-1 font-bold gap-1 min-w-[95px] h-[30px] rounded-[0.75rem]   text-center flex items-center justify-center"
+                      >
+                        {el.icon}
+                        {el.element}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </section>
-
-            <section className="flex gap-4 flex-wrap">
-              <div>
-                <h1 className=" font-bold text-lg  pb-2 ">
-                  Elements weak Against
-                </h1>
-                <div className="flex flex-wrap md:gap-3 gap-2">
-                  {weakAgainstStyles.map((el, index) => (
-                    <div
-                      key={index}
-                      style={{ backgroundColor: el.color }}
-                      className="p-2 font-bold gap-1 min-w-[100px] h-[35px] ${styles.glassEffect}  rounded-full text-center flex items-center justify-center"
-                    >
-                      {el.icon}
-                      {el.element}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </section>
             </section>
           </section>
-        </section>
-      </section>
+        </ScrollArea>
+      )}
     </>
   );
 };

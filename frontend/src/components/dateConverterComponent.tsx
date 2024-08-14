@@ -1,10 +1,19 @@
 import React from "react";
 
 interface DateConverterProps {
-  date: Date;
+  dateString: string;
 }
 
-const DateConverter: React.FC<DateConverterProps> = ({ date }) => {
+const DateConverter: React.FC<DateConverterProps> = ({ dateString }) => {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date string:", dateString);
+    return <span>Invalid date</span>;
+  }
+
   // Format the date to the desired format: "1st Jan 2024"
   const formatDate = (date: Date): string => {
     const day = date.getDate();
@@ -39,6 +48,8 @@ const DateConverter: React.FC<DateConverterProps> = ({ date }) => {
 
     return `${day}${daySuffix} ${month} ${year}`;
   };
+
+  console.log(`Formatted date: ${formatDate(date)}`); // Logging formatted date
 
   return <span>{formatDate(date)}</span>;
 };

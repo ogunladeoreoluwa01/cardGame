@@ -1,14 +1,12 @@
-
-
 // icon
-import attack from './attack.png';
-import defense from './defense.png';
-import alertIcon from './alertIcon.svg';
+import attack from "./attack.png";
+import defense from "./defense.png";
+import alertIcon from "./alertIcon.svg";
 
 // sounds
-import attackSound from './sounds/attack.wav';
-import defenseSound from './sounds/defense.mp3';
-import explosion from './sounds/explosion.mp3';
+import attackSound from "./sounds/attack.wav";
+import defenseSound from "./sounds/defense.mp3";
+import explosion from "./sounds/explosion.mp3";
 // emotes
 import E1 from "./chatAssets/E1.png";
 import E2 from "./chatAssets/E2.png";
@@ -86,26 +84,54 @@ import E73 from "./chatAssets/E73.png";
 import E74 from "./chatAssets/E74.png";
 import E75 from "./chatAssets/E75.png";
 
-
 // status effects
-import dazzle from "./StatusEffectAssets/glow.png"
-import burn from "./StatusEffectAssets/on_fire_(burning).png"
-import soak from "./StatusEffectAssets/water_spell.png"
-import rooted from "./StatusEffectAssets/thorn_vine_spell.png"
-import shock from "./StatusEffectAssets/paralyzed.png"
-import freeze from "./StatusEffectAssets/frozen.png"
-import fear from "./StatusEffectAssets/blinded.png"
-import disorient from "./StatusEffectAssets/confused.png"
+import dazzle from "./StatusEffectAssets/glow.png";
+import burn from "./StatusEffectAssets/on_fire_(burning).png";
+import soak from "./StatusEffectAssets/water_spell.png";
+import rooted from "./StatusEffectAssets/thorn_vine_spell.png";
+import shock from "./StatusEffectAssets/paralyzed.png";
+import freeze from "./StatusEffectAssets/frozen.png";
+import fear from "./StatusEffectAssets/blinded.png";
+import disorient from "./StatusEffectAssets/confused.png";
 import petrify from "./StatusEffectAssets/cursed_(disarmed+silenced).png";
 import corrode from "./StatusEffectAssets/frenzy_spell_(critical_booster).png";
 
 // currenccyAssets
 
-import gold from "./gold.png"
-import silver from "./silver.png"
+import gold from "./gold.png";
+import silver from "./silver.png";
 
+// User Badges Assets
 
+import Wood from "./UserBadges/Wood.png";
+import Onyx from "./UserBadges/Onyx.png";
+import Bronze from "./UserBadges/Bronze.png";
+import Silver from "./UserBadges/SilverB.png";
+import Gold from "./UserBadges/GoldB.png";
+import Ruby from "./UserBadges/Ruby.png";
+import Master from "./UserBadges/Master.png";
+import Amethyst from "./UserBadges/Amethyst.png";
+import No1 from "./UserBadges/No1.png";
+import No2 from "./UserBadges/No2.png";
+import No3 from "./UserBadges/No3.png";
+import No4 from "./UserBadges/No4.png";
+import No5 from "./UserBadges/No5.png";
 
+export const Badges = {
+  Wood,
+  Onyx,
+  Bronze,
+  Silver,
+  Gold,
+  Ruby,
+  Master,
+  Amethyst,
+  No1,
+  No2,
+  No3,
+  No4,
+  No5,
+};
 
 export {
   attack,
@@ -115,31 +141,29 @@ export {
   defenseSound,
   explosion,
   gold,
-  silver
+  silver,
 };
 
-
-
 export const gameRules = [
-  'Card with the same defense and attack point will cancel each other out.',
-  'Attack points from the attacking card will deduct the opposing player’s health points.',
-  'If P1 does not defend, their health wil be deducted by P2’s attack.',
-  'If P1 defends, P2’s attack is equal to P2’s attack - P1’s defense.',
-  'If a player defends, they refill 3 Mana',
-  'If a player attacks, they spend 3 Mana',
+  "Card with the same defense and attack point will cancel each other out.",
+  "Attack points from the attacking card will deduct the opposing player’s health points.",
+  "If P1 does not defend, their health wil be deducted by P2’s attack.",
+  "If P1 defends, P2’s attack is equal to P2’s attack - P1’s defense.",
+  "If a player defends, they refill 3 Mana",
+  "If a player attacks, they spend 3 Mana",
 ];
 
-export const statusEffectArray =[
-   dazzle,
- burn ,
- soak ,
- rooted, 
- shock ,
- freeze ,
- fear ,
- disorient, 
- petrify ,
-corrode ,
+export const statusEffectArray = [
+  dazzle,
+  burn,
+  soak,
+  rooted,
+  shock,
+  freeze,
+  fear,
+  disorient,
+  petrify,
+  corrode,
 ];
 
 export const statusEffectMap = {
@@ -231,3 +255,4 @@ export const emojiArray = [
   E74,
   E75,
 ];
+

@@ -33,10 +33,7 @@ const CreateDuelButtons: React.FC<CreateDuelButtonsProps> = ({
   );
   const accessTokenState = useSelector((state: RootState) => state.accessToken);
 
-useEffect(() => {
-  console.log(refreshTokenState.userRefreshToken);
-  console.log(accessTokenState);
-}, [refreshTokenState, accessTokenState]);
+
   
   const refresh = async () => {
     toast({
