@@ -101,7 +101,7 @@ const DashInventoryComp: React.FC<Prop> = ({
               {" "}
               Inventory
             </Button>
-            <Button onClick={()=>{navigate(`/market/${userId}/pet`);}} size="sm" className="mt-2  w-24 ">
+            <Button onClick={()=>{navigate(`/market/pet`);}} size="sm" className="mt-2  w-24 ">
               {" "}
               Black Market
             </Button>

@@ -431,7 +431,7 @@ const InventoryPage: React.FC = () => {
                    onClick={() => {
                   handleClearButton();
                 }}
-                  className={`w-7 h-7 hover:bg-red-700 rotate-[45deg] elementCounts  text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
+                  className={`w-7 h-7 cursor-pointer hover:bg-red-700 rotate-[45deg] elementCounts  text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
                     // Replace true with your actual condition
                     true
                       ? "bg-red-500  bg-opacity-90"

@@ -38,17 +38,7 @@ const createDuel = async (req, res, next) => {
     const { isPrivate } = req.body;
     const io = getSocketInstance()
 
-    const Arenas = [    "66b7ee874c4e461e9a83a728",
-    "66b7ee884c4e461e9a83a72b",
-    "66b7ee884c4e461e9a83a72e",
-    "66b7ee884c4e461e9a83a731",
-    "66b7ee884c4e461e9a83a734",
-    "66b7ee884c4e461e9a83a737",
-    "66b7ee884c4e461e9a83a73a",
-    "66b7ee884c4e461e9a83a73d",
-    "66b7ee884c4e461e9a83a740",
-    "66b7ee884c4e461e9a83a743",
-    "66b7ee884c4e461e9a83a746"];
+    const Arenas = await Arena.find({ isActive: true });
 
     
 

@@ -13,15 +13,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
-
+import { AppDispatch } from "@/stores";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import getPetDetails from "@/services/petServices/getAPet";
+import ViewAlistedItem  from "@/services/marketServices/viewAlistedItem";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import DateConverter from "@/components/dateConverterComponent";
 import NumberCounter from "@/components/numberCounterprop";
+import refreshAccessToken from "@/services/authServices/refreshAccessToken";
+import { accessTokenAction } from "@/stores/reducers/accessTokenReducer";
+import clearAccessToken from "@/stores/actions/accessTokenAction";
+import clearRefreshToken from "@/stores/actions/refreshTokenAction";
+import logOut from "@/stores/actions/userAction";
+import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
+import { gameAction } from "@/stores/reducers/gameReducer";
+import { liveGameAction } from "@/stores/reducers/liveGameReducer";
 import {
   GiTurtleShell,
   GiTigerHead,
@@ -194,9 +202,9 @@ const classData: Record<
   },
 };
 
-const PetView = () => {
-  const { petId } = useParams();
-
+const ViewAlistedItemPage = () => {
+  const { listingno } = useParams();
+ const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
   const userState: any | null = useSelector((state: RootState) => state.user);
@@ -206,11 +214,53 @@ const PetView = () => {
   );
   const accessTokenState = useSelector((state: RootState) => state.accessToken);
 
+
+   const refresh = useCallback(async () => {
+    toast({
+      variant: "warning",
+      description: "Refreshing access token",
+    });
+
+    try {
+      const response = await refreshAccessToken({
+        refreshToken: refreshTokenState.userRefreshToken,
+      });
+      dispatch(accessTokenAction.setUserAccessToken(response.accessToken));
+      return response.accessToken;
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        description: err.errorMessage,
+      });
+
+      if (err.errorCode === 403) {
+        dispatch(clearAccessToken());
+        dispatch(clearRefreshToken());
+        dispatch(logOut());
+        localStorage.removeItem("account");
+        localStorage.removeItem("refreshToken");
+        dispatch(liveGameAction.resetLiveGameState());
+        localStorage.removeItem("game");
+        dispatch(gameAction.resetGameState());
+        localStorage.removeItem("liveGame");
+        dispatch(gameSessionAction.clearSessionId());
+        localStorage.removeItem("gameSession");
+        toast({
+          variant: "warning",
+          description: "User logged out",
+        });
+        navigate("/login");
+      }
+    }
+  }, [dispatch, navigate, refreshTokenState.userRefreshToken, toast]);
+
+
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["gatPet", petId],
+    queryKey: ["getListing", accessTokenState.userAccessToken,listingno],
     queryFn: () =>
-      getPetDetails({
-        petId: petId,
+      ViewAlistedItem({
+        accessToken:accessTokenState.userAccessToken,
+        listingNo: listingno,
       }),
   });
 
@@ -249,15 +299,15 @@ const PetView = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      setElementStyles(data?.pet.petInfo.element.map((el) => elementData[el]));
-      setClassStyle(classData[data?.pet.petInfo.class]);
+      setElementStyles(data?.listing?.petId?.petInfo.element.map((el) => elementData[el]));
+      setClassStyle(classData[data?.listing?.petId?.petInfo.class]);
       setWeakAgainstStyles(
-        data?.pet.petInfo.weaknesses.map((el) => elementData[el])
+        data?.listing?.petId?.petInfo.weaknesses.map((el) => elementData[el])
       );
       setStrongAgainstStyles(
-        data?.pet.petInfo.strengths.map((el) => elementData[el])
+        data?.listing?.petId?.petInfo.strengths.map((el) => elementData[el])
       );
-      switch (data?.pet.rarity) {
+      switch (data?.listing?.petId?.rarity) {
         case "Rustic":
           setRarityStyle("rustic-card");
           setTextStyle("rustic-text ");
@@ -284,14 +334,46 @@ const PetView = () => {
           break;
       }
       const calculatedPercent =
-        (data?.pet.experience / data?.pet.xpNeededToNextLevel) * 100;
+        (data?.listing?.petId?.experience / data?.listing?.petId?.xpNeededToNextLevel) * 100;
       if (calculatedPercent > 100) {
         setPercent(100);
       } else {
         setPercent(calculatedPercent);
       }
     }
-  }, [data?.pet]);
+  }, [data?.listing?.petId]);
+
+
+
+ useEffect(() => {
+    if (isError && error) {
+      (async () => {
+        try {
+          const errorMessage = JSON.parse(error.message);
+          console.error(
+            `Error ${errorMessage.errorCode}: ${errorMessage.errorMessage}`
+          );
+
+          if (errorMessage.errorCode === 440) {
+            await refresh();
+          } else {
+            toast({
+              variant: "destructive",
+              description: `Error ${errorMessage.errorCode}: ${errorMessage.errorMessage}`,
+            });
+          }
+        } catch (parseError: any) {
+          console.error("Error parsing error message:", parseError);
+          toast({
+            variant: "destructive",
+            description: parseError.toString(),
+          });
+        }
+      })();
+    }
+  }, [isError, error, refresh, toast]);
+
+
 
   useEffect(() => {
     if (!userState.userInfo || !refreshTokenState.userRefreshToken) {
@@ -309,13 +391,13 @@ const PetView = () => {
   ]);
   return (
     <>
-      {isLoading ? (
+      {isLoading && data ? (
         <Skeleton className="lg:w-[60vw]  md:w-full h-[60%] p-3 md:p-6  w-full rounded-xl" />
       ) : (
         <ScrollArea
           style={{
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url(${
-              backgroundImages[data.pet.petInfo.element[0]]
+              backgroundImages[data?.listing?.petId?.petInfo.element[0]]
             })`,
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
@@ -329,8 +411,8 @@ const PetView = () => {
               >
                 <CardContent className="w-full h-full bg-muted p-0 rounded-[0.65rem] relative bg-black">
                   <img
-                    src={data.pet.petInfo.illustration}
-                    alt={data.pet.petInfo.name}
+                    src={data?.listing?.petId?.petInfo.illustration}
+                    alt={data?.listing?.petId?.petInfo.name}
                     fetchPriority="auto"
                     loading="lazy"
                     className="w-full h-full  rounded-[0.65rem] object-cover   object-center text-center shimmer dark:opacity-50 "
@@ -342,25 +424,30 @@ const PetView = () => {
             <section className="w-[100%] md:w-[70%] flex flex-col md:flex-row items-start gap-4 flex-wrap">
               <section className="w-full flex justify-between items-center">
                 <div className=" font-bold flex flex-col text-2xl pb-1">
-                  <h1> {data.pet.petInfo.name}</h1>
+                  <h1> {data?.listing?.petId?.petInfo.name}</h1>
 
-                  {data.pet.isSystem ? (
+                  {data?.listing?.isSystem ? (
                     <p className="text-muted-foreground text-sm">@System</p>
                   ) : (
                     <Link
-                      to={`/user-profile/${data.pet.userProfile.userId}`}
+                      to={`/user-profile/${data?.listing?.petId?.userProfile.userId}`}
                       className="text-muted-foreground text-sm  "
                     >
-                      @{data.pet.userProfile.username}
+                      @{data?.listing?.petId?.userProfile.username}
                     </Link>
                   )}
+                  <span className="text-muted-foreground text-sm  ">
+                    {data?.listing?.listingNumber}
+                  </span>
 
                   <span className="text-muted-foreground text-sm">
                     {" "}
-                    {data.pet.userProfile.previousUsers.length > 0 && (
+                    {data?.listing?.petId?.userProfile.previousUsers.length >
+                      0 && (
                       <p>
                         previously owned -{" "}
-                        {data.pet.userProfile.previousUsers.length} ppl
+                        {data?.listing?.petId?.userProfile.previousUsers.length}{" "}
+                        ppl
                       </p>
                     )}
                   </span>
@@ -372,58 +459,102 @@ const PetView = () => {
                     <p
                       className={`text-muted-foreground  rounded-[0.75rem]  text-base text-center  font-bold ${textStyle} `}
                     >
-                      {data.pet.rarity}
+                      {data?.listing?.petId?.rarity}
                     </p>
                   </div>
                 </div>
               </section>
 
               <div className="text-muted-foreground text-sm  pb-1">
-                <p className=" py-1">{data.pet.petInfo.description}</p>
+                <p className=" py-1">
+                  {data?.listing?.petId?.petInfo.description}
+                </p>
 
                 <span className="text-white font-bold  py-1 text-md">
                   {" "}
                   Lore{" "}
                 </span>
 
-                <p>{data.pet.petInfo.lore}</p>
+                <p>{data?.listing?.petId?.petInfo.lore}</p>
+
+                {data?.listing?.sideNote && (
+                  <>
+                    <span className="text-white font-bold  py-1 text-md">
+                      {" "}
+                      Side Note{" "}
+                    </span>
+
+                    <p>{data?.listing?.sideNote}</p>
+                  </>
+                )}
+                {!data?.listing?.isSystem && (
+                  <p className="text-muted-foreground text-sm  w-fit  pt-1 ">
+                    pulled on -{" "}
+                    <span className="text-white font-medium text-md">
+                      {" "}
+                      <DateConverter
+                        dateString={data?.listing?.petId?.createdAt}
+                      />{" "}
+                    </span>
+                  </p>
+                )}
 
                 <p className="text-muted-foreground text-sm  w-fit  pt-1 ">
-                  pulled on -{" "}
+                  listed on -{" "}
                   <span className="text-white font-medium text-md">
                     {" "}
-                    <DateConverter dateString={data.pet.createdAt} />{" "}
+                    <DateConverter dateString={data?.listing?.createdAt} />{" "}
                   </span>
                 </p>
                 <p className="text-muted-foreground text-sm  w-fit  pt-1 ">
                   level -{" "}
                   <span className="text-white font-medium text-md normal-num">
                     {" "}
-                    {data.pet.level}
+                    {data?.listing?.petId?.level}
                   </span>
                 </p>
-
-                {data.pet.isListed && (
-                  <section className="my-2 flex items-center gap-2 justify-start">
-                    <Link
-                      to={`/view-listing/${data.pet.listingNo}`}
-                      className={`flex gap-2 group  items-center  justify-center min-w-[95px] h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
-                    >
-                      <div className=" font-bold group-hover:text-[#32CD32] transition-all duration-300 ease-in-out scale-90 text-sm uppercase text-white flex gap-1 items-center justify-center ">
-                        <span className="text-[#32CD32] text-lg">
-                          <GiConvergenceTarget />
-                        </span>
-                        see Listing
-                      </div>
-                    </Link>
-                    <p className="text-muted-foreground text-sm  captitalize w-fit  pt-1 ">
-                      Items is Listed for -{" "}
-                      <span className="text-white font-medium text-sm">
-                        <NumberCounter number={data.pet.listingPrice} />{" "}
-                      </span>
-                    </p>
-                  </section>
-                )}
+                <p className="text-muted-foreground text-md  captitalize w-fit  pt-1 ">
+                  Items is selling for -{" "}
+                  <span className="text-white font-bold text-md">
+                    <NumberCounter number={data?.listing?.priceInSilver} /> AR
+                  </span>
+                </p>
+                <section className="flex gap-1 items-center">
+                   {
+                  data.listing.sellerId!==
+                    userState.userInfo._id && (
+                    <section className="my-2 flex items-center gap-2 justify-start">
+                      <Link
+                        to={`/view-listing/${data?.listing?.petId?.listingNo}`}
+                        className={`flex gap-2 group  items-center  justify-center min-w-[95px] h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                      >
+                        <div className="font-bold group-hover:text-[#32CD32] transition-all duration-300 ease-in-out scale-90 text-sm uppercase text-white flex gap-1 items-center justify-center">
+                          <span className="text-[#32CD32] text-lg">
+                            <GiConvergenceTarget />
+                          </span>
+                          See Listing
+                        </div>
+                      </Link>
+                    </section>
+                  )} {
+                  data.listing.sellerId!==
+                    userState.userInfo._id && (
+                    <section className="my-2 flex items-center gap-2 justify-start">
+                      <Link
+                        to={`/view-listing/${data?.listing?.petId?.listingNo}`}
+                        className={`flex gap-2 group  items-center  justify-center min-w-[95px] h-[30px]  p-2 rounded-[0.75rem]  ${styles.glassEffect}  min-w-[95px] `}
+                      >
+                        <div className="font-bold group-hover:text-[#32CD32] transition-all duration-300 ease-in-out scale-90 text-sm uppercase text-white flex gap-1 items-center justify-center">
+                          <span className="text-[#32CD32] text-lg">
+                            <GiConvergenceTarget />
+                          </span>
+                          See Listing
+                        </div>
+                      </Link>
+                    </section>
+                  )}
+                </section>
+               
               </div>
 
               <h1 className=" font-bold text-lg  ">Experience</h1>
@@ -453,7 +584,9 @@ const PetView = () => {
                   </div>
                   <h1 className="text-sm font-medium ">
                     {" "}
-                    <NumberCounter number={data.pet.currentHealth} />{" "}
+                    <NumberCounter
+                      number={data?.listing?.petId?.currentHealth}
+                    />{" "}
                   </h1>
                 </div>
 
@@ -468,7 +601,9 @@ const PetView = () => {
                   </div>
                   <h1 className="text-sm font-medium ">
                     {" "}
-                    <NumberCounter number={data.pet.currentCost} />{" "}
+                    <NumberCounter
+                      number={data?.listing?.petId?.currentCost}
+                    />{" "}
                   </h1>
                 </div>
                 <div
@@ -482,7 +617,9 @@ const PetView = () => {
                   </div>
                   <h1 className="text-sm font-medium ">
                     {" "}
-                    <NumberCounter number={data.pet.currentAttack} />{" "}
+                    <NumberCounter
+                      number={data?.listing?.petId?.currentAttack}
+                    />{" "}
                   </h1>
                 </div>
                 <div
@@ -496,7 +633,9 @@ const PetView = () => {
                   </div>
                   <h1 className="text-sm font-medium ">
                     {" "}
-                    <NumberCounter number={data.pet.currentDefense} />
+                    <NumberCounter
+                      number={data?.listing?.petId?.currentDefense}
+                    />
                   </h1>
                 </div>
                 <div
@@ -510,7 +649,9 @@ const PetView = () => {
                   </div>
                   <h1 className="text-sm font-medium ">
                     {" "}
-                    <NumberCounter number={data.pet.currentManaCost} />{" "}
+                    <NumberCounter
+                      number={data?.listing?.petId?.currentManaCost}
+                    />{" "}
                   </h1>
                 </div>
               </div>
@@ -605,4 +746,4 @@ const PetView = () => {
   );
 };
 
-export default PetView;
+export default ViewAlistedItemPage;

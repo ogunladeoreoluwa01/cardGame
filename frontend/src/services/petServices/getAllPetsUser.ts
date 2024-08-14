@@ -8,6 +8,7 @@ interface GetAllUserPetDetailsParams {
   element?: string[]|null;
   rarity?: string;
   petClass?: string;
+  petname?:string|null;
   isLvl?: string;
   petcategory?: string;
   page?: number | undefined;
@@ -38,6 +39,7 @@ const getAllUserPetDetails = async ({
   accessToken,
   userId,
   element ,
+  petname,
   rarity,
   petClass,
   isLvl,
@@ -51,6 +53,7 @@ const getAllUserPetDetails = async ({
     if (element && element.length > 0) {
       element.forEach((el) => queryParams.append("element", el));
     }
+     if (petname) queryParams.append("petname", petname);
     if (rarity) queryParams.append("rarity", rarity);
     if (petClass) queryParams.append("petClass", petClass);
     if (isLvl) queryParams.append("isLvl", isLvl);

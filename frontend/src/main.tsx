@@ -29,6 +29,7 @@ import ItemInventoryPage from "./pages/inventory/itemInventory";
 import MarketPage from "./pages/marketPlace/marketPage";
 import PetMarketPage from "./pages/marketPlace/petMarketPage";
 import ItemMarketPage from "./pages/marketPlace/itemMarketPage";
+import ViewAlistedItemPage from "./pages/viewAlistedItemPage";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
         path: "user-pet-view/:petId?",
         element: <PetView />,
       },
+      {
+    path: "view-listing/:listingno?",
+    element: <ViewAlistedItemPage />,
+  },
     ],
   },
   {
@@ -89,6 +94,7 @@ const router = createBrowserRouter([
     path: "/leaderboard/:userId",
     element: <UserLeaderBoards />,
   },
+  
   {
     path: "/inventory/:userId",
     element: <InventoryPage />,

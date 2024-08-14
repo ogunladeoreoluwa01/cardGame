@@ -26,7 +26,6 @@ import {
   GiTornado,
   GiLightningTrio,
   GiIceBolt,
-  GiTwoCoins,
   GiSundial,
   GiMoon,
   GiVineLeaf,
@@ -37,7 +36,7 @@ import {
   GiMineralHeart,
 } from "react-icons/gi";
 
-import { gold, silver, Badges } from "@/assets";
+import { gold, silver } from "@/assets";
 import { FaComputer } from "react-icons/fa6";
 import DateConverter from "@/components/dateConverterComponent";
 import NumberCounter from "@/components/numberCounterprop";
@@ -255,7 +254,11 @@ const MarketCardComp: React.FC<Props> = ({
   }, [listingDate]);
 
   return (
-    <HoverCard>
+    
+    <Link to={`/view-listing/${listingNo}`}>
+
+<HoverCard>
+    
       <HoverCardTrigger asChild>
         <Card
           className={`card saturate-150 rounded-sm w-[170px] h-[275px]  md:w-[200px]  md:h-[300px]   cursor-pointer      p-[0.22rem] relative overflow-hidden ${rarityStyle} font-mono`}
@@ -271,39 +274,42 @@ const MarketCardComp: React.FC<Props> = ({
           <CardContent
             className={`w-full mx-auto h-full bg-muted p-0 relative bg-black cardBg rounded-t-[0.5rem] rounded-b-[0.15rem] md:rounded-[0.5rem] flex flex-col items-center`}
           >
-            <div className="z-20 mt-2 md:hidden text-white absolute top-10 right-2 flex flex-col justify-center items-center gap-2">
-              <span
-                className="-rotate-[45deg] text-[1.1rem]"
-                style={{ color: classStyle.color }}
-              >
-                {classStyle.icon}
-              </span>
-              {elementStyles.map((el, index) => (
-                <span
-                  key={index}
-                  className="-rotate-[45deg] text-[1.1rem]"
-                  style={{ color: el.color }}
-                >
-                  {el.icon}
-                </span>
-              ))}
-            </div>
             <h1 className="absolute top-5  left-1/2 line-clamp-1 text-sm text-md  -translate-x-1/2 text-white z-20  px-2 py-1 w-[98%] text-center h-8">
               {name}
             </h1>
-            <section className="w-full h-full px-1 pt-1 md:p-1  bg-black  rounded-t-[0.5rem] relative">
+            <section className="w-full h-[85%] md:h-full px-1 pt-1 md:p-1  bg-black  rounded-t-[0.5rem] relative">
               {isUser && (
                 <span className="flex items-center gap-1 absolute bottom-7 p-1 bg-black backdrop-filter backdrop-blur-lg bg-opacity-10 right-[0.2rem] z-20 text-white text-lg  w-fit rounded-md">
                   <FaUserCheck />
                 </span>
               )}
-              {isListed && (
-                <span className="flex items-center gap-1 absolute bottom-2 p-1 bg-black backdrop-filter backdrop-blur-lg bg-opacity-10 right-1 z-20 text-[#FFC300] text-lg  w-fit rounded-md">
-                  <GiTwoCoins />
+              <div className="z-20 mt-2 md:hidden text-white absolute bottom-2 right-2 flex flex-col justify-center items-center gap-2">
+                <span
+                  className=" text-[1.1rem] p-[2px] rounded-[4px] justify-center items-center flex "
+                  style={{
+                    backgroundColor: classStyle.color,
+
+                    backgroundOpacity: 0.3,
+                  }}
+                >
+                  {classStyle.icon}
                 </span>
-              )}
+                {elementStyles.map((el, index) => (
+                  <span
+                    key={index}
+                    className=" text-[1.1rem] p-[2px] rounded-[4px] justify-center items-center flex"
+                    style={{
+                      backgroundColor: el.color,
+
+                      backgroundOpacity: 0.3,
+                    }}
+                  >
+                    {el.icon}
+                  </span>
+                ))}
+              </div>
               {isNew && (
-                <span className="md:flex  items-center gap-1 text-red-600 absolute hidden  -bottom-1 -left-1 rotate-[20deg] z-30 w-fit text-2xl bg-white  ">
+                <span className="md:flex  items-center gap-1 text-red-600 absolute hidden  bottom-[0.05rem] left-[0.10rem]  z-30 w-fit text-2xl   ">
                   <MdFiberNew />{" "}
                 </span>
               )}
@@ -344,7 +350,7 @@ const MarketCardComp: React.FC<Props> = ({
               </div>
             </section>
 
-            <ul className="flex gap-2 items-center py-1 md:hidden">
+            <ul className="flex gap-2 items-center py-1 md:hidden h-10">
               <li>
                 <div className="flex   justify-center items-center gap-1 min-w-10">
                   <img
@@ -378,7 +384,7 @@ const MarketCardComp: React.FC<Props> = ({
             </ul>
 
             {isNew && (
-              <span className="flex items-center gap-1 text-red-600  absolute md:hidden -bottom-1 -left-1 rotate-[20deg] z-30 w-fit text-2xl  bg-white ">
+              <span className="flex items-center gap-1 text-red-600  absolute md:hidden bottom-[0.05rem] left-[0.10rem]  z-30 w-fit text-2xl  ">
                 <MdFiberNew />{" "}
               </span>
             )}
@@ -411,7 +417,7 @@ const MarketCardComp: React.FC<Props> = ({
                 </span>
               </div>
             </div>
-            <p className="text-sm line-clamp-3 text-muted-foreground ">
+            <p className="text-sm line-clamp-2 text-muted-foreground ">
               {sideNote}
             </p>
             <div className="flex flex-col text-white flex-wrap h-5 gap-1 ">
@@ -472,6 +478,9 @@ const MarketCardComp: React.FC<Props> = ({
         </div>
       </HoverCardContent>
     </HoverCard>
+
+    </Link>
+    
   );
 };
 

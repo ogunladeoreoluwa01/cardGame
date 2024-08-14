@@ -199,27 +199,16 @@ const elementData: Record<
 
 
 interface FilterProps  {
-
-
-  minInputValue: number | null;
-  maxInputValue: number | null;
   handleElementParams: (element: string) => void;
   handleClassParams: (petClass: string) => void;
-  handleMinChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleMaxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
   handleClearButton: () => void;
 }
 
-const MarketPlaceSideBar: React.FC<FilterProps> = ({
+const InventorySideBar: React.FC<FilterProps> = ({
 
-  minInputValue,
-  maxInputValue,
+  
   handleElementParams,
   handleClassParams,
-  handleMinChange,
-  handleMaxChange,
-
   handleClearButton,
 }) => {
 
@@ -309,43 +298,7 @@ const MarketPlaceSideBar: React.FC<FilterProps> = ({
               Classes{" "}
             </h1>
             <ClassCombobox />
-            <section className="flex w-full flex-col gap-1">
-              <h1 className="px-2  font-bold flex items-center gap-1">
-                Price{" "}
-                <img
-                  src={silver}
-                  alt=""
-                  className="w-[1.2rem] h-[1.2rem] rounded-full "
-                  fetchPriority="high"
-                  loading="lazy"
-                />
-              </h1>
-              <div className="w-full flex justify-between items-center px-2">
-                <Input
-                  value={minInputValue ?? ""}
-                  onChange={handleMinChange}
-                  type="text"
-                  id="Min"
-                  autoComplete="off"
-                  placeholder="Min"
-                  pattern="[0-9]*" // This pattern only accepts numeric digits
-                  inputMode="numeric" // Ensures numeric keyboard on mobile devices
-                  className="w-[45%]  text-xs h-9 placeholder:text-xs placeholder:top-1 focus-visible:ring-gray-400 border-gray-400 rounded-sm focus:border-none bg-white backdrop-filter backdrop-blur-lg bg-opacity-10"
-                />
-                <Separator className="w-[5%] bg-gray-400" />
-                <Input
-                  value={maxInputValue ?? ""}
-                  onChange={handleMaxChange}
-                  type="text"
-                  id="Max"
-                  autoComplete="off"
-                  placeholder="Max"
-                  pattern="[0-9]*" // This pattern only accepts numeric digits
-                  inputMode="numeric" // Ensures numeric keyboard on mobile devices
-                  className="w-[45%] text-xs h-9 placeholder:text-xs placeholder:top-1 focus-visible:ring-gray-400 border-gray-400 rounded-sm focus:border-none bg-white backdrop-filter backdrop-blur-lg bg-opacity-10"
-                />
-              </div>
-            </section>
+            
           </section>
         </section>{" "}
         <div className="flex md:hidden left-2 z-20 flex-wrap  gap-3 w-12 h-12 justify-center fixed bottom-14 md:bottom-4  transition-all duration-300 ease-in-out bg-black backdrop-filter backdrop-blur-lg bg-opacity-50 border-[1px]  p-2  items-center rounded-[0.75rem] scale-90 ">
@@ -435,48 +388,7 @@ const MarketPlaceSideBar: React.FC<FilterProps> = ({
                 })}
               </section>
 
-              <SheetHeader>
-                <SheetTitle className="font-bold flex  items-center gap-2 mt-2 z-[9999]">
-                  {" "}
-                  Price
-                  <img
-                    src={silver}
-                    alt=""
-                    className="w-[1.2rem] h-[1.2rem] rounded-full "
-                    fetchPriority="high"
-                    loading="lazy"
-                  />
-                </SheetTitle>
-
-                <section className="flex w-full flex-col gap-1">
-                  <div className="w-full flex justify-between items-center px-2">
-                    <Input
-                      value={minInputValue ?? ""}
-                      onChange={handleMinChange}
-                      type="text"
-                      id="Min"
-                      autoComplete="off"
-                      placeholder="Min"
-                      pattern="[0-9]*" // This pattern only accepts numeric digits
-                      inputMode="numeric" // Ensures numeric keyboard on mobile devices
-                      className="w-[45%]  text-xs h-9 placeholder:text-xs placeholder:top-1 focus-visible:ring-gray-400 border-gray-400 rounded-sm focus:border-none bg-white backdrop-filter backdrop-blur-lg bg-opacity-10"
-                    />
-                    <Separator className="w-[5%] bg-gray-400" />
-                    <Input
-                      value={maxInputValue ?? ""}
-                      onChange={handleMaxChange}
-                      type="text"
-                      id="Max"
-                      autoComplete="off"
-                      placeholder="Max"
-                      pattern="[0-9]*" // This pattern only accepts numeric digits
-                      inputMode="numeric" // Ensures numeric keyboard on mobile devices
-                      className="w-[45%] text-xs h-9 placeholder:text-xs placeholder:top-1 focus-visible:ring-gray-400 border-gray-400 rounded-sm focus:border-none bg-white backdrop-filter backdrop-blur-lg bg-opacity-10"
-                    />
-                  </div>
-                </section>
-              </SheetHeader>
-
+             
               <SheetHeader>
                 <SheetTitle className="font-bold mt-2 z-[9999]">
                   {" "}
@@ -546,4 +458,4 @@ const MarketPlaceSideBar: React.FC<FilterProps> = ({
     );
 };
 
-export default MarketPlaceSideBar;
+export default InventorySideBar;

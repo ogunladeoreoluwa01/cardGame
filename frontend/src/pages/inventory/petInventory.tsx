@@ -9,12 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/types";
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import CardComp from "@/components/cardComp";
-
+import InventorySideBar from "./inventorySidebar"
 import getAllUserPetDetails from "@/services/petServices/getAllPetsUser";
 import refreshAccessToken from "@/services/authServices/refreshAccessToken";
 import { accessTokenAction } from "@/stores/reducers/accessTokenReducer";
@@ -25,156 +27,12 @@ import { AppDispatch } from "@/stores";
 import { gameSessionAction } from "@/stores/reducers/gameSessionReducer";
 import { gameAction } from "@/stores/reducers/gameReducer";
 import { liveGameAction } from "@/stores/reducers/liveGameReducer";
-import NumberCounter from "@/components/numberCounterprop";
 import CardLoader from "@/components/loaders/cardLoader";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
-  GiTurtleShell,
-  GiTigerHead,
-  GiCancel,
-  GiFairyWings,
-  GiPorcupine,
-  GiSmallFire,
-  GiDrop,
-  GiStonePile,
-  GiTornado,
-  GiLightningTrio,
-  GiIceBolt,
-  GiSundial,
-  GiMoon,
-  GiVineLeaf,
-  GiCompass,
-  GiMetalBar,
+  GiArchiveResearch,
 } from "react-icons/gi";
-import { IoIosFunnel } from "react-icons/io";
-import { ClassCombobox } from "./ClassCombobox";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
-const petClasses = [
-  {
-    class: "Guardian",
-    label: "Guardian",
-    color: "#2E7D32",
-    icon: <GiTurtleShell />,
-    effect: "Provides exceptional defense and protection for allies.",
-  },
-  {
-    class: "Breaker",
-    label: "Breaker",
-    color: "#8B4513",
-    icon: <GiPorcupine />,
-    effect: "Breaks through enemy defenses with powerful attacks.",
-  },
-  {
-    class: "Predator",
-    label: "Predator",
-    color: "#8B0000",
-    icon: <GiTigerHead />,
-    effect: "Uses speed and ferocity to overwhelm opponents.",
-  },
-  {
-    class: "Nimble",
-    label: "Nimble",
-    color: "#AD1457",
-    icon: <GiFairyWings />,
-    effect: "Dodges attacks and strikes with precision and agility.",
-  },
-];
 
-const classData: Record<
-  string,
-  { class: string; color: string; icon: JSX.Element; effect: string }
-> = {
-  Guardian: {
-    class: "Guardian",
-    color: "#2E7D32",
-    icon: <GiTurtleShell />,
-    effect: "Provides exceptional defense and protection for allies.",
-  },
-  Breaker: {
-    class: "Breaker",
-    color: "#8B4513",
-    icon: <GiPorcupine />,
-    effect: "Breaks through enemy defenses with powerful attacks.",
-  },
-  Predator: {
-    class: "Predator",
-    color: "#8B0000",
-    icon: <GiTigerHead />,
-    effect: "Uses speed and ferocity to overwhelm opponents.",
-  },
-  Nimble: {
-    class: "Nimble",
-    color: "#AD1457",
-    icon: <GiFairyWings />,
-    effect: "Dodges attacks and strikes with precision and agility.",
-  },
-};
-
-const elementData: Record<
-  string,
-  { color: string; icon: JSX.Element; effect: string }
-> = {
-  Fire: {
-    color: "#8B0000",
-    icon: <GiSmallFire />,
-    effect: "Burns enemies over time with fire damage.",
-  },
-  Water: {
-    color: "#1C86EE",
-    icon: <GiDrop />,
-    effect: "Cools and calms, providing defensive and healing abilities.",
-  },
-  Earth: {
-    color: "#4B3621",
-    icon: <GiStonePile />,
-    effect: "Provides stability and defensive strength.",
-  },
-  Air: {
-    color: "#4682B4",
-    icon: <GiTornado />,
-    effect: "Brings swift and evasive maneuvers, enhancing agility.",
-  },
-  Lightning: {
-    color: "#DAA520",
-    icon: <GiLightningTrio />,
-    effect: "Electrifies attacks with shocking damage and stunning effects.",
-  },
-  Nature: {
-    color: "#2E8B57",
-    icon: <GiVineLeaf />,
-    effect: "Harmonizes with surroundings, providing healing and growth.",
-  },
-  Ice: {
-    color: "#008B8B",
-    icon: <GiIceBolt />,
-    effect: "Freezes enemies and slows their actions.",
-  },
-  Shadow: {
-    color: "#4B0082",
-    icon: <GiMoon />,
-    effect: "Obscures vision and deals shadowy damage.",
-  },
-  Light: {
-    color: "#B8860B",
-    icon: <GiSundial />,
-    effect: "Illuminates and heals, providing clarity and purity.",
-  },
-  Metal: {
-    color: "#4F4F4F",
-    icon: <GiMetalBar />,
-    effect: "Strengthens defenses and enhances durability.",
-  },
-};
 
 const PetInventoryPage: React.FC = () => {
   const { toast } = useToast();
@@ -186,7 +44,7 @@ const PetInventoryPage: React.FC = () => {
   let [searchParams, setSearchParams] = useSearchParams();
   const [element, setElement] = useState<string[] | null>(null);
   const [petClass, setPetClass] = useState<string | null>(null);
-
+const [petNameValue, setPetNameValue] = useState<string | null>(null);
   const userState: any | null = useSelector((state: RootState) => state.user);
   const accessTokenState: any | null = useSelector(
     (state: RootState) => state.accessToken
@@ -198,6 +56,7 @@ const PetInventoryPage: React.FC = () => {
   useEffect(() => {
     const elementParam = searchParams.get("elements");
     const classParam = searchParams.get("class");
+      const searchValueParam = searchParams.get("q");
     if (elementParam) {
       setElement([elementParam.toString()]);
       console.log([elementParam.toString()]);
@@ -211,6 +70,11 @@ const PetInventoryPage: React.FC = () => {
     } else {
       setPetClass(null);
     }
+    if (searchValueParam) {
+    setPetNameValue(searchValueParam.toString());
+  } else {
+    setPetNameValue(null);
+  }
   }, [searchParams]);
 
   const refresh = useCallback(async () => {
@@ -270,6 +134,7 @@ const PetInventoryPage: React.FC = () => {
       accessTokenState.userAccessToken,
       element,
       petClass,
+      petNameValue
     ],
     queryFn: ({ pageParam = 1 }) =>
       getAllUserPetDetails({
@@ -279,8 +144,7 @@ const PetInventoryPage: React.FC = () => {
         limit: 10,
         element: element,
         petClass: petClass,
-
-        // petcategory:,
+        petname: petNameValue,
       }),
     getNextPageParam: (lastPage) => {
       const { currentPage, totalPages } = lastPage.pagination;
@@ -359,6 +223,16 @@ const PetInventoryPage: React.FC = () => {
     setSearchParams(newParams);
   };
 
+ const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const value = event.target.value;
+   const newParams = new URLSearchParams(searchParams);
+   if (value === "") {
+     newParams.delete("q");
+   } else {
+     newParams.set("q", value);
+   }
+   setSearchParams(newParams);
+ };
 
   const handleClearButton = () =>{
     const newParams = new URLSearchParams(searchParams);
@@ -372,112 +246,30 @@ const PetInventoryPage: React.FC = () => {
       <>
         {" "}
         <section className="mx-2  overflow-none  md:mx-6 ">
+          <div className="flex w-full max-w-sm items-center  gap-1.5  md:mx-10 mx-0  ">
+            <Label
+              htmlFor="petName"
+              className="p-1 w-9 h-9 items-center justify-center flex text-2xl bg-primary rounded-[0.55rem]  "
+            >
+              <GiArchiveResearch />
+            </Label>
+            <Input
+              value={petNameValue ?? ""}
+              onChange={handleSearchChange}
+              type="text"
+              id="petName"
+              autoComplete="off"
+              placeholder="search"
+              pattern="[A-Z,a-z]*" // This pattern only accepts numeric digits
+              className=" text-xs h-9  placeholder:top-1 focus-visible:ring-gray-400 border-gray-400 rounded-sm focus:border-none bg-white backdrop-filter bg-opacity-10"
+            />
+          </div>
           <section className="flex  overflow-auto  flex-wrap justify-around items-start md:mt-4 mt-2 ">
-            <section className=" lg:w-[18vw] md:w-[650px]  hidden w-full h-fit md:flex flex-wrap flex-col gap-1 p-2 border-[2px] border-gray-400 bg-black backdrop-filter backdrop-blur-lg bg-opacity-10 text-secondary-foreground shadow-sm rounded-lg">
-              {isFetching && !isFetchingNextPage ? (
-                <section className="flex  flex-row    justify-between  flex-wrap p-2 gap-[0.25rem]">
-                  {Array(10)
-                    .fill(0)
-                    .map((_, index) => (
-                      <Skeleton
-                        className="w-[200px] h-[28px] bg-muted rounded-sm"
-                        key={index}
-                      />
-                    ))}
-                </section>
-              ) : (
-                <section className=" flex flex-col flex-wrap w-full gap-2 items-center">
-                  <section className="flex  flex-row   flex-wrap p-2 gap-[0.15rem] h-30">
-                    <div
-                      onClick={() => {
-                        handleClearButton();
-                      }}
-                      className={`flex  hover:bg-red-700 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg md:hover:bg-opacity-100  scale-[0.94]   w-fit md:hover:scale-100 justify-between h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                    >
-                      <div className="flex gap-3">
-                        <div
-                          className={`md:h-6 md:w-6 hover:bg-red-700 rotate-[45deg] elementCounts h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                            // Replace true with your actual condition
-                            true
-                              ? "bg-red-500  bg-opacity-90"
-                              : "bg-red-500  bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-red-700 "
-                          }`}
-                        >
-                          <span className="-rotate-[45deg] text-[1rem]">
-                            <GiCancel />
-                          </span>
-                        </div>
-                        {/* <h1 className="text-md   font-bold">
-                                Remove Tags
-                              </h1> */}
-                      </div>
-                    </div>
-                    {data?.pages?.[0]?.elementCounts.map((element, index) => {
-                      let isActive = false;
-                      if (searchParams.get("elements") === element.element) {
-                        isActive = true;
-                      }
-                      const backgroundColor =
-                        searchParams.get("elements") === element.element
-                          ? elementData[element.element].color
-                          : undefined;
-
-                      return (
-                        <div
-                          onClick={() => {
-                            handleElementParams(element.element);
-                          }}
-                          key={index}
-                          style={{
-                            "--hover-bg-color":
-                              elementData[element.element].color,
-                            backgroundColor: backgroundColor,
-                            order: isActive ? -1 : index,
-                          }}
-                          className={`flex bg-white ${
-                            isActive ? `scale-[0.94]` : `scale-90`
-                          }  md:hover:bg-opacity-100 ${
-                            isActive ? "w-full" : "w-fit"
-                          }  md:hover:bg-opacity-100   hover:scale-100 justify-between bg-opacity-10 h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                        >
-                          <div className="flex gap-3">
-                            <div
-                              style={{
-                                backgroundColor:
-                                  elementData[element.element].color,
-                              }}
-                              className={`md:h-6 md:w-6 rotate-[45deg]  h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                                // Replace true with your actual condition
-                                true
-                                  ? "bg-primary bg-opacity-90"
-                                  : "bg-zinc-400 bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-primary"
-                              }`}
-                            >
-                              <span className="-rotate-[45deg] text-[1rem]">
-                                {elementData[element.element].icon}
-                              </span>
-                            </div>
-                            {isActive && (
-                              <>
-                                <h1 className="text-md hidden md:inline-block  font-bold">
-                                  {element.element}
-                                </h1>
-                              </>
-                            )}
-                          </div>
-                          {isActive && (
-                            <>
-                              <NumberCounter number={element.count} />
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </section>
-                  <ClassCombobox />
-                </section>
-              )}
-            </section>
+            <InventorySideBar
+              handleElementParams={handleElementParams}
+              handleClassParams={handleClassParams}
+              handleClearButton={handleClearButton}
+            />
 
             <ScrollArea className="lg:w-[65vw] flex flex-row justify-center h-[75vh] md:h-[70vh]  w-full md:w-[650px]  md:justify-start items-start  px-auto  rounded-md  md:p-2 ">
               <section className="flex w-[99%] h-full justify-start flex-wrap mb-10  gap-2 md:gap-2 mx-auto ">
@@ -526,208 +318,7 @@ const PetInventoryPage: React.FC = () => {
             </ScrollArea>
           </section>
         </section>
-        <div className="flex md:hidden flex-wrap  gap-3 w-12 h-12 justify-center fixed bottom-14 md:bottom-4  transition-all duration-300 ease-in-out bg-black backdrop-filter backdrop-blur-lg bg-opacity-50 border-[1px]  p-2  items-center rounded-[0.75rem] scale-90">
-          <Sheet>
-            <SheetTrigger asChild>
-              <span className="text-2xl text-white hover:scale-110 transition-all duration-300 ease-in-out">
-                <IoIosFunnel />
-              </span>
-            </SheetTrigger>
-            <SheetContent className="w-[300px] md:w-[350px] overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle className="font-bold mb-2">Elements</SheetTitle>
-              </SheetHeader>
-
-              <section className="flex mb-2  flex-row  justify-between  flex-wrap md:flex-col gap-1">
-                <div
-                  onClick={() => {
-                    handleClearButton();
-                  }}
-                  className={`flex bg-muted scale-100  md:hover:bg-opacity-100 w-full md:hover:scale-100 justify-between h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                >
-                  <div className="flex gap-3">
-                    <div
-                      className={`md:h-6 md:w-6 hover:bg-red-700 rotate-[45deg] elementCounts h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                        // Replace true with your actual condition
-                        true
-                          ? "bg-red-500  bg-opacity-90"
-                          : "bg-red-500  bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-red-700 "
-                      }`}
-                    >
-                      <span className="-rotate-[45deg] text-[1rem]">
-                        <GiCancel />
-                      </span>
-                    </div>
-                    <h1 className="text-md   font-bold">Remove Tags</h1>
-                  </div>
-                </div>
-                {isFetching && !isFetchingNextPage ? (
-                  Array(10)
-                    .fill(0)
-                    .map((_, index) => (
-                      <Skeleton
-                        className="w-full bg-muted h-[28px] rounded-sm"
-                        key={index}
-                      />
-                    ))
-                ) : (
-                  <>
-                    {data?.pages?.[0]?.elementCounts.map((element, index) => {
-                      let isActive = false;
-                      if (searchParams.get("elements") === element.element) {
-                        isActive = true;
-                      }
-                      const backgroundColor =
-                        searchParams.get("elements") === element.element
-                          ? elementData[element.element].color
-                          : undefined;
-
-                      return (
-                        <>
-                          <div
-                            onClick={() => {
-                              handleElementParams(element.element);
-                            }}
-                            key={index}
-                            style={{
-                              "--hover-bg-color":
-                                elementData[element.element].color,
-                              backgroundColor: backgroundColor,
-                              order: isActive ? -1 : index,
-                            }}
-                            className={`flex bg-muted ${
-                              isActive ? `scale-100` : ``
-                            }  md:hover:bg-opacity-100 w-full md:hover:scale-100 justify-between bg-opacity-10 h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                          >
-                            <div className="flex gap-3">
-                              <div
-                                style={{
-                                  backgroundColor:
-                                    elementData[element.element].color,
-                                }}
-                                className={`md:h-6 md:w-6 rotate-[45deg] elementCounts h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                                  // Replace true with your actual condition
-                                  true
-                                    ? "bg-primary bg-opacity-90"
-                                    : "bg-zinc-400 bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-primary"
-                                }`}
-                              >
-                                <span className="-rotate-[45deg] text-[1rem]">
-                                  {elementData[element.element].icon}
-                                </span>
-                              </div>
-                              <h1 className="text-md   font-bold">
-                                {element.element}
-                              </h1>
-                            </div>
-                            <NumberCounter number={element.count} />
-                          </div>
-                        </>
-                      );
-                    })}
-                  </>
-                )}
-              </section>
-
-              <SheetHeader>
-                <SheetTitle className="font-bold mt-2 z-[9999]">
-                  {" "}
-                  Classes
-                </SheetTitle>
-                <section className="flex mb-2  flex-row  justify-between  flex-wrap md:flex-col gap-1">
-                  {isFetching && !isFetchingNextPage ? (
-                    Array(4)
-                      .fill(0)
-                      .map((_, index) => (
-                        <Skeleton
-                          className="w-full bg-muted h-[28px] rounded-sm"
-                          key={index}
-                        />
-                      ))
-                  ) : (
-                    <>
-                      {petClasses.map((petClass, index) => {
-                        let isActive = false;
-                        if (searchParams.get("class") === petClass.class) {
-                          isActive = true;
-                        }
-                        const backgroundColor =
-                          searchParams.get("class") === petClass.class
-                            ? classData[petClass.class].color
-                            : undefined;
-
-                        return (
-                          <>
-                            <div
-                              onClick={() => {
-                                handleClassParams(petClass.class);
-                              }}
-                              key={index}
-                              style={{
-                                "--hover-bg-color":
-                                  classData[petClass.class].color,
-                                backgroundColor: backgroundColor,
-                                order: isActive ? -1 : index,
-                              }}
-                              className={`flex bg-muted ${
-                                isActive ? `scale-100` : ``
-                              }  md:hover:bg-opacity-100 w-full md:hover:scale-100 justify-between h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                            >
-                              <div className="flex gap-3">
-                                <div
-                                  style={{
-                                    backgroundColor:
-                                      classData[petClass.class].color,
-                                  }}
-                                  className={`md:h-6 md:w-6 rotate-[45deg] elementCounts h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                                    // Replace true with your actual condition
-                                    true
-                                      ? "bg-primary bg-opacity-90"
-                                      : "bg-zinc-400 bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-primary"
-                                  }`}
-                                >
-                                  <span className="-rotate-[45deg] text-[1rem]">
-                                    {classData[petClass.class].icon}
-                                  </span>
-                                </div>
-                                <h1 className="text-md   font-bold">
-                                  {petClass.class}
-                                </h1>
-                              </div>
-                            </div>
-                          </>
-                        );
-                      })}
-                    </>
-                  )}
-                  <div
-                    onClick={() => {
-                      handleClassParams();
-                    }}
-                    className={`flex bg-muted scale-100  md:hover:bg-opacity-100 w-full md:hover:scale-100 justify-between h-fit transition-all duration-300 ease-in-out items-center group gap-3 py-[0.35rem] px-3 rounded-sm`}
-                  >
-                    <div className="flex gap-3">
-                      <div
-                        className={`md:h-6 md:w-6 hover:bg-red-700 rotate-[45deg] elementCounts h-6 w-6 text-xl md:text-md flex justify-center items-center backdrop-filter transition-all duration-300 ease-in-out backdrop-blur-lg rounded-sm ${
-                          // Replace true with your actual condition
-                          true
-                            ? "bg-red-500 bg-opacity-90"
-                            : "bg-red-500 bg-opacity-10 group-md:hover:bg-opacity-90 group-md:hover:bg-red-700"
-                        }`}
-                      >
-                        <span className="-rotate-[45deg] text-[1rem]">
-                          <GiCancel />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </SheetHeader>
-              <SheetDescription className="flex flex-col gap-2 py-3"></SheetDescription>
-              <SheetFooter></SheetFooter>
-            </SheetContent>
-          </Sheet>
-        </div>
+        
       </>
     </>
   );

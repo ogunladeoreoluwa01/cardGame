@@ -257,7 +257,7 @@ const viewAllListings = async (req, res, next) => {
 const getAListing = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { listingNo } = req.body;
+    const { listingNo } = req.params;
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -267,28 +267,36 @@ const getAListing = async (req, res, next) => {
     }
 
     // Find the listing by listingNumber and populate the appropriate fields
-    const listing = await Market.findOne({ listingNumber:listingNo })
-      .populate({
-          path: 'pet',
-            populate: {
-        path: 'petInfo',
-        select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
-      },
-          match: { $expr: { $eq: ['$listingCategory', 'pet'] } }
-        })
-      .populate({
-        path: 'item',
-        match: { $expr: { $eq: ['$listingCategory', 'item'] } }
-      });
+    const listing = await Market.findOne({ listingNumber: listingNo });
+
+if (listing.listingCategory === 'pet') {
+  await listing.populate({
+    path: 'petId',
+    populate: {
+      path: 'petInfo',
+      select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+    }
+  });
+} else if (listing.listingCategory === 'item') {
+  await listing.populate({
+    path: 'itemId'
+  });
+}
 
     if (!listing) {
       return res.status(404).json({ message: "Listing not found." });
     }
 
+     const buyerTotalSilver = user.profile.Argentum + (user.profile.Aureus * 1000);
+
+    const canUserBuy = buyerTotalSilver >= listing.priceInSilver
+
+
     // Respond with the listing details
     res.status(200).json({
       message: "Listing found successfully.",
       listing: listing,
+      canUserBuy:canUserBuy,
     });
 
   } catch (error) {
@@ -395,23 +403,26 @@ const BuyAListing = async (req, res, next) => {
 
     // Find the listing by listingNumber and populate the appropriate fields
     const listing = await Market.findOne({ listingNumber: listingNo })
-      .populate({
-        path: 'pet',
-        populate: {
-          path: 'petInfo',
-          select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
-        },
-        match: { $expr: { $eq: ['$listingCategory', 'pet'] } }
-      })
-      .populate({
-        path: 'item',
-        match: { $expr: { $eq: ['$listingCategory', 'item'] } }
-      });
+
 
     // Check if listing exists
     if (!listing) {
       return res.status(404).json({ message: "Listing not found." });
     }
+
+      if (listing.listingCategory === 'pet') {
+  await listing.populate({
+    path: 'petId',
+    populate: {
+      path: 'petInfo',
+      select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+    }
+  });
+} else if (listing.listingCategory === 'item') {
+  await listing.populate({
+    path: 'itemId'
+  });
+}
 
     if(listing.buyerId){
         return res.status(400).json({ message: "Listing already has a buyer." });
@@ -439,7 +450,7 @@ const BuyAListing = async (req, res, next) => {
     }
 
     // Calculate the buyer's total currency in silver
-    const buyerTotalSilver = buyer.profile.Argentum + (buyer.profile.Aureus * 100);
+    const buyerTotalSilver = buyer.profile.Argentum + (buyer.profile.Aureus * 1000);
 
     // Check if user has enough silver to buy the listing
     if (buyerTotalSilver < listing.priceInSilver) {
@@ -450,32 +461,37 @@ const BuyAListing = async (req, res, next) => {
     const newBuyerTotalSilver = buyerTotalSilver - listing.priceInSilver;
 
     // Function to get the tax rate based on rank
+     // Function to get the tax rate based on rank
     const getTaxRateByRank = (rank) => {
       switch (rank) {
-        case "Ethereal":
-          return 5.5;
-        case "Exalted":
+        case "Amethyst":
+          return 6;
+        case "Master":
           return 5;
-        case "Mythic":
+        case "Ruby":
           return 4;
-        case "Arcane":
+        case "Gold":
+          return 3.5;
+        case "Silver":
           return 3;
-        case "Rustic":
+        case "Bronze":
+          return 2.5;
+        case "Onyx":
           return 2;
-        case "Unranked":
-          return 1;
+        case "Wood":
+          return 1.5;
         default:
-          return 1;
+          return 1.5;
       }
-    };
+    }
 
     // Calculate the seller's earnings post-tax
-    const TaxedEarning = listing.priceInSilver - ((listing.priceInSilver / 100) * getTaxRateByRank(seller.playerRank));
+    const TaxedEarning = listing.priceInSilver - ((listing.priceInSilver / 1000) * getTaxRateByRank(seller.playerRank));
     const sellersEarningPostTAX = TaxedEarning;
 
     // Handle pet listings
     if (listing.listingCategory === 'pet') {
-      const pet = await Pet.findById(listing.petId);
+      const pet = await Pet.findById(listing.petId._id);
 
       // Check if pet exists
       if (!pet) {
@@ -594,7 +610,7 @@ const DeleteAListing = async (req, res, next) => {
 
     // Handle pet listings
     if (listing.listingCategory === 'pet') {
-      const pet = await Pet.findById(listing.petId);
+      const pet = await Pet.findById(listing.petId._id);
 
       // Check if pet exists
       if (!pet) {
@@ -656,23 +672,27 @@ const BuySystemListing = async (req, res, next) => {
 
     // Find the listing by listingNumber and populate the appropriate fields
     const listing = await Market.findOne({ listingNumber: listingNo })
-      .populate({
-        path: 'pet',
-        populate: {
-          path: 'petInfo',
-          select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
-        },
-        match: { $expr: { $eq: ['$listingCategory', 'pet'] } }
-      })
-      .populate({
-        path: 'item',
-        match: { $expr: { $eq: ['$listingCategory', 'item'] } }
-      });
+
+
 
     // Check if listing exists
     if (!listing) {
       return res.status(404).json({ message: "Listing not found." });
     }
+
+  if (listing.listingCategory === 'pet') {
+  await listing.populate({
+    path: 'petId',
+    populate: {
+      path: 'petInfo',
+      select: '-baseHealth -baseAttack -baseDefense -baseManaCost'
+    }
+  });
+} else if (listing.listingCategory === 'item') {
+  await listing.populate({
+    path: 'itemId'
+  });
+}
 
     if(listing.buyerId){
         return res.status(400).json({ message: "Listing already has a buyer." });
@@ -688,7 +708,7 @@ const BuySystemListing = async (req, res, next) => {
 
 
     // Calculate the buyer's total currency in silver
-    const buyerTotalSilver = buyer.profile.Argentum + (buyer.profile.Aureus * 100);
+    const buyerTotalSilver = buyer.profile.Argentum + (buyer.profile.Aureus * 1000);
 
     // Check if user has enough silver to buy the listing
     if (buyerTotalSilver < listing.priceInSilver) {
@@ -702,7 +722,7 @@ const BuySystemListing = async (req, res, next) => {
 
     // Handle pet listings
     if (listing.listingCategory === 'pet') {
-      const pet = await Pet.findById(listing.petId);
+      const pet = await Pet.findById(listing.petId._id);
 
       // Check if pet exists
       if (!pet) {
@@ -777,5 +797,7 @@ createListing,
 viewAllListings,
 getAListing,
 UpdateAListing,
-DeleteAListing
+DeleteAListing,
+BuyAListing,
+BuySystemListing 
 }

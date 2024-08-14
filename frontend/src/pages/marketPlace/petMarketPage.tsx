@@ -70,7 +70,7 @@ import MarketPlaceSideBar from "./marketPlaceSideBar";
 const PetMarketPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
+
   const dispatch: AppDispatch = useDispatch();
 
   const userState: any | null = useSelector((state: RootState) => state.user);
@@ -83,22 +83,20 @@ const PetMarketPage: React.FC = () => {
 
 
 let [searchParams, setSearchParams] = useSearchParams();
-const [isHigh, setIsHigh] = useState<boolean>(false);
 const [element, setElement] = useState<string[] | null>(null);
 const [petClass, setPetClass] = useState<string | null>(null);
 const [minInputValue, setMinInputValue] = useState<number | null>(null);
 const [maxInputValue, setMaxInputValue] = useState<number | null>(null);
 const [petNameValue, setPetNameValue] = useState<string | null>(null);
-const [priceFilter, setPriceFilter] = useState<string>("low");
+
 
 
 useEffect(() => {
   const elementParam = searchParams.get("elements");
   const classParam = searchParams.get("class");
-  const minValueParam = searchParams.get("min-value");
-  const maxValueParam = searchParams.get("max-value");
-  const searchValueParam = searchParams.get("search-value");
-  const priceFilterParam = searchParams.get("price-filter");
+  const minValueParam = searchParams.get("mi");
+  const maxValueParam = searchParams.get("mx");
+  const searchValueParam = searchParams.get("q");
 
   if (elementParam) {
     setElement([elementParam.toString()]);
@@ -130,14 +128,7 @@ useEffect(() => {
     setPetNameValue(null);
   }
 
-  if (priceFilterParam) {
-    setPriceFilter(priceFilterParam.toString());
-  } else {
-    setPriceFilter("low");
-  }
-  if (!priceFilterParam) {
-    setIsHigh(false);
-  }
+
 }, [searchParams]);
 
 
@@ -199,7 +190,6 @@ const {
     petClass,
     minInputValue,
     maxInputValue,
-    priceFilter,
     petNameValue,
   ],
   queryFn: ({ pageParam = 1 }) => {
@@ -212,7 +202,6 @@ const {
       minPrice: minInputValue,
       maxPrice: maxInputValue,
       itemname: petNameValue,
-      petFilter: priceFilter,
     });
   },
   getNextPageParam: (lastPage) => {
@@ -300,12 +289,12 @@ const handleMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const value = event.target.value;
   const newParams = new URLSearchParams(searchParams);
 
-  // If the input is empty, remove the "min-value" parameter
+  // If the input is empty, remove the "mi" parameter
   if (value === "") {
-    newParams.delete("min-value");
+    newParams.delete("mi");
   } else {
-    // Set or update the "min-value" parameter with the new value
-    newParams.set("min-value", value);
+    // Set or update the "mi" parameter with the new value
+    newParams.set("mi", value);
   }
   setSearchParams(newParams);
 };
@@ -314,12 +303,12 @@ const handleMaxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const value = event.target.value;
   const newParams = new URLSearchParams(searchParams);
 
-  // If the input is empty, remove the "max-value" parameter
+  // If the input is empty, remove the "mx" parameter
   if (value === "") {
-    newParams.delete("max-value");
+    newParams.delete("mx");
   } else {
-    // Set or update the "max-value" parameter with the new value
-    newParams.set("max-value", value);
+    // Set or update the "mx" parameter with the new value
+    newParams.set("mx", value);
   }
   setSearchParams(newParams);
 };
@@ -328,42 +317,29 @@ const handleMaxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
    const value = event.target.value;
  const newParams = new URLSearchParams(searchParams);
   if (value === "") {
-    newParams.delete("search-value");
+    newParams.delete("q");
   } else {
-    newParams.set("search-value", value);
+    newParams.set("q", value);
   }
   setSearchParams(newParams);
 
  };
 
  const handleClearButton = () => {
+   setPetNameValue("");
    const newParams = new URLSearchParams(searchParams);
    newParams.delete("elements");
    newParams.delete("class");
-   newParams.delete("min-value");
-   newParams.delete("max-value");
-   newParams.delete("price-filter");
-   newParams.delete("search-value");
+   newParams.delete("mi");
+   newParams.delete("mx");
+   newParams.delete("q");
    setSearchParams(newParams);
+  
  };
 
- // Handle the change in the switch state
- const handleSwitchChange = (checked: boolean) => {
-   setIsHigh(checked);
- };
+ 
 
- // Effect that updates the price filter based on the value of isHigh
- useEffect(() => {
-   const newParams = new URLSearchParams(searchParams);
-   if (isHigh) {
-     if (newParams.get("price-filter") === "high") {
-       newParams.delete("price-filter");
-     } else {
-       newParams.set("price-filter", "low");
-     }
-     setSearchParams(newParams);
-   }
- }, [isHigh]);
+ 
 
   let cardIndex = 0;
   return (
@@ -391,17 +367,15 @@ const handleMaxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           </div>
           <section className="flex  overflow-auto  flex-wrap justify-around items-start md:mt-4 mt-2 ">
             <MarketPlaceSideBar
-              isHigh={isHigh}
-              priceFilter={priceFilter}
+
               minInputValue={minInputValue}
               maxInputValue={maxInputValue}
               handleElementParams={handleElementParams}
               handleClassParams={handleClassParams}
               handleMinChange={handleMinChange}
               handleMaxChange={handleMaxChange}
-              handleSwitchChange={handleSwitchChange}
               handleClearButton={handleClearButton}
-            />i
+            />
 
             <ScrollArea className="lg:w-[65vw] flex flex-row justify-center h-[75vh] md:h-[70vh]  w-full md:w-[650px]  md:justify-start items-start  px-auto  rounded-md  md:p-2 ">
               <section className="flex w-[99%] h-full justify-start flex-wrap mb-10  gap-2 md:gap-2 mx-auto ">
