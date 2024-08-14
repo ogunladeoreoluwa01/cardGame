@@ -50,6 +50,9 @@ const createDuel = async (req, res, next) => {
     "66b7ee884c4e461e9a83a743",
     "66b7ee884c4e461e9a83a746"];
 
+    
+
+
     // Check for active duels
     const inActiveDuelCheck = await Duel.find({
       'players.player1.userId': playerOneId,
